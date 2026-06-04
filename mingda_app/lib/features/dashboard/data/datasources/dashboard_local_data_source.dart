@@ -1,11 +1,6 @@
-import 'package:mingda_app/features/auth/data/models/auth_session_model.dart';
 import 'package:mingda_app/features/auth/data/models/user_model.dart';
 
-abstract class AuthLocalDataSource {
-  Future<void> saveRemember(AuthSessionModel model);
-  Future<bool?> getRemember();
-  Future<void> removeSession();
-
+abstract class DashboardLocalDataSource {
   Future<String?> getToken();
   Future<void> saveToken(String token);
   Future<void> deleteToken();

@@ -2,15 +2,13 @@ import 'package:dartz/dartz.dart';
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/splash/domain/repositories/splash_repository.dart';
 
-class ChecktokenUsecase {
+class GettokenUsecase {
   final SplashRepository splashRepository;
-  ChecktokenUsecase({required this.splashRepository});
+  GettokenUsecase({required this.splashRepository});
 
-  Future<Either<Failure, void>> call() async {
+  Future<Either<Failure, String>> call() async {
     final resultGetToken = await splashRepository.GetToken();
 
-    return resultGetToken.fold((f) => Left(f), (r) async {
-      return await splashRepository.CheckToken(r);
-    });
+    return resultGetToken.fold((f) => Left(f), (r) => Right(r));
   }
 }

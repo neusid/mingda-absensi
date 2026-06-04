@@ -1,39 +1,45 @@
 import 'dart:convert';
 
+import 'package:dio/dio.dart';
 import 'package:http/http.dart' as http;
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:mingda_app/features/auth/data/models/login_model.dart';
 
 class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
+  final Dio dio;
+  AuthRemoteDataSourceImpl({required this.dio});
+
   static const baseURL = "https://absensi.mingda.my.id/api";
 
   Future<LoginModel> SignInDataSource({
     required String email,
     required String password,
   }) async {
-    final response = await http.post(
-      Uri.parse('$baseURL/auth/login'),
-      body: {'email': email, 'password': password, 'token_name': 'mobile-app'},
-    );
+    try {
+      final response = await dio.post(
+        '/auth/login',
+        data: {
+          'email': email,
+          'password': password,
+          'token_name': 'mobile-app',
+        },
+      );
+      return LoginModel.fromJson(response.data);
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final message = e.message;
 
-    final body = jsonDecode(response.body) as Map<String, dynamic>;
+      if (statusCode == 401) {
+        throw AuthFailure(message ?? 'Email atau password salah');
+      }
 
-    if (response.statusCode == 200) {
-      return LoginModel.fromJson(body);
+      if (statusCode == 422) {
+        throw ValidationFailure(message ?? 'Format email tidak valid');
+      }
+
+      throw ServerFailure(message ?? 'Server error: ${statusCode}');
     }
-
-    if (response.statusCode == 401) {
-      throw AuthFailure(body['message'] ?? 'Email atau password salah');
-    }
-
-    if (response.statusCode == 422) {
-      throw ValidationFailure(body['message'] ?? 'Format email tidak valid');
-    }
-
-    throw ServerFailure(
-      body['message'] ?? 'Server error: ${response.statusCode}',
-    );
   }
 
   Future<void> SignOutDataSource(String token) async {

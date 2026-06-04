@@ -1,23 +1,27 @@
 import 'package:get_it/get_it.dart';
+import 'package:mingda_app/features/auth/domain/usecases/get_remember_usecase.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_local_data_source.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_local_data_source_impl.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_remote_data_source.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_remote_data_source_impl.dart';
 import 'package:mingda_app/features/splash/data/repositories/splash_repository_impl.dart';
 import 'package:mingda_app/features/splash/domain/repositories/splash_repository.dart';
-import 'package:mingda_app/features/splash/domain/usecases/checktoken_usecase.dart';
+import 'package:mingda_app/features/splash/domain/usecases/gettoken_usecase.dart';
 import 'package:mingda_app/features/splash/presentation/blocs/splash_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void initSplashInjection(GetIt sl) {
   // bloc
   sl.registerFactory<SplashBloc>(
-    () => SplashBloc(checktokenUsecase: sl<ChecktokenUsecase>()),
+    () => SplashBloc(
+      getTokenUsecase: sl<GettokenUsecase>(),
+      getRememberUsecase: sl<GetRememberUsecase>(),
+    ),
   );
 
   // usecase
-  sl.registerLazySingleton<ChecktokenUsecase>(
-    () => ChecktokenUsecase(splashRepository: sl<SplashRepository>()),
+  sl.registerLazySingleton<GettokenUsecase>(
+    () => GettokenUsecase(splashRepository: sl<SplashRepository>()),
   );
 
   // repository

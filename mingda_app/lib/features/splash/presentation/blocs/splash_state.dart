@@ -12,6 +12,10 @@ class InitialSplashState extends SplashState {}
 
 class LoadingSplashState extends SplashState {}
 
-class SuccessSplashState extends SplashState {}
+class SuccessSplashState extends SplashState {
+  final bool value;
+
+  SuccessSplashState(this.value);
+}
 
 class FailureSplashState extends SplashState {}

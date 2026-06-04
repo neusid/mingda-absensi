@@ -1,14 +1,14 @@
 import 'dart:convert';
 
-import 'package:mingda_app/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:mingda_app/features/auth/data/models/auth_session_model.dart';
 import 'package:mingda_app/features/auth/data/models/user_model.dart';
+import 'package:mingda_app/features/dashboard/data/datasources/dashboard_local_data_source.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthLocalDataSourceImpl implements AuthLocalDataSource {
+class DashboardLocalDataSourceImpl implements DashboardLocalDataSource {
   final SharedPreferences sharedPreferences;
 
-  AuthLocalDataSourceImpl({required this.sharedPreferences});
+  DashboardLocalDataSourceImpl({required this.sharedPreferences});
 
   Future<void> saveRemember(AuthSessionModel model) async {
     final String stringSession = jsonEncode(model.toJson());

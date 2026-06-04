@@ -30,8 +30,6 @@ class SigninUsecase {
       return const Left(ValidationFailure('Password minimal 8 karakter'));
     }
 
-    print("usecase");
-
     final loginEntity = await authRepository.SignIn(
       email: params.email,
       password: params.password,
