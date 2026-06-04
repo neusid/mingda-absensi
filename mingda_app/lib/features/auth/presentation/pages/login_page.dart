@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/features/auth/domain/entities/auth_session_entity.dart';
@@ -125,7 +124,7 @@ class _LoginPageState extends State<LoginPage> {
                                     InputAuth(
                                       label: "Password",
                                       hintText: "Enter your password",
-                                      isPassword: true,
+                                      isPassword: false,
                                       controller: passwordTextC,
                                     ),
                                     SizedBox(
@@ -155,7 +154,8 @@ class _LoginPageState extends State<LoginPage> {
                                           SizedBox(width: 98.w),
                                           Text(
                                             "Forgot Password",
-                                            style: GoogleFonts.inter(
+                                            style: TextStyle(
+                                              fontFamily: 'Inter',
                                               fontSize: 12.sp,
                                               color: Colors.blue,
                                               fontWeight: FontWeight.w400,
@@ -190,7 +190,8 @@ class _LoginPageState extends State<LoginPage> {
                                         },
                                         child: Text(
                                           "Sign In",
-                                          style: GoogleFonts.inter(
+                                          style: TextStyle(
+                                            fontFamily: 'Inter',
                                             color: AppColors.white,
                                             fontWeight: FontWeight.w500,
                                             fontSize: 14.sp,
@@ -229,7 +230,8 @@ class _LoginPageState extends State<LoginPage> {
                                             ),
                                             Text(
                                               "Sign In With Google",
-                                              style: GoogleFonts.inter(
+                                              style: TextStyle(
+                                                fontFamily: 'Inter',
                                                 color: AppColors.textPrimary,
                                                 fontWeight: FontWeight.w500,
                                                 fontSize: 14.sp,

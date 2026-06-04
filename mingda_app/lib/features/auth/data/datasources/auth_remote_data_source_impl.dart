@@ -25,21 +25,20 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
           'token_name': 'mobile-app',
         },
       );
-
-      print('=== SUCCESS ===');
-      print('Status: ${response.statusCode}');
-      print('Data: ${response.data}');
-
       return LoginModel.fromJson(response.data);
     } on DioException catch (e) {
-      print('=== DIO ERROR ===');
-      print('Type: ${e.type}');
-      print('Error object: ${e.error}'); // <-- tambah ini
-      print('StackTrace: ${e.stackTrace}'); // <-- tambah ini
-      print('Message: ${e.message}');
-      print('Status: ${e.response?.statusCode}');
+      final statusCode = e.response?.statusCode;
+      final message = e.message;
 
-      throw ServerFailure('${e.error}');
+      if (statusCode == 401) {
+        throw AuthFailure(message ?? 'Email atau password salah');
+      }
+
+      if (statusCode == 422) {
+        throw ValidationFailure(message ?? 'Format email tidak valid');
+      }
+
+      throw ServerFailure(message ?? 'Server error: ${statusCode}');
     }
   }
 

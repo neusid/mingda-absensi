@@ -18,8 +18,11 @@ class DashboardPage extends StatelessWidget {
             Navigator.pushReplacementNamed(context, '/login');
           }
         },
-        child: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          height: double.infinity,
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               ElevatedButton(
                 onPressed: () => dasboardBloc.add(DashboardSignout()),

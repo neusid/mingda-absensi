@@ -18,7 +18,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       emit(LoadingSplashState());
       final result = await getTokenUsecase();
 
-      result.fold(
+      await result.fold(
         (l) async {
           final rememberValue = await getRememberUsecase();
           rememberValue.fold(
@@ -34,7 +34,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
             ),
           );
         },
-        (r) {
+        (r) async {
           if (r == null || r.isEmpty) {
             emit(FailureSplashState());
             return;

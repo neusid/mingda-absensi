@@ -1,381 +1,434 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:google_fonts/google_fonts.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 
 class AppTextStyles {
-  static TextStyle get inter8RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter8RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 8.sp,
     height: 22 / 8,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter8RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter8RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 8.sp,
     height: 22 / 8,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter8MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter8MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 8.sp,
     height: 22 / 8,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter8MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter8MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 8.sp,
     height: 22 / 8,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter96RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter96RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 9.6.sp,
     height: 22 / 9.6,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter96RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter96RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 9.6.sp,
     height: 22 / 9.6,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter96MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter96MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 9.6.sp,
     height: 22 / 9.6,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter96MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter96MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 9.6.sp,
     height: 22 / 9.6,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter11RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter11RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 11.sp,
     height: 22 / 11,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter11RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter11RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 11.sp,
     height: 22 / 11,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter11MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter11MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 11.sp,
     height: 22 / 11,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter11MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter11MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 11.sp,
     height: 22 / 11,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter128RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter128RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 12.8.sp,
     height: 22 / 12.8,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter128RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter128RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 12.8.sp,
     height: 22 / 12.8,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter128MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter128MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 12.8.sp,
     height: 22 / 12.8,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter128MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter128MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 12.8.sp,
     height: 22 / 12.8,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter13RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter13RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.sp,
     height: 20 / 13,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter13RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter13RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.sp,
     height: 20 / 13,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter13MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter13MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.sp,
     height: 20 / 13,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter13MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter13MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.sp,
     height: 20 / 13,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter138RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter138RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.8.sp,
     height: 22 / 13.8,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter138RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter138RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.8.sp,
     height: 22 / 13.8,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter138MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter138MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.8.sp,
     height: 22 / 13.8,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter138MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter138MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.8.sp,
     height: 22 / 13.8,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter14RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter14RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 14.sp,
     height: 22 / 14,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter14RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter14RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 14.sp,
     height: 22 / 14,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter14MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter14MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 14.sp,
     height: 22 / 14,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter14MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter14MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 14.sp,
     height: 22 / 14,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter16RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter16RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 16.sp,
     height: 22 / 16,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter16RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter16RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 16.sp,
     height: 22 / 16,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter16MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter16MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 16.sp,
     height: 22 / 16,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter16MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter16MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 16.sp,
     height: 22 / 16,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter18RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter18RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 18.sp,
     height: 26 / 18,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter18RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter18RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 18.sp,
     height: 26 / 18,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter18MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter18MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 18.sp,
     height: 26 / 18,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter18MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter18MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 18.sp,
     height: 26 / 18,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter20RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter20RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 20.sp,
     height: 28 / 20,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter20RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter20RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 20.sp,
     height: 28 / 20,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter20MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter20MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 20.sp,
     height: 28 / 20,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter20MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter20MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 20.sp,
     height: 28 / 20,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter24RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter24RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 24.sp,
     height: 32 / 24,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter24RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter24RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 24.sp,
     height: 32 / 24,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter24MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter24MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 24.sp,
     height: 32 / 24,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter24MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter24MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 24.sp,
     height: 32 / 24,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter28RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter28RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 28.sp,
     height: 36 / 28,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter28RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter28RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 28.sp,
     height: 36 / 28,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter28MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter28MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 28.sp,
     height: 36 / 28,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter28MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter28MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 28.sp,
     height: 36 / 28,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter32RegularPrimary => GoogleFonts.inter(
+  static TextStyle get inter32RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 32.sp,
     height: 40 / 32,
     fontWeight: FontWeight.w400,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter32RegularSecondary => GoogleFonts.inter(
+  static TextStyle get inter32RegularSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 32.sp,
     height: 40 / 32,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get inter32MediumPrimary => GoogleFonts.inter(
+  static TextStyle get inter32MediumPrimary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 32.sp,
     height: 40 / 32,
     fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inter32MediumSecondary => GoogleFonts.inter(
+  static TextStyle get inter32MediumSecondary => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 32.sp,
     height: 40 / 32,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
 
-  static TextStyle get interExtraBold18 => GoogleFonts.inter(
+  static TextStyle get interExtraBold18 => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 18.sp,
     height: 22 / 18,
-    fontWeight: FontWeight.w700,
+    fontWeight: FontWeight.w800,
     color: AppColors.textPrimary,
   );
 
-  static TextStyle get inputTextStyles => GoogleFonts.inter(
+  static TextStyle get inputTextStyles => TextStyle(
+    fontFamily: 'Inter',
     fontSize: 13.sp,
     height: 20 / 13,
     fontWeight: FontWeight.w400,

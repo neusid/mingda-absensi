@@ -24,4 +24,6 @@ class LoadedSplashState extends SplashState {
   LoadedSplashState(this.authSessionEntity);
 }
 
+class NotLoadedSplashState extends SplashState {}
+
 class FailureSplashState extends SplashState {}
