@@ -13,9 +13,15 @@ class InitialSplashState extends SplashState {}
 class LoadingSplashState extends SplashState {}
 
 class SuccessSplashState extends SplashState {
-  final bool value;
+  final String value;
 
   SuccessSplashState(this.value);
+}
+
+class LoadedSplashState extends SplashState {
+  final AuthSessionEntity authSessionEntity;
+
+  LoadedSplashState(this.authSessionEntity);
 }
 
 class FailureSplashState extends SplashState {}

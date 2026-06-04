@@ -6,7 +6,7 @@ abstract class AuthState extends Equatable {
 
   @override
   // TODO: implement props
-  List<Object?> get props => throw UnimplementedError();
+  List<Object?> get props => [];
 }
 
 class AuthInitial extends AuthState {}
@@ -20,7 +20,7 @@ class AuthAuthenticated extends AuthState {}
 class AuthUnauthenticated extends AuthState {}
 
 class AuthRememberDataLoaded extends AuthState {
-  final bool? isCheck;
+  final bool isCheck;
 
   AuthRememberDataLoaded(this.isCheck);
 }

@@ -30,8 +30,8 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
       final result = await getRememberUsecase();
 
       result.fold(
-        (l) => AuthError(l.toString()),
-        (r) => emit(AuthRememberDataLoaded(r)),
+        (l) => emit(AuthError(l.toString())),
+        (r) => emit(AuthRememberDataLoaded(r.isChecked)),
       );
     });
 
@@ -45,9 +45,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         ),
       );
 
-      result.fold(
+      await result.fold(
         // l
-        (failure) => emit(AuthError(failure.toString())),
+        (failure) async => emit(AuthError(failure.toString())),
         // r
         (login) async {
           if (event.authSessionEntity.isChecked) {

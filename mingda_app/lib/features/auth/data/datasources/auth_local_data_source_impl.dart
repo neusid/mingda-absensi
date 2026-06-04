@@ -15,9 +15,9 @@ class AuthLocalDataSourceImpl implements AuthLocalDataSource {
     await sharedPreferences.setString('remember', stringSession);
   }
 
-  Future<bool?> getRemember() async {
-    final result = await sharedPreferences.getBool('remember');
-    return result;
+  Future<AuthSessionModel> getRemember() async {
+    final result = await sharedPreferences.getString('remember');
+    return AuthSessionModel.fromJson(jsonDecode(result!));
   }
 
   Future<void> removeSession() async {

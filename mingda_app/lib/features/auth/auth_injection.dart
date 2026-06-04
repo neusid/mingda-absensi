@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mingda_app/app/config/dio_client.dart';
 import 'package:mingda_app/features/auth/data/datasources/auth_remote_data_source.dart';
 import 'package:mingda_app/features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:mingda_app/features/auth/data/repositories/auth_repository_impl.dart';
@@ -28,14 +28,13 @@ void initAuthInjection(GetIt sl) {
   );
 
   sl.registerLazySingleton<AuthRemoteDataSource>(
-    () => AuthRemoteDataSourceImpl(dio: sl<Dio>()),
+    () => AuthRemoteDataSourceImpl(dio: sl<DioClient>().dio),
   );
 
   sl.registerLazySingleton<AuthRepository>(
     () => AuthRepositoryImpl(
       authRemoteDataSource: sl(),
       authLocalDataSource: sl(),
-      dio: sl<Dio>(),
     ),
   );
 

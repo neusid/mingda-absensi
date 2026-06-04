@@ -14,12 +14,10 @@ import 'package:mingda_app/features/auth/domain/repositories/auth_repository.dar
 class AuthRepositoryImpl implements AuthRepository {
   final AuthRemoteDataSource authRemoteDataSource;
   final AuthLocalDataSource authLocalDataSource;
-  final Dio dio;
 
   const AuthRepositoryImpl({
     required this.authRemoteDataSource,
     required this.authLocalDataSource,
-    required this.dio,
   });
 
   Future<Either<Failure, void>> saveRememberRepository(
@@ -38,10 +36,9 @@ class AuthRepositoryImpl implements AuthRepository {
     }
   }
 
-  Future<Either<Failure, bool?>> getRememberRepository() async {
+  Future<Either<Failure, AuthSessionEntity>> getRememberRepository() async {
     try {
       final result = await authLocalDataSource.getRemember();
-
       return right(result);
     } on Failure catch (f) {
       return left(f);
@@ -52,9 +49,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   Future<Either<Failure, bool?>> removeSessionRepository() async {
     try {
-      final result = await authLocalDataSource.getRemember();
+      await authLocalDataSource.removeSession();
 
-      return right(result);
+      return right(null);
     } on Failure catch (f) {
       return left(f);
     } catch (e) {
@@ -81,9 +78,8 @@ class AuthRepositoryImpl implements AuthRepository {
     } on SocketException {
       print("Network failure");
       return left(NetworkFailure());
-    } catch (e) {
-      print(e.toString());
-      return left(ServerFailure(e.toString()));
+    } on DioException catch (e) {
+      throw ServerFailure(e.response?.data['message'] ?? 'Error');
     }
   }
 

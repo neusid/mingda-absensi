@@ -6,7 +6,7 @@ import 'package:mingda_app/features/auth/domain/entities/login_entity.dart';
 
 abstract class AuthRepository {
   Future<Either<Failure, void>> saveRememberRepository(AuthSessionEntity value);
-  Future<Either<Failure, bool?>> getRememberRepository();
+  Future<Either<Failure, AuthSessionEntity>> getRememberRepository();
   Future<Either<Failure, bool?>> removeSessionRepository();
 
   Future<Either<Failure, LoginEntity>> SignIn({

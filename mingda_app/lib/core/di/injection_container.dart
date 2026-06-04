@@ -17,15 +17,15 @@ Future<void> init() async {
   sl.registerSingleton<SharedPreferences>(sharedPreferences);
   sl.registerLazySingleton(() => Dio());
 
+  sl.registerLazySingleton<AuthLocalDataSource>(
+    () => AuthLocalDataSourceImpl(sharedPreferences: sl()),
+  );
+
   sl.registerLazySingleton(
     () => DioClient(
       dio: sl<Dio>(),
       authLocalDataSource: sl<AuthLocalDataSource>(),
     ),
-  );
-
-  sl.registerLazySingleton<AuthLocalDataSource>(
-    () => AuthLocalDataSourceImpl(sharedPreferences: sl()),
   );
 
   initSplashInjection(sl);

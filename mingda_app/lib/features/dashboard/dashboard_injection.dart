@@ -1,5 +1,5 @@
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mingda_app/app/config/dio_client.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_local_data_source.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_local_data_source_impl.dart';
 import 'package:mingda_app/features/dashboard/data/repositories/dashboard_repository_impl.dart';
@@ -22,8 +22,8 @@ void initDashboardInjection(GetIt sl) {
   // repository
   sl.registerLazySingleton<DashboardRepository>(
     () => DashboardRepositoryImpl(
-      dashboardLocalDataSource: sl<DashboardLocalDataSourceImpl>(),
-      dio: sl<Dio>(),
+      dashboardLocalDataSource: sl<DashboardLocalDataSource>(),
+      dio: sl<DioClient>().dio,
     ),
   );
 

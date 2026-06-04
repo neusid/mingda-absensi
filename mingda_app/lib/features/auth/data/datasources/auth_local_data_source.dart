@@ -3,7 +3,7 @@ import 'package:mingda_app/features/auth/data/models/user_model.dart';
 
 abstract class AuthLocalDataSource {
   Future<void> saveRemember(AuthSessionModel model);
-  Future<bool?> getRemember();
+  Future<AuthSessionModel> getRemember();
   Future<void> removeSession();
 
   Future<String?> getToken();

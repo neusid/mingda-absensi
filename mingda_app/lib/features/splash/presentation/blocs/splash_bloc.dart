@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:mingda_app/features/auth/domain/entities/auth_session_entity.dart';
 import 'package:mingda_app/features/auth/domain/usecases/get_remember_usecase.dart';
 import 'package:mingda_app/features/splash/domain/usecases/gettoken_usecase.dart';
 
@@ -16,13 +17,31 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       // TODO: implement event handler
       emit(LoadingSplashState());
       final result = await getTokenUsecase();
-      final rememberValue = await getRememberUsecase();
-      result.fold((l) => emit(FailureSplashState()), (r) {
-        rememberValue.fold(
-          (l) => emit(FailureSplashState()),
-          (r) => emit(SuccessSplashState(r!)),
-        );
-      });
+
+      result.fold(
+        (l) async {
+          final rememberValue = await getRememberUsecase();
+          rememberValue.fold(
+            (l2) => emit(FailureSplashState()),
+            (r2) => emit(
+              LoadedSplashState(
+                AuthSessionEntity(
+                  email: r2.email,
+                  password: '',
+                  isChecked: r2.isChecked,
+                ),
+              ),
+            ),
+          );
+        },
+        (r) {
+          if (r == null || r.isEmpty) {
+            emit(FailureSplashState());
+            return;
+          }
+          emit(SuccessSplashState(r));
+        },
+      );
     });
   }
 }
