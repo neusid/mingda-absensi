@@ -1,7 +1,6 @@
 import 'dart:io';
 
 import 'package:dartz/dartz.dart';
-import 'package:dio/dio.dart';
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/auth/data/datasources/auth_local_data_source.dart';
 import 'package:mingda_app/features/auth/data/datasources/auth_remote_data_source.dart';
@@ -78,8 +77,8 @@ class AuthRepositoryImpl implements AuthRepository {
     } on SocketException {
       print("Network failure");
       return left(NetworkFailure());
-    } on DioException catch (e) {
-      throw ServerFailure(e.response?.data['message'] ?? 'Error');
+    } catch (e) {
+      throw ServerFailure(e.toString());
     }
   }
 

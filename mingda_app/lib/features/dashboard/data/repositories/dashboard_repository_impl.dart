@@ -16,7 +16,7 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
   Future<Either<Failure, void>> signOut() async {
     try {
-      await dio.get('/auth/logout');
+      await dio.post('/auth/logout');
       await dashboardLocalDataSource.deleteToken();
       await dashboardLocalDataSource.deleteUser();
       return right(null);

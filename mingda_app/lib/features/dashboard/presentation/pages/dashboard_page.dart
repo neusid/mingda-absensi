@@ -12,9 +12,10 @@ class DashboardPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.white,
       body: BlocListener<DashboardBloc, DashboardState>(
+        bloc: dasboardBloc,
         listener: (context, state) {
           // TODO: implement listener
-          if (state is DashboardSignout) {
+          if (state is SignoutDashboardState) {
             Navigator.pushReplacementNamed(context, '/login');
           }
         },

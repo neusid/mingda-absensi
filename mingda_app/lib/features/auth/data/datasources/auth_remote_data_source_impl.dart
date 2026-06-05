@@ -30,15 +30,19 @@ class AuthRemoteDataSourceImpl implements AuthRemoteDataSource {
       final statusCode = e.response?.statusCode;
       final message = e.message;
 
+      final apiMessage = e.response?.data['message']?.toString();
+
+      print("DioException StatusCode: $statusCode");
+
       if (statusCode == 401) {
-        throw AuthFailure(message ?? 'Email atau password salah');
+        throw AuthFailure(apiMessage ?? 'Email atau password salah');
       }
 
       if (statusCode == 422) {
-        throw ValidationFailure(message ?? 'Format email tidak valid');
+        throw ValidationFailure(apiMessage ?? 'Format email tidak valid');
       }
 
-      throw ServerFailure(message ?? 'Server error: ${statusCode}');
+      throw ServerFailure(apiMessage ?? 'Server error: $statusCode');
     }
   }
 

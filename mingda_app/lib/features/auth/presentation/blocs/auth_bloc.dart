@@ -29,10 +29,9 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       final result = await getRememberUsecase();
 
-      result.fold(
-        (l) => emit(AuthError(l.toString())),
-        (r) => emit(AuthRememberDataLoaded(r.isChecked)),
-      );
+      result.fold((l) {
+        emit(AuthRememberDataNotFound());
+      }, (r) => emit(AuthRememberDataLoaded(r.email, r.isChecked)));
     });
 
     on<LoginSubmitted>((event, emit) async {
@@ -47,19 +46,21 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
 
       await result.fold(
         // l
-        (failure) async => emit(AuthError(failure.toString())),
+        (failure) async {
+          emit(AuthError(failure.message.toString()));
+        },
         // r
         (login) async {
           if (event.authSessionEntity.isChecked) {
             final save = await saveRememberUsecase(event.authSessionEntity);
             save.fold(
-              (l) => emit(AuthError(l.message)),
+              (l) => emit(AuthError(l.message.toString())),
               (r) => emit(AuthAuthenticated()),
             );
           } else {
             final remove = await removeAuthSessionUsecase();
             remove.fold(
-              (l) => emit(AuthError(l.message)),
+              (l) => emit(AuthError(l.message.toString())),
               (r) => emit(AuthAuthenticated()),
             );
           }

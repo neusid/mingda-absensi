@@ -18,7 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   TextEditingController emailTextC = TextEditingController();
   TextEditingController passwordTextC = TextEditingController();
-  bool isChecked = true;
+  bool isChecked = false;
 
   @override
   void initState() {
@@ -29,6 +29,8 @@ class _LoginPageState extends State<LoginPage> {
   @override
   void dispose() {
     // TODO: implement dispose
+    emailTextC.dispose();
+    passwordTextC.dispose();
     super.dispose();
   }
 
@@ -40,8 +42,6 @@ class _LoginPageState extends State<LoginPage> {
       bloc: authBloc,
       listener: (context, state) async {
         if (state is AuthAuthenticated) {
-          await Future.delayed(const Duration(seconds: 2));
-
           if (context.mounted) {
             Navigator.pushNamedAndRemoveUntil(
               context,
@@ -53,6 +53,11 @@ class _LoginPageState extends State<LoginPage> {
           ScaffoldMessenger.of(
             context,
           ).showSnackBar(SnackBar(content: Text(state.message)));
+        }
+
+        if (state is AuthRememberDataLoaded) {
+          emailTextC.text = state.email;
+          setState(() {});
         }
       },
       builder: (context, state) {
@@ -124,7 +129,7 @@ class _LoginPageState extends State<LoginPage> {
                                     InputAuth(
                                       label: "Password",
                                       hintText: "Enter your password",
-                                      isPassword: false,
+                                      isPassword: true,
                                       controller: passwordTextC,
                                     ),
                                     SizedBox(

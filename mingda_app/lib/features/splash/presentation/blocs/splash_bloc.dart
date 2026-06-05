@@ -20,19 +20,7 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
 
       await result.fold(
         (l) async {
-          final rememberValue = await getRememberUsecase();
-          rememberValue.fold(
-            (l2) => emit(FailureSplashState()),
-            (r2) => emit(
-              LoadedSplashState(
-                AuthSessionEntity(
-                  email: r2.email,
-                  password: '',
-                  isChecked: r2.isChecked,
-                ),
-              ),
-            ),
-          );
+          emit(FailureSplashState());
         },
         (r) async {
           if (r == null || r.isEmpty) {

@@ -20,10 +20,13 @@ class AuthAuthenticated extends AuthState {}
 class AuthUnauthenticated extends AuthState {}
 
 class AuthRememberDataLoaded extends AuthState {
+  final String email;
   final bool isCheck;
 
-  AuthRememberDataLoaded(this.isCheck);
+  AuthRememberDataLoaded(this.email, this.isCheck);
 }
+
+class AuthRememberDataNotFound extends AuthState {}
 
 class AuthSessionDataSaved extends AuthState {
   final AuthSessionEntity entity;

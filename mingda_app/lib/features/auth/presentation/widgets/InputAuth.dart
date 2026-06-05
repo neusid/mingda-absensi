@@ -25,7 +25,7 @@ class InputAuth extends StatefulWidget {
 
 class _InputAuthState extends State<InputAuth> {
   late final FocusNode _focusNode;
-  late bool _obsecureText = false;
+  late bool _obsecureText = true;
 
   @override
   void initState() {
