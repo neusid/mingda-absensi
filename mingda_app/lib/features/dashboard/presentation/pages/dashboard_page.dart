@@ -300,7 +300,6 @@ class DashboardPage extends StatelessWidget {
           }
         },
       ),
-      bottomNavigationBar: Persis,
     );
   }
 }
