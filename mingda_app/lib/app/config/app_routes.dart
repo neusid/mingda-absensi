@@ -28,7 +28,7 @@ class AppRoutes {
       case '/dashboard':
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
-            create: (context) => sl<DashboardBloc>(),
+            create: (context) => sl<DashboardBloc>()..add(DashboardStarted()),
             child: DashboardPage(),
           ),
         );

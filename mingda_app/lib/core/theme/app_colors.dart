@@ -30,6 +30,7 @@ class AppColors {
   static const Color yellow = Color(0xFFFFA902);
   static const Color aqua = Color(0xFF20BDDE);
   static const Color green = Color(0xFF89CA62);
+  static const Color blueGradient = Color(0xFF00A8CC);
 
   // Elevation & Shadows
   static final Color shadowCard = const Color(0xFF000000).withOpacity(0.04);
