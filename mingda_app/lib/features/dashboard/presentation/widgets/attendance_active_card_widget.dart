@@ -6,14 +6,16 @@ import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 
 class AttendanceActiveCardWidget extends StatelessWidget {
+  final status;
   final day;
-  final clock;
-  final description;
+  final checkIn;
+  final checkOut;
   const AttendanceActiveCardWidget({
     super.key,
+    required this.status,
     required this.day,
-    required this.clock,
-    required this.description,
+    required this.checkIn,
+    required this.checkOut,
   });
 
   @override
@@ -61,7 +63,7 @@ class AttendanceActiveCardWidget extends StatelessWidget {
                 spacing: 5.w,
                 children: [
                   Text(
-                    'Masuk',
+                    status[0].toUpperCase() + status.substring(1).toLowerCase(),
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.inter14MediumActive,
                   ),
@@ -80,12 +82,12 @@ class AttendanceActiveCardWidget extends StatelessWidget {
             spacing: 5.w,
             children: [
               Text(
-                clock ?? '',
+                'In $checkIn' ?? '',
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.inter14MediumActive,
               ),
               Text(
-                description ?? '',
+                'Out $checkOut' ?? '',
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.inter1102RegularActive,
               ),

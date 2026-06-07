@@ -6,14 +6,16 @@ import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 
 class AttendanceNotActiveCardWidget extends StatelessWidget {
+  final status;
   final day;
-  final clock;
-  final description;
+  final checkIn;
+  final checkOut;
   const AttendanceNotActiveCardWidget({
     super.key,
+    required this.status,
     required this.day,
-    required this.clock,
-    required this.description,
+    required this.checkIn,
+    required this.checkOut,
   });
 
   @override
@@ -47,7 +49,9 @@ class AttendanceNotActiveCardWidget extends StatelessWidget {
                 ),
                 child: Center(
                   child: SvgPicture.asset(
-                    'assets/icon/login.svg',
+                    status == 'libur'
+                        ? 'assets/icon/logout.svg'
+                        : 'assets/icon/login.svg',
                     colorFilter: ColorFilter.mode(
                       AppColors.deepTeal,
                       BlendMode.srcIn,
@@ -61,7 +65,7 @@ class AttendanceNotActiveCardWidget extends StatelessWidget {
                 spacing: 5.w,
                 children: [
                   Text(
-                    'Masuk',
+                    status[0].toUpperCase() + status.substring(1).toLowerCase(),
                     overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.inter14MediumNotActive,
                   ),
@@ -80,17 +84,14 @@ class AttendanceNotActiveCardWidget extends StatelessWidget {
             spacing: 5.w,
             children: [
               Text(
-                clock ?? 'Libur',
+                'In $checkIn' ?? '-',
                 overflow: TextOverflow.ellipsis,
                 style: AppTextStyles.inter14MediumNotActive,
               ),
-              SizedBox(
-                width: 78.w,
-                child: Text(
-                  description ?? '',
-                  overflow: TextOverflow.ellipsis,
-                  style: AppTextStyles.inter1102RegularNotActive,
-                ),
+              Text(
+                'Out $checkOut' ?? '-',
+                overflow: TextOverflow.ellipsis,
+                style: AppTextStyles.inter1102RegularNotActive,
               ),
             ],
           ),

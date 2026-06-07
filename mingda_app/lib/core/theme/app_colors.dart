@@ -25,6 +25,9 @@ class AppColors {
   static const Color red50 = Color(0xFFFFEBEE);
   static const Color red = Color(0xFFEF5350);
 
+  // Gray Palatte
+  static const Color gray = Color(0xFFD9D9D9);
+
   // Accent Colors
   static const Color orange = Color(0xFFFC3E1E);
   static const Color yellow = Color(0xFFFFA902);
@@ -35,6 +38,7 @@ class AppColors {
   // Elevation & Shadows
   static final Color shadowCard = const Color(0xFF000000).withOpacity(0.04);
   static final Color shadowInput = const Color(0xFFD8E6FD);
+  static final Color shadowAppBar = const Color(0xFF191919);
 
   // Text Colors
   static const Color textPrimary = Color(0xFF24252C);

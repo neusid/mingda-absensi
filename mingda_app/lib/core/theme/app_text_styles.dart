@@ -75,6 +75,14 @@ class AppTextStyles {
     color: AppColors.textSecondary,
   );
 
+  static TextStyle get inter10RegularWhite => TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 10.sp,
+    height: 16.w / 16.w,
+    fontWeight: FontWeight.w400,
+    color: AppColors.white,
+  );
+
   static TextStyle get inter102RegularSecondary => TextStyle(
     fontFamily: 'Inter',
     fontSize: 10.2.sp,
@@ -137,6 +145,14 @@ class AppTextStyles {
     height: 16 / 11.02,
     fontWeight: FontWeight.w400,
     color: AppColors.textSecondary,
+  );
+
+  static TextStyle get inter12RegularPrimary => TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 12.sp,
+    height: 22 / 12.8,
+    fontWeight: FontWeight.w400,
+    color: AppColors.textPrimary,
   );
 
   static TextStyle get inter12MediumWhite => TextStyle(

@@ -259,18 +259,52 @@ class DashboardPage extends StatelessWidget {
                       final attendance =
                           state.attendanceHistoryEntity.data[index];
                       if (index == 0) {
-                        return AttendanceActiveCardWidget(
-                          day: attendance.attendanceDate
-                              .toIndonesianDateString(),
-                          clock: attendance.checkIn,
-                          description: attendance.notes,
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () =>
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pushNamed(
+                                  '/detail-attendance',
+                                  arguments: {
+                                    'profile': state.profileEntity,
+                                    'attendance': attendance,
+                                  },
+                                ),
+                            child: AttendanceActiveCardWidget(
+                              status: attendance.status,
+                              day: attendance.attendanceDate
+                                  .toIndonesianDateString(),
+                              checkIn: attendance.checkIn ?? '-',
+                              checkOut: attendance.checkOut ?? '-',
+                            ),
+                          ),
                         );
                       } else {
-                        return AttendanceNotActiveCardWidget(
-                          day: attendance.attendanceDate
-                              .toIndonesianDateString(),
-                          clock: attendance.checkIn,
-                          description: attendance.notes,
+                        return Material(
+                          color: Colors.transparent,
+                          child: InkWell(
+                            onTap: () =>
+                                Navigator.of(
+                                  context,
+                                  rootNavigator: true,
+                                ).pushNamed(
+                                  '/detail-attendance',
+                                  arguments: {
+                                    'profile': state.profileEntity,
+                                    'attendance': attendance,
+                                  },
+                                ),
+                            child: AttendanceNotActiveCardWidget(
+                              status: attendance.status,
+                              day: attendance.attendanceDate
+                                  .toIndonesianDateString(),
+                              checkIn: attendance.checkIn ?? '-',
+                              checkOut: attendance.checkOut ?? '-',
+                            ),
+                          ),
                         );
                       }
                     },
