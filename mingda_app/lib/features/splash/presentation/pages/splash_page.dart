@@ -28,7 +28,7 @@ class _SplashPageState extends State<SplashPage> {
     return BlocListener<SplashBloc, SplashState>(
       listener: (context, state) {
         if (state is SuccessSplashState) {
-          Navigator.pushReplacementNamed(context, '/dashboard');
+          Navigator.pushReplacementNamed(context, '/root');
         } else if (state is FailureSplashState) {
           Navigator.pushReplacementNamed(context, '/login');
         } else if (state is LoadedSplashState) {

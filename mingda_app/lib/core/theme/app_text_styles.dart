@@ -147,6 +147,14 @@ class AppTextStyles {
     color: AppColors.white,
   );
 
+  static TextStyle get inter12MediumDeepTeal => TextStyle(
+    fontFamily: 'Inter',
+    fontSize: 12.sp,
+    height: 22 / 12.8,
+    fontWeight: FontWeight.w500,
+    color: AppColors.deepTeal,
+  );
+
   static TextStyle get inter128RegularPrimary => TextStyle(
     fontFamily: 'Inter',
     fontSize: 12.8.sp,
