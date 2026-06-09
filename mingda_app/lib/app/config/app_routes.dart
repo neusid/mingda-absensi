@@ -4,8 +4,11 @@ import 'package:mingda_app/core/di/injection_container.dart';
 import 'package:mingda_app/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:mingda_app/features/auth/presentation/pages/login_page.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
+import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
 import 'package:mingda_app/features/detail_attendance/presentation/pages/detail_attendance_page.dart';
+import 'package:mingda_app/features/history_attendance/presentation/blocs/history_attendance_bloc.dart';
+import 'package:mingda_app/features/history_attendance/presentation/pages/history_attendance_page.dart';
 import 'package:mingda_app/features/root/presentation/pages/root_page.dart';
 import 'package:mingda_app/features/splash/presentation/blocs/splash_bloc.dart';
 import 'package:mingda_app/features/splash/presentation/pages/splash_page.dart';
@@ -39,6 +42,26 @@ class AppRoutes {
           builder: (context) => DetailAttendancePage(
             profileEntity: profile,
             attendanceItemEntity: attendance,
+          ),
+        );
+      case '/history-attendance':
+        final args = settings.arguments as Map<String, dynamic>;
+
+        final summaryAttendance =
+            args['summary_attendance'] as AttendanceSummaryEntity;
+        final historyAttendance =
+            args['history_attendance'] as AttendanceHistoryEntity;
+
+        return MaterialPageRoute(
+          builder: (context) => BlocProvider(
+            create: (context) => sl<HistoryAttendanceBloc>()
+              ..add(
+                HistoryAttendanceEventStarted(
+                  historyEntity: historyAttendance,
+                  summaryEntity: summaryAttendance,
+                ),
+              ),
+            child: HistoryAttendancePage(),
           ),
         );
       // case '/dashboard':

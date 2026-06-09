@@ -27,7 +27,10 @@ class DetailAttendancePage extends StatelessWidget {
         shadowColor: AppColors.shadowAppBar,
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
-        title: Text('Back to Dashboard'),
+        title: Text(
+          'Back to Dashboard',
+          style: AppTextStyles.inter16MediumPrimary,
+        ),
       ),
       backgroundColor: AppColors.bg,
       body: SingleChildScrollView(

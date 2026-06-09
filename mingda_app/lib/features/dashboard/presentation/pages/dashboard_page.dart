@@ -223,7 +223,20 @@ class DashboardPage extends StatelessWidget {
                               ),
                               Material(
                                 child: InkWell(
-                                  onTap: () {},
+                                  onTap: () {
+                                    Navigator.of(
+                                      context,
+                                      rootNavigator: true,
+                                    ).pushNamed(
+                                      '/history-attendance',
+                                      arguments: {
+                                        'history_attendance':
+                                            state.attendanceHistoryEntity,
+                                        'summary_attendance':
+                                            state.attendanceSummaryEntity,
+                                      },
+                                    );
+                                  },
                                   child: Ink(
                                     width: 96.w,
                                     height: 27.w,

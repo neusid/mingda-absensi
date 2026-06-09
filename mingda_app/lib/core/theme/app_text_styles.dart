@@ -30,7 +30,7 @@ class AppTextStyles {
   static TextStyle get inter8MediumSecondary => TextStyle(
     fontFamily: 'Inter',
     fontSize: 8.sp,
-    height: 22 / 8,
+    height: 8 / 8,
     fontWeight: FontWeight.w500,
     color: AppColors.textSecondary,
   );
