@@ -1,17 +1,33 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/core/utils/date_formatter.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_active_card_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_not_active_card_widget.dart';
+import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
+import 'package:mingda_app/features/history_attendance/domain/enum/month_enum.dart';
 import 'package:mingda_app/features/history_attendance/presentation/blocs/history_attendance_bloc.dart';
 import 'package:mingda_app/features/history_attendance/presentation/widgets/card_history_attendance_widget.dart';
 
-class HistoryAttendancePage extends StatelessWidget {
-  const HistoryAttendancePage({super.key});
+class HistoryAttendancePage extends StatefulWidget {
+  HistoryAttendancePage({super.key});
+
+  @override
+  State<HistoryAttendancePage> createState() => _HistoryAttendancePageState();
+}
+
+class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
+  AttendanceEnum? attendanceSelected;
+  MonthEnum? monthSelected;
+  int yearsSelected = DateTime.now().year;
+  final List<int> ListYears = List.generate(
+    4,
+    (index) => DateTime.now().year - index,
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -47,13 +63,13 @@ class HistoryAttendancePage extends StatelessWidget {
                           children: [
                             CardHistoryAttendanceWidget(
                               color: AppColors.green250,
-                              icon: 'assets/icon/calendar.svg',
+                              icon: 'assets/icon/calendar-tick-2.svg',
                               title: state.summaryEntity.hadir.toString(),
                               subTitle: 'TOTAL HADIR',
                             ),
                             CardHistoryAttendanceWidget(
                               color: AppColors.yellow250,
-                              icon: 'assets/icon/calendar.svg',
+                              icon: 'assets/icon/calendar-search-2.svg',
                               title: state.summaryEntity.terlambat.toString(),
                               subTitle: 'TOTAL TERLAMBAT',
                             ),
@@ -65,13 +81,13 @@ class HistoryAttendancePage extends StatelessWidget {
                           children: [
                             CardHistoryAttendanceWidget(
                               color: AppColors.red50,
-                              icon: 'assets/icon/calendar.svg',
+                              icon: 'assets/icon/calendar-remove-2.svg',
                               title: state.summaryEntity.alpha.toString(),
                               subTitle: 'TOTAL ALPHA',
                             ),
                             CardHistoryAttendanceWidget(
                               color: AppColors.charcoalSlate50,
-                              icon: 'assets/icon/calendar.svg',
+                              icon: 'assets/icon/calendar-edit-2.svg',
                               title: state.summaryEntity.izin.toString(),
                               subTitle: 'TOTAL IZIN',
                             ),
@@ -83,13 +99,13 @@ class HistoryAttendancePage extends StatelessWidget {
                           children: [
                             CardHistoryAttendanceWidget(
                               color: AppColors.charcoalSlate50,
-                              icon: 'assets/icon/calendar.svg',
+                              icon: 'assets/icon/calendar-clock-2.svg',
                               title: state.summaryEntity.cuti.toString(),
                               subTitle: 'TOTAL CUTI',
                             ),
                             CardHistoryAttendanceWidget(
                               color: AppColors.charcoalSlate50,
-                              icon: 'assets/icon/calendar.svg',
+                              icon: 'assets/icon/calendar-add-2.svg',
                               title: state.summaryEntity.sakit.toString(),
                               subTitle: 'TOTAL SAKIT',
                             ),
@@ -114,6 +130,136 @@ class HistoryAttendancePage extends StatelessWidget {
                               ),
                             ],
                           ),
+                        ),
+                        SizedBox(height: 22.w),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 205.w,
+                              height: 45.w,
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.w),
+                                color: AppColors.white,
+                              ),
+                              child: DropdownButtonFormField<MonthEnum>(
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                                style: AppTextStyles.inter14MediumSecondary,
+                                dropdownColor: AppColors.white,
+                                initialValue: MonthEnum.Januari,
+                                items: MonthEnum.values
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e.name,
+                                          style: AppTextStyles
+                                              .inter14MediumSecondary,
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) => setState(() {
+                                  monthSelected = value;
+                                }),
+                              ),
+                            ),
+                            Container(
+                              width: 110.w,
+                              height: 45.w,
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.w),
+                                color: AppColors.white,
+                              ),
+                              child: DropdownButtonFormField<int>(
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                                style: AppTextStyles.inter14MediumSecondary,
+                                dropdownColor: AppColors.white,
+                                initialValue: yearsSelected,
+                                items: ListYears.map(
+                                  (e) => DropdownMenuItem(
+                                    value: e,
+                                    child: Text(
+                                      e.toString(),
+                                      style:
+                                          AppTextStyles.inter14MediumSecondary,
+                                    ),
+                                  ),
+                                ).toList(),
+                                onChanged: (value) => setState(() {
+                                  yearsSelected = value!;
+                                }),
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 11.w),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          children: [
+                            Container(
+                              width: 205.w,
+                              height: 45.w,
+                              padding: EdgeInsets.symmetric(horizontal: 20.w),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.w),
+                                color: AppColors.white,
+                              ),
+                              child: DropdownButtonFormField<AttendanceEnum>(
+                                decoration: InputDecoration(
+                                  border: InputBorder.none,
+                                ),
+                                style: AppTextStyles.inter14MediumSecondary,
+                                dropdownColor: AppColors.white,
+                                initialValue: AttendanceEnum.Hadir,
+                                items: AttendanceEnum.values
+                                    .map(
+                                      (e) => DropdownMenuItem(
+                                        value: e,
+                                        child: Text(
+                                          e.name,
+                                          style: AppTextStyles
+                                              .inter14MediumSecondary,
+                                        ),
+                                      ),
+                                    )
+                                    .toList(),
+                                onChanged: (value) => setState(() {
+                                  attendanceSelected = value;
+                                }),
+                              ),
+                            ),
+                            Container(
+                              width: 45.w,
+                              height: 45.w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.w),
+                                color: AppColors.white,
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset('assets/icon/sort.svg'),
+                              ),
+                            ),
+                            Container(
+                              width: 45.w,
+                              height: 45.w,
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.w),
+                                color: AppColors.white,
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icon/trash.svg',
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                         SizedBox(height: 22.w),
                       ],
