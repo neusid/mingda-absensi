@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:lottie/lottie.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
@@ -10,6 +9,7 @@ import 'package:mingda_app/features/dashboard/domain/entities/attendance_history
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
 import 'package:mingda_app/features/detail_attendance/presentation/widgets/card_detail_attendance.dart';
 import 'package:mingda_app/features/detail_attendance/presentation/widgets/card_long_detail_attendance.dart';
+import 'package:mingda_app/features/detail_attendance/presentation/widgets/image_not_found_widget.dart';
 
 class DetailAttendancePage extends StatelessWidget {
   ProfileEntity profileEntity;
@@ -249,9 +249,20 @@ class DetailAttendancePage extends StatelessWidget {
                         width: 158.w,
                         height: 130.w,
                         decoration: BoxDecoration(
-                          color: AppColors.white,
+                          color: AppColors.charcoalSlate,
                           boxShadow: [AppShadows.shadow094],
                           borderRadius: BorderRadius.circular(10.w),
+                        ),
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.w),
+                          child: attendanceItemEntity.photoIn != null
+                              ? Image.network(
+                                  attendanceItemEntity.photoIn.toString(),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      ImageNotFoundWidget(),
+                                )
+                              : ImageNotFoundWidget(),
                         ),
                       ),
                       Container(
@@ -280,30 +291,21 @@ class DetailAttendancePage extends StatelessWidget {
                       Container(
                         width: 158.w,
                         height: 130.w,
-                        padding: EdgeInsets.only(
-                          top: 22.w,
-                          left: 35.w,
-                          right: 35.w,
-                        ),
                         decoration: BoxDecoration(
                           color: AppColors.charcoalSlate,
                           boxShadow: [AppShadows.shadow094],
                           borderRadius: BorderRadius.circular(10.w),
                         ),
-                        child: Column(
-                          children: [
-                            SvgPicture.asset(
-                              'assets/icon/gallery-slash.svg',
-                              width: 32.w,
-                              height: 32.w,
-                            ),
-                            SizedBox(height: 10.w),
-                            Text(
-                              'Belum tersedia',
-                              style: AppTextStyles.inter10RegularWhite,
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ],
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.w),
+                          child: attendanceItemEntity.photoOut != null
+                              ? Image.network(
+                                  attendanceItemEntity.photoOut.toString(),
+                                  fit: BoxFit.cover,
+                                  errorBuilder: (context, error, stackTrace) =>
+                                      ImageNotFoundWidget(),
+                                )
+                              : ImageNotFoundWidget(),
                         ),
                       ),
                       Container(
