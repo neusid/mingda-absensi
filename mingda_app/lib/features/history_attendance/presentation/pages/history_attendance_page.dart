@@ -21,6 +21,9 @@ class HistoryAttendancePage extends StatefulWidget {
 }
 
 class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
+  Key attendanceDropdownKey = UniqueKey();
+  Key monthDropdownKey = UniqueKey();
+
   AttendanceEnum? attendanceSelected;
   MonthEnum? monthSelected;
   int yearsSelected = DateTime.now().year;
@@ -47,9 +50,9 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
       body: BlocConsumer<HistoryAttendanceBloc, HistoryAttendanceState>(
         bloc: historyAttendanceBloc,
         builder: (context, state) {
-          if (state is HistoryAttendanceLoadingState) {
+          if (state is HistoryAttendanceEarlyLoadingState) {
             return Center(child: CircularProgressIndicator());
-          } else if (state is HistoryAttendanceSuccessState) {
+          } else if (state is HistoryAttendanceLoadedState) {
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 25.w),
               child: CustomScrollView(
@@ -144,12 +147,19 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                                 color: AppColors.white,
                               ),
                               child: DropdownButtonFormField<MonthEnum>(
+                                key: monthDropdownKey,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                 ),
+                                isExpanded: true,
+                                hint: Center(
+                                  child: Text(
+                                    "-- default --",
+                                    style: AppTextStyles.inter14MediumSecondary,
+                                  ),
+                                ),
                                 style: AppTextStyles.inter14MediumSecondary,
                                 dropdownColor: AppColors.white,
-                                initialValue: MonthEnum.Januari,
                                 items: MonthEnum.values
                                     .map(
                                       (e) => DropdownMenuItem(
@@ -212,12 +222,20 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                                 color: AppColors.white,
                               ),
                               child: DropdownButtonFormField<AttendanceEnum>(
+                                key: attendanceDropdownKey,
                                 decoration: InputDecoration(
                                   border: InputBorder.none,
                                 ),
+                                isExpanded: true,
+                                hint: Center(
+                                  child: Text(
+                                    "-- default --",
+                                    style: AppTextStyles.inter14MediumSecondary,
+                                  ),
+                                ),
+
                                 style: AppTextStyles.inter14MediumSecondary,
                                 dropdownColor: AppColors.white,
-                                initialValue: AttendanceEnum.Hadir,
                                 items: AttendanceEnum.values
                                     .map(
                                       (e) => DropdownMenuItem(
@@ -235,27 +253,57 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                                 }),
                               ),
                             ),
-                            Container(
-                              width: 45.w,
-                              height: 45.w,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.w),
-                                color: AppColors.white,
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset('assets/icon/sort.svg'),
+                            InkWell(
+                              borderRadius: BorderRadius.circular(10.w),
+                              onTap: () => monthSelected != null
+                                  ? historyAttendanceBloc.add(
+                                      HistoryAttendanceEventFiltered(
+                                        historyEntity: state.historyEntity,
+                                        summaryEntity: state.summaryEntity,
+                                        page: 1,
+                                        month: (monthSelected?.index ?? 0) + 1,
+                                        year: yearsSelected,
+                                        status: attendanceSelected,
+                                      ),
+                                    )
+                                  : null,
+                              child: Ink(
+                                width: 45.w,
+                                height: 45.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.w),
+                                  color: AppColors.white,
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icon/sort.svg',
+                                  ),
+                                ),
                               ),
                             ),
-                            Container(
-                              width: 45.w,
-                              height: 45.w,
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.w),
-                                color: AppColors.white,
-                              ),
-                              child: Center(
-                                child: SvgPicture.asset(
-                                  'assets/icon/trash.svg',
+                            InkWell(
+                              borderRadius: BorderRadius.circular(10.w),
+                              onTap: () {
+                                setState(() {
+                                  monthSelected = null;
+                                  attendanceSelected = null;
+                                  yearsSelected = DateTime.now().year;
+
+                                  monthDropdownKey = UniqueKey();
+                                  attendanceDropdownKey = UniqueKey();
+                                });
+                              },
+                              child: Ink(
+                                width: 45.w,
+                                height: 45.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.w),
+                                  color: AppColors.white,
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icon/trash.svg',
+                                  ),
                                 ),
                               ),
                             ),
@@ -265,70 +313,57 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                       ],
                     ),
                   ),
-                  SliverList.separated(
-                    itemCount: state.historyEntity.data.length,
-                    itemBuilder: (context, index) {
-                      final attendance = state.historyEntity.data[index];
-                      if (index == 0) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () =>
-                                // Navigator.of(
-                                //   context,
-                                //   rootNavigator: true,
-                                // ).pushNamed(
-                                //   '/detail-attendance',
-                                //   arguments: {
-                                //     'profile': state.historyEntity,
-                                //     'attendance': attendance,
-                                //   },
-                                // ),
-                                true,
-                            child: AttendanceActiveCardWidget(
-                              status: attendance.status,
-                              day: attendance.attendanceDate
-                                  .toIndonesianDateString(),
-                              checkIn: attendance.checkIn ?? '-',
-                              checkOut: attendance.checkOut ?? '-',
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () =>
-                                // Navigator.of(
-                                //   context,
-                                //   rootNavigator: true,
-                                // ).pushNamed(
-                                //   '/detail-attendance',
-                                //   arguments: {
-                                //     'profile': state.profileEntity,
-                                //     'attendance': attendance,
-                                //   },
-                                // ),
-                                true,
-                            child: AttendanceNotActiveCardWidget(
-                              status: attendance.status,
-                              day: attendance.attendanceDate
-                                  .toIndonesianDateString(),
-                              checkIn: attendance.checkIn ?? '-',
-                              checkOut: attendance.checkOut ?? '-',
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: 10.w),
-                  ),
+                  state is HistoryAttendanceFailedFilterState
+                      ? SliverToBoxAdapter(
+                          child: Center(child: Text("Data kosong")),
+                        )
+                      : SliverList.separated(
+                          itemCount: state.historyEntity.data.length,
+                          itemBuilder: (context, index) {
+                            final attendance = state.historyEntity.data[index];
+                            if (index == 0) {
+                              return Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => true,
+                                  child: AttendanceActiveCardWidget(
+                                    status: attendance.status,
+                                    day: attendance.attendanceDate
+                                        .toIndonesianDateString(),
+                                    checkIn: attendance.checkIn ?? '-',
+                                    checkOut: attendance.checkOut ?? '-',
+                                  ),
+                                ),
+                              );
+                            } else {
+                              return Material(
+                                color: Colors.transparent,
+                                child: InkWell(
+                                  onTap: () => true,
+                                  child: AttendanceNotActiveCardWidget(
+                                    status: attendance.status,
+                                    day: attendance.attendanceDate
+                                        .toIndonesianDateString(),
+                                    checkIn: attendance.checkIn ?? '-',
+                                    checkOut: attendance.checkOut ?? '-',
+                                  ),
+                                ),
+                              );
+                            }
+                          },
+                          separatorBuilder: (context, index) =>
+                              SizedBox(height: 10.w),
+                        ),
                 ],
               ),
             );
           } else {
-            return Center(child: CircularProgressIndicator());
+            return Center(
+              child: Text(
+                'Failed to Get Profile',
+                style: AppTextStyles.inter16MediumPrimary,
+              ),
+            );
           }
         },
         listener: (context, state) {},

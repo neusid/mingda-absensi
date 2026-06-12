@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/features/splash/presentation/blocs/splash_bloc.dart';
 
 class SplashPage extends StatefulWidget {
@@ -35,7 +36,10 @@ class _SplashPageState extends State<SplashPage> {
           Navigator.pushReplacementNamed(context, '/login');
         }
       },
-      child: Scaffold(body: CircularProgressIndicator()),
+      child: Scaffold(
+        backgroundColor: AppColors.bg,
+        body: CircularProgressIndicator(),
+      ),
     );
   }
 }

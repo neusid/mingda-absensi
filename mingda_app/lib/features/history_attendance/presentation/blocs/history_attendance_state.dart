@@ -8,12 +8,39 @@ abstract class HistoryAttendanceState extends Equatable {
 
 final class HistoryAttendanceInitialState extends HistoryAttendanceState {}
 
-final class HistoryAttendanceLoadingState extends HistoryAttendanceState {}
+final class HistoryAttendanceEarlyLoadingState extends HistoryAttendanceState {}
 
-final class HistoryAttendanceSuccessState extends HistoryAttendanceState {
+final class HistoryAttendanceFilterLoadingState
+    extends HistoryAttendanceState {}
+
+abstract class HistoryAttendanceLoadedState extends HistoryAttendanceState {
   final AttendanceHistoryEntity historyEntity;
   final AttendanceSummaryEntity summaryEntity;
-  const HistoryAttendanceSuccessState(this.historyEntity, this.summaryEntity);
+  const HistoryAttendanceLoadedState(this.historyEntity, this.summaryEntity);
+}
+
+final class HistoryAttendanceEarlyLoadedState
+    extends HistoryAttendanceLoadedState {
+  const HistoryAttendanceEarlyLoadedState(
+    super.historyEntity,
+    super.summaryEntity,
+  );
+}
+
+final class HistoryAttendanceFilterLoadedState
+    extends HistoryAttendanceLoadedState {
+  const HistoryAttendanceFilterLoadedState(
+    super.historyEntity,
+    super.summaryEntity,
+  );
+}
+
+final class HistoryAttendanceFailedFilterState
+    extends HistoryAttendanceLoadedState {
+  const HistoryAttendanceFailedFilterState(
+    super.historyEntity,
+    super.summaryEntity,
+  );
 }
 
 final class HistoryAttendanceFailedState extends HistoryAttendanceState {}

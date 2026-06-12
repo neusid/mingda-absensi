@@ -15,3 +15,20 @@ class HistoryAttendanceEventStarted extends HistoryAttendanceEvent {
     required this.summaryEntity,
   });
 }
+
+class HistoryAttendanceEventFiltered extends HistoryAttendanceEvent {
+  final AttendanceHistoryEntity historyEntity;
+  final AttendanceSummaryEntity summaryEntity;
+  final page;
+  final month;
+  final year;
+  final status;
+  const HistoryAttendanceEventFiltered({
+    required this.historyEntity,
+    required this.summaryEntity,
+    required this.page,
+    required this.month,
+    required this.year,
+    required this.status,
+  });
+}

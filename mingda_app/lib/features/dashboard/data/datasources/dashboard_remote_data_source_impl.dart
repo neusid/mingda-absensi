@@ -41,6 +41,7 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       final apiMessage = e.response?.data['message']?.toString();
 
       print("DioException getProfile StatusCode: $statusCode");
+      print(apiMessage);
 
       if (statusCode == 401) {
         throw AuthFailure(
