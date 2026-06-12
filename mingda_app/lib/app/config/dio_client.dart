@@ -17,6 +17,7 @@ class DioClient {
           if (token != null) {
             options.headers['X-Authorization'] = 'Bearer $token';
           }
+          print("Bearer $token");
           options.headers['Accept'] = 'application/json';
           return handler.next(options);
         },

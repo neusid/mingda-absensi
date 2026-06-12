@@ -27,27 +27,40 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       // TODO: implement event handler
       emit(LoadingDashboardState());
       final result = await getprofileUsecase();
-      await result.fold((l) async => emit(FailureGetProfileDashboardState()), (
-        r1,
-      ) async {
-        final attendance = await getattendanceSummaryUsecase();
-        await attendance.fold(
-          (l) async => emit(FailureGetAttendanceSummaryDashboardState()),
-          (r2) async {
-            final attendanceHistory = await getAttendanceHistoryUsecase();
-            await attendanceHistory.fold(
-              (l3) async => emit(FailureGetAttendanceHistoryDashboardState()),
-              (r3) async => emit(
-                SuccessDashboardState(
-                  profileEntity: r1,
-                  attendanceSummaryEntity: r2,
-                  attendanceHistoryEntity: r3,
-                ),
-              ),
+      await result.fold(
+        (l) async {
+          if (l.message == "Unauthenticated.") {
+            final result = await signoutUsecase();
+            result.fold(
+              (l) => emit(FailureDashboardState()),
+              (r) => emit(SignoutDashboardState()),
             );
-          },
-        );
-      });
+          } else {
+            emit(FailureGetProfileDashboardState());
+          }
+        },
+        (r1) async {
+          final attendance = await getattendanceSummaryUsecase();
+          await attendance.fold(
+            (l) async {
+              emit(FailureGetAttendanceSummaryDashboardState());
+            },
+            (r2) async {
+              final attendanceHistory = await getAttendanceHistoryUsecase();
+              await attendanceHistory.fold(
+                (l3) async => emit(FailureGetAttendanceHistoryDashboardState()),
+                (r3) async => emit(
+                  SuccessDashboardState(
+                    profileEntity: r1,
+                    attendanceSummaryEntity: r2,
+                    attendanceHistoryEntity: r3,
+                  ),
+                ),
+              );
+            },
+          );
+        },
+      );
     });
 
     on<DashboardSignout>((event, emit) async {
