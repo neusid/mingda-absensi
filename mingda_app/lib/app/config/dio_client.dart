@@ -15,7 +15,7 @@ class DioClient {
         onRequest: (options, handler) async {
           final String? token = await authLocalDataSource.getToken();
           if (token != null) {
-            options.headers['X-Authorization'] = 'Bearer $token';
+            options.headers['Authorization'] = 'Bearer $token';
           }
           print("Bearer $token");
           options.headers['Accept'] = 'application/json';
