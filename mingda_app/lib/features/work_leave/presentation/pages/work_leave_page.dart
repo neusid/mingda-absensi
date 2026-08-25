@@ -13,7 +13,6 @@ class WorkLeavePage extends StatelessWidget {
       body: SafeArea(
         child: Column(
           children: [
-            _buildHeader(context),
             Expanded(
               child: SingleChildScrollView(
                 padding: EdgeInsets.symmetric(horizontal: 20.w),
@@ -163,33 +162,6 @@ class WorkLeavePage extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      width: double.infinity,
-      color: AppColors.white,
-      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 14.w),
-      child: Row(
-        children: [
-          InkWell(
-            onTap: () => Navigator.of(context).maybePop(),
-            borderRadius: BorderRadius.circular(8.w),
-            child: Icon(Icons.close, size: 24.w, color: AppColors.textPrimary),
-          ),
-          SizedBox(width: 12.w),
-          Text(
-            'Back To Dashboard',
-            style: TextStyle(
-              fontFamily: 'Poppins',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w500,
-              color: AppColors.textPrimary,
-            ),
-          ),
-        ],
       ),
     );
   }

@@ -13,6 +13,7 @@ import 'package:mingda_app/features/root/presentation/pages/root_page.dart';
 import 'package:mingda_app/features/splash/presentation/blocs/splash_bloc.dart';
 import 'package:mingda_app/features/splash/presentation/pages/splash_page.dart';
 import 'package:mingda_app/features/work_leave/presentation/pages/work_leave_page.dart';
+import 'package:mingda_app/features/warning_letter/presentation/pages/warning_letter_page.dart';
 
 class AppRoutes {
   Route onRoute(RouteSettings settings) {
@@ -67,6 +68,10 @@ class AppRoutes {
         );
       case '/work-leave':
         return MaterialPageRoute(builder: (context) => const WorkLeavePage());
+      case '/warning-letter':
+        return MaterialPageRoute(
+          builder: (context) => const WarningLetterPage(),
+        );
       // case '/dashboard':
       //   return MaterialPageRoute(
       //     builder: (context) => BlocProvider(

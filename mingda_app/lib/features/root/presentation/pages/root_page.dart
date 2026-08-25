@@ -7,6 +7,7 @@ import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.
 import 'package:mingda_app/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:mingda_app/features/dashboard/presentation/pages/profile_page.dart';
 import 'package:mingda_app/features/work_leave/presentation/pages/work_leave_page.dart';
+import 'package:mingda_app/features/warning_letter/presentation/pages/warning_letter_page.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '../../../../core/di/injection_container.dart';
@@ -34,7 +35,7 @@ class _RootPageState extends State<RootPage> {
     _screens = [
       DashboardPage(),
       const WorkLeavePage(),
-      const Center(child: Text('Surat Peringatan')),
+      const WarningLetterPage(),
       const Center(child: Text('Wallet')),
       const ProfilePage(),
     ];
