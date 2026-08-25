@@ -6,6 +6,7 @@ import 'package:mingda_app/features/splash/data/datasources/splash_remote_data_s
 import 'package:mingda_app/features/splash/data/datasources/splash_remote_data_source_impl.dart';
 import 'package:mingda_app/features/splash/data/repositories/splash_repository_impl.dart';
 import 'package:mingda_app/features/splash/domain/repositories/splash_repository.dart';
+import 'package:mingda_app/features/splash/domain/usecases/checktoken_usecase.dart';
 import 'package:mingda_app/features/splash/domain/usecases/gettoken_usecase.dart';
 import 'package:mingda_app/features/splash/presentation/blocs/splash_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -16,12 +17,16 @@ void initSplashInjection(GetIt sl) {
     () => SplashBloc(
       getTokenUsecase: sl<GettokenUsecase>(),
       getRememberUsecase: sl<GetRememberUsecase>(),
+      checkTokenUsecase: sl<CheckTokenUsecase>(),
     ),
   );
 
   // usecase
   sl.registerLazySingleton<GettokenUsecase>(
     () => GettokenUsecase(splashRepository: sl<SplashRepository>()),
+  );
+  sl.registerLazySingleton<CheckTokenUsecase>(
+    () => CheckTokenUsecase(splashRepository: sl<SplashRepository>()),
   );
 
   // repository

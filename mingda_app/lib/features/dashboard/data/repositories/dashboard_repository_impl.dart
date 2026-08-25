@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_local_data_source.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
@@ -54,10 +55,12 @@ class DashboardRepositoryImpl implements DashboardRepository {
       final result = await dashboardRemoteDataSource.getAttendanceSummary();
       return right(result);
     } on Failure catch (f) {
+      debugPrint('getDataAttendanceSummary Failure: $f');
       return left(f);
     } on SocketException {
       return left(NetworkFailure());
-    } catch (e) {
+    } catch (e, st) {
+      debugPrint('getDataAttendanceSummary Error: $e\n$st');
       return left(ServerFailure(e.toString()));
     }
   }

@@ -10,6 +10,7 @@ import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.
 import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_active_card_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_not_active_card_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/card_dashboard_widget.dart';
+import 'package:mingda_app/features/dashboard/presentation/widgets/profile_network_image.dart';
 
 class DashboardPage extends StatelessWidget {
   DashboardPage({super.key});
@@ -30,6 +31,54 @@ class DashboardPage extends StatelessWidget {
           }
         },
         builder: (context, state) {
+          if (state is LoadingDashboardState ||
+              state is InitialDashboardState) {
+            return Center(child: CircularProgressIndicator());
+          }
+
+          if (state is FailureDashboardState ||
+              state is FailureGetProfileDashboardState ||
+              state is FailureGetAttendanceSummaryDashboardState ||
+              state is FailureGetAttendanceHistoryDashboardState) {
+            final message = state is FailureGetProfileDashboardState
+                ? state.message
+                : state is FailureGetAttendanceSummaryDashboardState
+                ? state.message
+                : state is FailureGetAttendanceHistoryDashboardState
+                ? state.message
+                : 'Gagal memuat data';
+
+            return Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
+                  SizedBox(height: 12.w),
+                  Text(
+                    'Gagal memuat data',
+                    style: AppTextStyles.inter16MediumPrimary,
+                  ),
+                  if (message.isNotEmpty) ...[
+                    SizedBox(height: 8.w),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 24.w),
+                      child: Text(
+                        message,
+                        textAlign: TextAlign.center,
+                        style: AppTextStyles.inter128RegularSecondary,
+                      ),
+                    ),
+                  ],
+                  SizedBox(height: 12.w),
+                  ElevatedButton(
+                    onPressed: () => dasboardBloc.add(DashboardStarted()),
+                    child: const Text('Coba lagi'),
+                  ),
+                ],
+              ),
+            );
+          }
+
           if (state is SuccessDashboardState) {
             return Container(
               width: double.infinity,
@@ -46,22 +95,10 @@ class DashboardPage extends StatelessWidget {
                             Row(
                               spacing: 20.w,
                               children: [
-                                Container(
+                                ProfileNetworkImage(
+                                  url: state.profileEntity.profilePhotoUrl,
                                   width: 50.w,
                                   height: 50.w,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(10.w),
-                                    border: Border.all(
-                                      color: Color(0xFF8E8E8E),
-                                      width: 1.w,
-                                    ),
-                                    image: DecorationImage(
-                                      image: NetworkImage(
-                                        state.profileEntity.profilePhotoUrl,
-                                      ),
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
                                 ),
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -342,9 +379,9 @@ class DashboardPage extends StatelessWidget {
                 ],
               ),
             );
-          } else {
-            return Center(child: CircularProgressIndicator());
           }
+
+          return Center(child: CircularProgressIndicator());
         },
       ),
     );

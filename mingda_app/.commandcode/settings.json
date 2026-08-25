@@ -1,0 +1,19 @@
+{
+  "permissions": {
+    "allow": [
+      "Shell(flutter:*)",
+      "Shell(findstr:*)",
+      "Shell(where vs_installer.exe 2>nul & dir /b \"C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vs_installer.exe\" 2>nul & dir /b \"C:\\ProgramData\\Microsoft\\VisualStudio\\Packages\\_Instances\" 2>nul)",
+      "Shell(C:\\Program Files (x86)\\Microsoft Visual Studio\\Installer\\vs_installer.exe:*)",
+      "Shell(timeout 20 >nul & type \"C:\\Users\\oksar\\AppData\\Local\\Temp\\commandcode\\shellout\\2026-08-25T14-05-14-118Z-s0helszz.log\")",
+      "Shell(tasklist:*)",
+      "Shell(type:*)",
+      "Shell(timeout /t 25 /nobreak >nul 2>&1; tasklist | findstr /I \"vs_installer setup.exe\"; echo ---log---; powershell -NoProfile -Command \"if(Test-Path 'C:\\Users\\oksar\\AppData\\Local\\Temp\\commandcode\\shellout\\2026-08-25T14-06-57-943Z-s1woy2fo.log'){Get-Content 'C:\\Users\\oksar\\AppData\\Local\\Temp\\commandcode\\shellout\\2026-08-25T14-06-57-943Z-s1woy2fo.log' -Tail 20}else{'no log'}\")",
+      "powershell",
+      "Shell(dir /b \"%TEMP%\\dd_setup_*\" 2>nul & dir /b \"C:\\Users\\oksar\\AppData\\Local\\Temp\\dd_setup_*\" 2>nul & powershell -NoProfile -Command \"Get-ChildItem 'C:\\ProgramData\\Microsoft\\VisualStudio\\Packages\\_Instances\\debb911e' -Filter *.json | Select-Object Name,LastWriteTime\")",
+      "Shell(powershell -NoProfile -Command \"taskkill /F /IM vs_installer.exe /IM setup.exe 2>$null; exit 0\")"
+    ],
+    "deny": [],
+    "defaultMode": "default"
+  }
+}

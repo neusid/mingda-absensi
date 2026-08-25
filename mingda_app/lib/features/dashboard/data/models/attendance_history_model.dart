@@ -1,3 +1,4 @@
+import 'package:mingda_app/core/utils/json_parser.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 
 class AttendanceHistoryModel extends AttendanceHistoryEntity {
@@ -20,23 +21,23 @@ class AttendanceHistoryModel extends AttendanceHistoryEntity {
   factory AttendanceHistoryModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>;
     return AttendanceHistoryModel(
-      currentPage: data['current_page'],
+      currentPage: parseIntValue(data['current_page']),
       data: (data['data'] as List)
           .map((e) => AttendanceItemModel.fromJson(e))
           .toList(),
       firstPageUrl: data['first_page_url'],
-      from: data['from'],
-      lastPage: data['last_page'],
+      from: parseIntValue(data['from']),
+      lastPage: parseIntValue(data['last_page']),
       lastPageUrl: data['last_page_url'],
       links: (data['links'] as List)
           .map((e) => AttendanceLinkModel.fromJson(e))
           .toList(),
       nextPageUrl: data['next_page_url'],
       path: data['path'],
-      perPage: data['per_page'],
+      perPage: parseIntValue(data['per_page']),
       prevPageUrl: data['prev_page_url'],
-      to: data['to'],
-      total: data['total'],
+      to: parseIntValue(data['to']),
+      total: parseIntValue(data['total']),
     );
   }
 }
@@ -70,33 +71,29 @@ class AttendanceItemModel extends AttendanceItemEntity {
 
   factory AttendanceItemModel.fromJson(Map<String, dynamic> json) {
     return AttendanceItemModel(
-      id: json['id'],
-      employeeId: json['employee_id'],
-      attendanceDate: json['attendance_date'],
+      id: parseIntValue(json['id']),
+      employeeId: parseIntValue(json['employee_id']),
+      attendanceDate: json['attendance_date'] ?? '',
       checkIn: json['check_in'],
       checkOut: json['check_out'],
-      status: json['status'],
+      status: json['status'] ?? '',
       notes: json['notes'],
       photoIn: json['photo_in'],
       photoOut: json['photo_out'],
       locationIn: json['location_in'],
-      gpsAccuracyIn: json['gps_accuracy_in'] != null
-          ? (json['gps_accuracy_in'] as num).toDouble()
-          : null,
-      isMockedIn: json['is_mocked_in'] ?? false,
+      gpsAccuracyIn: parseDoubleValue(json['gps_accuracy_in']),
+      isMockedIn: parseBoolValue(json['is_mocked_in']),
       gpsWarningsIn: json['gps_warnings_in'],
-      isSuspiciousIn: json['is_suspicious_in'] ?? false,
+      isSuspiciousIn: parseBoolValue(json['is_suspicious_in']),
       locationOut: json['location_out'],
-      gpsAccuracyOut: json['gps_accuracy_out'] != null
-          ? (json['gps_accuracy_out'] as num).toDouble()
-          : null,
-      isMockedOut: json['is_mocked_out'] ?? false,
+      gpsAccuracyOut: parseDoubleValue(json['gps_accuracy_out']),
+      isMockedOut: parseBoolValue(json['is_mocked_out']),
       gpsWarningsOut: json['gps_warnings_out'],
-      isSuspiciousOut: json['is_suspicious_out'] ?? false,
-      lateMinutes: json['late_minutes'],
-      overtimeMinutes: json['overtime_minutes'],
-      createdAt: json['created_at'],
-      updatedAt: json['updated_at'],
+      isSuspiciousOut: parseBoolValue(json['is_suspicious_out']),
+      lateMinutes: parseIntValue(json['late_minutes']),
+      overtimeMinutes: parseIntValue(json['overtime_minutes']),
+      createdAt: json['created_at'] ?? '',
+      updatedAt: json['updated_at'] ?? '',
     );
   }
 }
@@ -112,9 +109,9 @@ class AttendanceLinkModel extends AttendanceLinkEntity {
   factory AttendanceLinkModel.fromJson(Map<String, dynamic> json) {
     return AttendanceLinkModel(
       url: json['url'],
-      label: json['label'],
-      page: json['page'],
-      active: json['active'],
+      label: json['label'] ?? '',
+      page: json['page'] == null ? null : parseIntValue(json['page']),
+      active: parseBoolValue(json['active']),
     );
   }
 }

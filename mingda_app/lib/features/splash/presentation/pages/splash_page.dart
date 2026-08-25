@@ -32,13 +32,11 @@ class _SplashPageState extends State<SplashPage> {
           Navigator.pushReplacementNamed(context, '/root');
         } else if (state is FailureSplashState) {
           Navigator.pushReplacementNamed(context, '/login');
-        } else if (state is LoadedSplashState) {
-          Navigator.pushReplacementNamed(context, '/login');
         }
       },
       child: Scaffold(
         backgroundColor: AppColors.bg,
-        body: CircularProgressIndicator(),
+        body: Center(child: CircularProgressIndicator()),
       ),
     );
   }

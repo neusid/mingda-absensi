@@ -5,6 +5,7 @@ import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
 import 'package:mingda_app/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:mingda_app/features/dashboard/presentation/pages/profile_page.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '../../../../core/di/injection_container.dart';
@@ -30,26 +31,11 @@ class _RootPageState extends State<RootPage> {
     _controller.addListener(() => setState(() {}));
 
     _screens = [
-      BlocProvider<DashboardBloc>(
-        create: (_) => sl<DashboardBloc>()..add(DashboardStarted()),
-        child: DashboardPage(),
-      ),
-      BlocProvider<DashboardBloc>(
-        create: (_) => sl<DashboardBloc>()..add(DashboardStarted()),
-        child: DashboardPage(),
-      ),
-      BlocProvider<DashboardBloc>(
-        create: (_) => sl<DashboardBloc>()..add(DashboardStarted()),
-        child: DashboardPage(),
-      ),
-      BlocProvider<DashboardBloc>(
-        create: (_) => sl<DashboardBloc>()..add(DashboardStarted()),
-        child: DashboardPage(),
-      ),
-      BlocProvider<DashboardBloc>(
-        create: (_) => sl<DashboardBloc>()..add(DashboardStarted()),
-        child: DashboardPage(),
-      ),
+      DashboardPage(),
+      const Center(child: Text('Absensi')),
+      const Center(child: Text('Izin')),
+      const Center(child: Text('Wallet')),
+      const ProfilePage(),
     ];
   }
 
@@ -95,16 +81,19 @@ class _RootPageState extends State<RootPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PersistentTabView(
-      context,
-      controller: _controller,
-      screens: _screens,
-      items: _navBarsItems(),
-      backgroundColor: Colors.white,
-      handleAndroidBackButtonPress: true,
-      resizeToAvoidBottomInset: true,
-      stateManagement: true,
-      navBarStyle: NavBarStyle.style1,
+    return BlocProvider<DashboardBloc>(
+      create: (_) => sl<DashboardBloc>()..add(DashboardStarted()),
+      child: PersistentTabView(
+        context,
+        controller: _controller,
+        screens: _screens,
+        items: _navBarsItems(),
+        backgroundColor: Colors.white,
+        handleAndroidBackButtonPress: true,
+        resizeToAvoidBottomInset: true,
+        stateManagement: true,
+        navBarStyle: NavBarStyle.style1,
+      ),
     );
   }
 }

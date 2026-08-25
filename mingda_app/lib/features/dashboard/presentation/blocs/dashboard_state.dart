@@ -28,8 +28,17 @@ class SignoutDashboardState extends DashboardState {}
 
 class FailureDashboardState extends DashboardState {}
 
-class FailureGetProfileDashboardState extends DashboardState {}
+class FailureGetProfileDashboardState extends DashboardState {
+  final String message;
+  FailureGetProfileDashboardState([this.message = '']);
+}
 
-class FailureGetAttendanceSummaryDashboardState extends DashboardState {}
+class FailureGetAttendanceSummaryDashboardState extends DashboardState {
+  final String message;
+  FailureGetAttendanceSummaryDashboardState([this.message = '']);
+}
 
-class FailureGetAttendanceHistoryDashboardState extends DashboardState {}
+class FailureGetAttendanceHistoryDashboardState extends DashboardState {
+  final String message;
+  FailureGetAttendanceHistoryDashboardState([this.message = '']);
+}

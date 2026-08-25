@@ -1,3 +1,4 @@
+import 'package:mingda_app/core/utils/json_parser.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
 
 class AttendanceSummaryModel extends AttendanceSummaryEntity {
@@ -15,14 +16,14 @@ class AttendanceSummaryModel extends AttendanceSummaryEntity {
   factory AttendanceSummaryModel.fromJson(Map<String, dynamic> json) {
     final data = json['data'] as Map<String, dynamic>;
     return AttendanceSummaryModel(
-      total: data['total'],
-      hadir: data['hadir'],
-      terlambat: data['terlambat'],
-      izin: data['izin'],
-      sakit: data['sakit'],
-      alpha: data['alpha'],
-      cuti: data['cuti'],
-      totalLateMinutes: data['total_late_minutes'],
+      total: parseIntValue(data['total']),
+      hadir: parseIntValue(data['hadir']),
+      terlambat: parseIntValue(data['terlambat']),
+      izin: parseIntValue(data['izin']),
+      sakit: parseIntValue(data['sakit']),
+      alpha: parseIntValue(data['alpha']),
+      cuti: parseIntValue(data['cuti']),
+      totalLateMinutes: parseIntValue(data['total_late_minutes']),
     );
   }
 }

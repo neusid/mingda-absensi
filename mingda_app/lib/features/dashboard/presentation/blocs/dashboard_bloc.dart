@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
+import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
@@ -29,26 +30,30 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
       final result = await getprofileUsecase();
       await result.fold(
         (l) async {
-          if (l.message == "Unauthenticated.") {
+          if (l.message.contains("Unauthenticated") ||
+              l.message.contains("401") ||
+              l is AuthFailure) {
             final result = await signoutUsecase();
             result.fold(
               (l) => emit(FailureDashboardState()),
               (r) => emit(SignoutDashboardState()),
             );
           } else {
-            emit(FailureGetProfileDashboardState());
+            emit(FailureGetProfileDashboardState(l.message));
           }
         },
         (r1) async {
           final attendance = await getattendanceSummaryUsecase();
           await attendance.fold(
             (l) async {
-              emit(FailureGetAttendanceSummaryDashboardState());
+              emit(FailureGetAttendanceSummaryDashboardState(l.message));
             },
             (r2) async {
               final attendanceHistory = await getAttendanceHistoryUsecase();
               await attendanceHistory.fold(
-                (l3) async => emit(FailureGetAttendanceHistoryDashboardState()),
+                (l3) async => emit(
+                  FailureGetAttendanceHistoryDashboardState(l3.message),
+                ),
                 (r3) async => emit(
                   SuccessDashboardState(
                     profileEntity: r1,
