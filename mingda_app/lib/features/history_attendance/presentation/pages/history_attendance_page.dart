@@ -12,6 +12,7 @@ import 'package:mingda_app/features/history_attendance/domain/enum/attendance_en
 import 'package:mingda_app/features/history_attendance/domain/enum/month_enum.dart';
 import 'package:mingda_app/features/history_attendance/presentation/blocs/history_attendance_bloc.dart';
 import 'package:mingda_app/features/history_attendance/presentation/widgets/card_history_attendance_widget.dart';
+import 'package:mingda_app/features/history_attendance/presentation/widgets/history_skeleton.dart';
 
 class HistoryAttendancePage extends StatefulWidget {
   HistoryAttendancePage({super.key});
@@ -58,7 +59,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
         bloc: historyAttendanceBloc,
         builder: (context, state) {
           if (state is HistoryAttendanceEarlyLoadingState) {
-            return Center(child: CircularProgressIndicator());
+            return const HistorySkeleton();
           } else if (state is HistoryAttendanceLoadedState) {
             int currentPage = state.historyEntity.currentPage;
             int lastPage = state.historyEntity.lastPage;

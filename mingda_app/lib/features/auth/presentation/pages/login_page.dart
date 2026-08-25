@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
+import 'package:mingda_app/core/widgets/skeleton.dart';
 import 'package:mingda_app/features/auth/domain/entities/auth_session_entity.dart';
 import 'package:mingda_app/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:mingda_app/features/auth/presentation/blocs/auth_state.dart';
@@ -278,7 +279,20 @@ class _LoginPageState extends State<LoginPage> {
                   ? Positioned.fill(
                       child: Container(
                         color: Colors.black26,
-                        child: Center(child: CircularProgressIndicator()),
+                        child: Center(
+                          child: SkeletonLoading(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SkeletonBox(width: 200.w, height: 20.w),
+                                SizedBox(height: 10.w),
+                                SkeletonBox(width: 160.w, height: 20.w),
+                                SizedBox(height: 10.w),
+                                SkeletonBox(width: 180.w, height: 40.w, radius: 10.w),
+                              ],
+                            ),
+                          ),
+                        ),
                       ),
                     )
                   : SizedBox(),

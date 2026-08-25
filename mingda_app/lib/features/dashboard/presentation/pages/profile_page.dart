@@ -6,6 +6,7 @@ import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/profile_network_image.dart';
+import 'package:mingda_app/core/widgets/skeleton.dart';
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
@@ -15,10 +16,7 @@ class ProfilePage extends StatelessWidget {
     return BlocBuilder<DashboardBloc, DashboardState>(
       builder: (context, state) {
         if (state is! SuccessDashboardState) {
-          return const Scaffold(
-            backgroundColor: AppColors.bg,
-            body: Center(child: CircularProgressIndicator()),
-          );
+          return const _ProfileSkeleton();
         }
         return _ProfileContent(profile: state.profileEntity);
       },
@@ -337,6 +335,98 @@ class _SettingItem extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class _ProfileSkeleton extends StatelessWidget {
+  const _ProfileSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: AppColors.bg,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 24.w),
+          child: SkeletonLoading(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 24.w),
+                // Header profil
+                Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(14.w),
+                  decoration: BoxDecoration(
+                    color: AppColors.white,
+                    borderRadius: BorderRadius.circular(10.w),
+                  ),
+                  child: Row(
+                    children: [
+                      SkeletonBox(width: 70.w, height: 70.w, radius: 10.w),
+                      SizedBox(width: 20.w),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            SkeletonBox(width: 140.w, height: 16.w),
+                            SizedBox(height: 10.w),
+                            SkeletonBox(width: 180.w, height: 26.w, radius: 9.w),
+                          ],
+                        ),
+                      ),
+                      SkeletonBox(width: 40.w, height: 40.w, radius: 10.w),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 19.w),
+                // Grid info
+                Row(
+                  children: [
+                    Expanded(child: _skeletonInfoCard()),
+                    SizedBox(width: 10.w),
+                    Expanded(child: _skeletonInfoCard()),
+                  ],
+                ),
+                SizedBox(height: 10.w),
+                Row(
+                  children: [
+                    Expanded(child: _skeletonInfoCard()),
+                    SizedBox(width: 10.w),
+                    Expanded(child: _skeletonInfoCard()),
+                  ],
+                ),
+                SizedBox(height: 19.w),
+                // Section pengaturan
+                SkeletonBox(width: double.infinity, height: 40.w, radius: 5.w),
+                SizedBox(height: 10.w),
+                SkeletonBox(width: double.infinity, height: 164.w, radius: 15.w),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _skeletonInfoCard() {
+    return Container(
+      padding: EdgeInsets.all(14.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(10.w),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SkeletonBox(width: 30.w, height: 30.w, radius: 5.w),
+          SizedBox(height: 7.w),
+          SkeletonBox(width: 60.w, height: 12.w),
+          SizedBox(height: 2.w),
+          SkeletonBox(width: 90.w, height: 14.w),
+        ],
       ),
     );
   }

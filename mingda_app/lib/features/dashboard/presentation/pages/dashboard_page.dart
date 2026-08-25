@@ -10,6 +10,7 @@ import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.
 import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_active_card_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_not_active_card_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/card_dashboard_widget.dart';
+import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/profile_network_image.dart';
 
 class DashboardPage extends StatelessWidget {
@@ -33,7 +34,7 @@ class DashboardPage extends StatelessWidget {
         builder: (context, state) {
           if (state is LoadingDashboardState ||
               state is InitialDashboardState) {
-            return Center(child: CircularProgressIndicator());
+            return const DashboardSkeleton();
           }
 
           if (state is FailureDashboardState ||
@@ -381,7 +382,7 @@ class DashboardPage extends StatelessWidget {
             );
           }
 
-          return Center(child: CircularProgressIndicator());
+          return const DashboardSkeleton();
         },
       ),
     );

@@ -6,6 +6,7 @@ import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
 import 'package:mingda_app/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:mingda_app/features/dashboard/presentation/pages/profile_page.dart';
+import 'package:mingda_app/features/work_leave/presentation/pages/work_leave_page.dart';
 import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 
 import '../../../../core/di/injection_container.dart';
@@ -32,8 +33,8 @@ class _RootPageState extends State<RootPage> {
 
     _screens = [
       DashboardPage(),
-      const Center(child: Text('Absensi')),
-      const Center(child: Text('Izin')),
+      const WorkLeavePage(),
+      const Center(child: Text('Surat Peringatan')),
       const Center(child: Text('Wallet')),
       const ProfilePage(),
     ];
@@ -56,7 +57,7 @@ class _RootPageState extends State<RootPage> {
       'assets/icon/profile-not-active.svg',
     ];
 
-    final titles = ['Home', 'Absensi', 'Izin', 'Wallet', 'Profile'];
+    final titles = ['Home', 'Cuti', 'Peringatan', 'Wallet', 'Profile'];
 
     return List.generate(titles.length, (index) {
       final isActive = _controller.index == index;
