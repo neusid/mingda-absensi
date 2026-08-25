@@ -9,9 +9,9 @@ class FilterHistoryAttendanceUsecase {
 
   Future<Either<Failure, AttendanceHistoryEntity>> call(
     int page,
-    int month,
-    int year,
-    String status,
+    int? month,
+    int? year,
+    String? status,
   ) async {
     return await historyAttendanceRepository.filterHistoryAttendanceRepository(
       page,

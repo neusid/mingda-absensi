@@ -29,9 +29,15 @@ final class HistoryAttendanceEarlyLoadedState
 
 final class HistoryAttendanceFilterLoadedState
     extends HistoryAttendanceLoadedState {
-  const HistoryAttendanceFilterLoadedState(
+  AttendanceEnum? attendanceSelected;
+  MonthEnum? monthSelected;
+  int yearsSelected;
+  HistoryAttendanceFilterLoadedState(
     super.historyEntity,
     super.summaryEntity,
+    this.attendanceSelected,
+    this.monthSelected,
+    this.yearsSelected,
   );
 }
 

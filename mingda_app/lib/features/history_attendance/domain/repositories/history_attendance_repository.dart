@@ -5,9 +5,17 @@ import 'package:mingda_app/features/dashboard/domain/entities/attendance_history
 abstract class HistoryAttendanceRepository {
   Future<Either<Failure, AttendanceHistoryEntity>>
   filterHistoryAttendanceRepository(
-    int page,
-    int month,
-    int year,
-    String status,
+    int? page,
+    int? month,
+    int? year,
+    String? status,
+  );
+
+  Future<Either<Failure, AttendanceHistoryEntity>>
+  paginationHistoryAttendanceRepository(
+    int? page,
+    int? month,
+    int? year,
+    String? status,
   );
 }

@@ -32,6 +32,13 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
     (index) => DateTime.now().year - index,
   );
 
+  List<int> visiblePages(int current, int last) {
+    const visiblePageCount = 3;
+    int start = ((current - 1) ~/ visiblePageCount) * visiblePageCount + 1;
+    int end = (start + visiblePageCount - 1).clamp(1, last);
+    return List.generate(end - start + 1, (i) => start + i);
+  }
+
   @override
   Widget build(BuildContext context) {
     final historyAttendanceBloc = context.read<HistoryAttendanceBloc>();
@@ -53,6 +60,16 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
           if (state is HistoryAttendanceEarlyLoadingState) {
             return Center(child: CircularProgressIndicator());
           } else if (state is HistoryAttendanceLoadedState) {
+            int currentPage = state.historyEntity.currentPage;
+            int lastPage = state.historyEntity.lastPage;
+            final pages = visiblePages(currentPage, lastPage);
+
+            if (state is HistoryAttendanceFilterLoadedState) {
+              attendanceSelected = state.attendanceSelected;
+              print('XX ${state.monthSelected}');
+              yearsSelected = yearsSelected;
+            }
+
             return Padding(
               padding: EdgeInsets.symmetric(horizontal: 25.w),
               child: CustomScrollView(
@@ -354,6 +371,57 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                           separatorBuilder: (context, index) =>
                               SizedBox(height: 10.w),
                         ),
+                  SliverToBoxAdapter(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        SizedBox(height: 10.w),
+                        Row(
+                          spacing: 10.w,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (currentPage > 3) ...[
+                              Container(
+                                width: 30.w,
+                                height: 30.w,
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  boxShadow: [AppShadows.shadow094],
+                                  borderRadius: BorderRadius.circular(10.w),
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icon/arrow-left.svg',
+                                  ),
+                                ),
+                              ),
+                            ],
+                            for (final p in pages)
+                              ButtonPage(index: p.toString()),
+                            if (currentPage < lastPage) ...[
+                              Container(
+                                width: 30.w,
+                                height: 30.w,
+                                padding: EdgeInsets.all(8.w),
+                                decoration: BoxDecoration(
+                                  color: AppColors.white,
+                                  boxShadow: [AppShadows.shadow094],
+                                  borderRadius: BorderRadius.circular(10.w),
+                                ),
+                                child: Center(
+                                  child: SvgPicture.asset(
+                                    'assets/icon/arrow-right.svg',
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                        SizedBox(height: 50.w),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             );
@@ -367,6 +435,28 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
           }
         },
         listener: (context, state) {},
+      ),
+    );
+  }
+}
+
+class ButtonPage extends StatelessWidget {
+  final index;
+  const ButtonPage({super.key, required this.index});
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 30.w,
+      height: 30.w,
+      padding: EdgeInsets.all(8.w),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        boxShadow: [AppShadows.shadow094],
+        borderRadius: BorderRadius.circular(10.w),
+      ),
+      child: Center(
+        child: Text(index, style: AppTextStyles.inter12RegularPrimary),
       ),
     );
   }

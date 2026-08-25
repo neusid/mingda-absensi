@@ -14,10 +14,30 @@ class HistoryAttendanceRepositoryImpl implements HistoryAttendanceRepository {
 
   Future<Either<Failure, AttendanceHistoryEntity>>
   filterHistoryAttendanceRepository(
-    int page,
-    int month,
-    int year,
-    String status,
+    int? page,
+    int? month,
+    int? year,
+    String? status,
+  ) async {
+    try {
+      final result = await historyAttendanceRemoteDataSource
+          .filterHistoryAttendanceDatasource(page, month, year, status);
+      return right(result);
+    } on Failure catch (f) {
+      return left(f);
+    } on SocketException {
+      return left(NetworkFailure());
+    } catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
+
+  Future<Either<Failure, AttendanceHistoryEntity>>
+  paginationHistoryAttendanceRepository(
+    int? page,
+    int? month,
+    int? year,
+    String? status,
   ) async {
     try {
       final result = await historyAttendanceRemoteDataSource

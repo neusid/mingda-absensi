@@ -2,9 +2,16 @@ import 'package:mingda_app/features/dashboard/data/models/attendance_history_mod
 
 abstract class HistoryAttendanceRemoteDataSource {
   Future<AttendanceHistoryModel> filterHistoryAttendanceDatasource(
-    int page,
-    int month,
-    int year,
-    String status,
+    int? page,
+    int? month,
+    int? year,
+    String? status,
+  );
+
+  Future<AttendanceHistoryModel> paginationHistoryAttendanceDatasource(
+    int? page,
+    int? month,
+    int? year,
+    String? status,
   );
 }
