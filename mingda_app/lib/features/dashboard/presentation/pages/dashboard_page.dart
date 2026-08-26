@@ -25,12 +25,7 @@ class DashboardPage extends StatelessWidget {
       backgroundColor: AppColors.bg,
       body: BlocConsumer<DashboardBloc, DashboardState>(
         bloc: dasboardBloc,
-        listener: (context, state) {
-          // TODO: implement listener
-          if (state is SignoutDashboardState) {
-            Navigator.pushReplacementNamed(context, '/login');
-          }
-        },
+        listener: (context, state) {},
         builder: (context, state) {
           if (state is LoadingDashboardState ||
               state is InitialDashboardState) {
@@ -305,7 +300,9 @@ class DashboardPage extends StatelessWidget {
                     ),
                   ),
                   SliverList.separated(
-                    itemCount: state.attendanceHistoryEntity.data.length,
+                    itemCount: state.attendanceHistoryEntity.data.length > 4
+                        ? 4
+                        : state.attendanceHistoryEntity.data.length,
                     itemBuilder: (context, index) {
                       final attendance =
                           state.attendanceHistoryEntity.data[index];
@@ -363,20 +360,8 @@ class DashboardPage extends StatelessWidget {
                         SizedBox(height: 10.w),
                   ),
                   SliverToBoxAdapter(
-                    child: Column(
-                      children: [
-                        SizedBox(height: 17.w),
-                        ElevatedButton(
-                          onPressed: () => dasboardBloc.add(DashboardSignout()),
-                          child: Text(
-                            "Logout",
-                            style: AppTextStyles.inter18RegularPrimary,
-                          ),
-                        ),
-                        SizedBox(height: 50.w),
-                      ],
-                    ),
-                  ),
+                    child: SizedBox(height: 10),
+                  )
                 ],
               ),
             );

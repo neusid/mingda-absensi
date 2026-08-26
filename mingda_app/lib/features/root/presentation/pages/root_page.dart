@@ -85,16 +85,26 @@ class _RootPageState extends State<RootPage> {
   Widget build(BuildContext context) {
     return BlocProvider<DashboardBloc>(
       create: (_) => sl<DashboardBloc>()..add(DashboardStarted()),
-      child: PersistentTabView(
-        context,
-        controller: _controller,
-        screens: _screens,
-        items: _navBarsItems(),
-        backgroundColor: Colors.white,
-        handleAndroidBackButtonPress: true,
-        resizeToAvoidBottomInset: true,
-        stateManagement: true,
-        navBarStyle: NavBarStyle.style1,
+      child: BlocListener<DashboardBloc, DashboardState>(
+        listener: (context, state) {
+          if (state is SignoutDashboardState) {
+            Navigator.of(context, rootNavigator: true).pushNamedAndRemoveUntil(
+              '/login',
+              (route) => false,
+            );
+          }
+        },
+        child: PersistentTabView(
+          context,
+          controller: _controller,
+          screens: _screens,
+          items: _navBarsItems(),
+          backgroundColor: Colors.white,
+          handleAndroidBackButtonPress: true,
+          resizeToAvoidBottomInset: true,
+          stateManagement: true,
+          navBarStyle: NavBarStyle.style1,
+        ),
       ),
     );
   }
