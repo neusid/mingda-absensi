@@ -85,6 +85,7 @@ class AuthRepositoryImpl implements AuthRepository {
   Future<Either<Failure, void>> SignOut({required String token}) async {
     try {
       await authRemoteDataSource.SignOutDataSource(token);
+      await authLocalDataSource.deleteToken();
       await authLocalDataSource.deleteUser();
       return right(null);
     } on Failure catch (f) {

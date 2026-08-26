@@ -13,11 +13,16 @@ class DioClient {
     dio.interceptors.add(
       InterceptorsWrapper(
         onRequest: (options, handler) async {
-          final String? token = await authLocalDataSource.getToken();
-          if (token != null) {
-            options.headers['Authorization'] = 'Bearer $token';
+          // Jangan kirim token lama ke endpoint login, karena token yang
+          // masih tersimpan (stale/expired) akan membuat request login ditolak.
+          final String? path = options.path;
+          if (path != '/auth/login') {
+            final String? token = await authLocalDataSource.getToken();
+            if (token != null) {
+              options.headers['Authorization'] = 'Bearer $token';
+            }
+            print("Bearer $token");
           }
-          print("Bearer $token");
           options.headers['Accept'] = 'application/json';
           return handler.next(options);
         },

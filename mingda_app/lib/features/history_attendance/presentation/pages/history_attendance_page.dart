@@ -132,7 +132,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             ),
                           ],
                         ),
-                        SizedBox(height: 22.w),
+                        SizedBox(height: 10.w),
                         Container(
                           width: 326.w,
                           height: 27.w,
@@ -152,185 +152,54 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             ],
                           ),
                         ),
-                        SizedBox(height: 22.w),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 205.w,
-                              height: 45.w,
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.w),
-                                color: AppColors.white,
-                              ),
-                              child: DropdownButtonFormField<MonthEnum>(
-                                key: monthDropdownKey,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                                isExpanded: true,
-                                hint: Center(
-                                  child: Text(
-                                    "-- default --",
-                                    style: AppTextStyles.inter14MediumSecondary,
-                                  ),
-                                ),
-                                style: AppTextStyles.inter14MediumSecondary,
-                                dropdownColor: AppColors.white,
-                                items: MonthEnum.values
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                          e.name,
-                                          style: AppTextStyles
-                                              .inter14MediumSecondary,
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (value) => setState(() {
-                                  monthSelected = value;
-                                }),
-                              ),
-                            ),
-                            Container(
-                              width: 110.w,
-                              height: 45.w,
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.w),
-                                color: AppColors.white,
-                              ),
-                              child: DropdownButtonFormField<int>(
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                                style: AppTextStyles.inter14MediumSecondary,
-                                dropdownColor: AppColors.white,
-                                initialValue: yearsSelected,
-                                items: ListYears.map(
-                                  (e) => DropdownMenuItem(
-                                    value: e,
-                                    child: Text(
-                                      e.toString(),
-                                      style:
-                                          AppTextStyles.inter14MediumSecondary,
-                                    ),
-                                  ),
-                                ).toList(),
-                                onChanged: (value) => setState(() {
-                                  yearsSelected = value!;
-                                }),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 11.w),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Container(
-                              width: 205.w,
-                              height: 45.w,
-                              padding: EdgeInsets.symmetric(horizontal: 20.w),
-                              decoration: BoxDecoration(
-                                borderRadius: BorderRadius.circular(10.w),
-                                color: AppColors.white,
-                              ),
-                              child: DropdownButtonFormField<AttendanceEnum>(
-                                key: attendanceDropdownKey,
-                                decoration: InputDecoration(
-                                  border: InputBorder.none,
-                                ),
-                                isExpanded: true,
-                                hint: Center(
-                                  child: Text(
-                                    "-- default --",
-                                    style: AppTextStyles.inter14MediumSecondary,
-                                  ),
-                                ),
-
-                                style: AppTextStyles.inter14MediumSecondary,
-                                dropdownColor: AppColors.white,
-                                items: AttendanceEnum.values
-                                    .map(
-                                      (e) => DropdownMenuItem(
-                                        value: e,
-                                        child: Text(
-                                          e.name,
-                                          style: AppTextStyles
-                                              .inter14MediumSecondary,
-                                        ),
-                                      ),
-                                    )
-                                    .toList(),
-                                onChanged: (value) => setState(() {
-                                  attendanceSelected = value;
-                                }),
-                              ),
-                            ),
-                            InkWell(
-                              borderRadius: BorderRadius.circular(10.w),
-                              onTap: () => monthSelected != null
-                                  ? historyAttendanceBloc.add(
-                                      HistoryAttendanceEventFiltered(
-                                        historyEntity: state.historyEntity,
-                                        summaryEntity: state.summaryEntity,
-                                        page: 1,
-                                        month: (monthSelected?.index ?? 0) + 1,
-                                        year: yearsSelected,
-                                        status: attendanceSelected,
-                                      ),
-                                    )
-                                  : null,
-                              child: Ink(
-                                width: 45.w,
-                                height: 45.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.w),
-                                  color: AppColors.white,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/icon/sort.svg',
-                                  ),
-                                ),
-                              ),
-                            ),
-                            InkWell(
-                              borderRadius: BorderRadius.circular(10.w),
-                              onTap: () {
-                                setState(() {
-                                  monthSelected = null;
-                                  attendanceSelected = null;
-                                  yearsSelected = DateTime.now().year;
-
-                                  monthDropdownKey = UniqueKey();
-                                  attendanceDropdownKey = UniqueKey();
-                                });
-                              },
-                              child: Ink(
-                                width: 45.w,
-                                height: 45.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.w),
-                                  color: AppColors.white,
-                                ),
-                                child: Center(
-                                  child: SvgPicture.asset(
-                                    'assets/icon/trash.svg',
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 22.w),
+                        SizedBox(height: 10.w),
                       ],
                     ),
                   ),
+                  SliverPersistentHeader(
+                    pinned: true,
+                    delegate: _FilterHeaderDelegate(
+                      monthDropdownKey: monthDropdownKey,
+                      attendanceDropdownKey: attendanceDropdownKey,
+                      monthSelected: monthSelected,
+                      attendanceSelected: attendanceSelected,
+                      yearsSelected: yearsSelected,
+                      listYears: ListYears,
+                      onMonthChanged: (value) => setState(() {
+                        monthSelected = value;
+                      }),
+                      onAttendanceChanged: (value) => setState(() {
+                        attendanceSelected = value;
+                      }),
+                      onYearChanged: (value) => setState(() {
+                        yearsSelected = value!;
+                      }),
+                      onSort: () {
+                        if (monthSelected == null) return;
+                        historyAttendanceBloc.add(
+                          HistoryAttendanceEventFiltered(
+                            historyEntity: state.historyEntity,
+                            summaryEntity: state.summaryEntity,
+                            page: 1,
+                            month: (monthSelected?.index ?? 0) + 1,
+                            year: yearsSelected,
+                            status: attendanceSelected,
+                          ),
+                        );
+                      },
+                      onReset: () {
+                        setState(() {
+                          monthSelected = null;
+                          attendanceSelected = null;
+                          yearsSelected = DateTime.now().year;
+
+                          monthDropdownKey = UniqueKey();
+                          attendanceDropdownKey = UniqueKey();
+                        });
+                      },
+                    ),
+                  ),
+                  SliverToBoxAdapter(child: SizedBox(height: 10.w)),
                   state is HistoryAttendanceFailedFilterState
                       ? SliverToBoxAdapter(
                           child: Center(child: Text("Data kosong")),
@@ -460,5 +329,203 @@ class ButtonPage extends StatelessWidget {
         child: Text(index, style: AppTextStyles.inter12RegularPrimary),
       ),
     );
+  }
+}
+
+class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Key monthDropdownKey;
+  final Key attendanceDropdownKey;
+  final MonthEnum? monthSelected;
+  final AttendanceEnum? attendanceSelected;
+  final int yearsSelected;
+  final List<int> listYears;
+  final ValueChanged<MonthEnum?> onMonthChanged;
+  final ValueChanged<AttendanceEnum?> onAttendanceChanged;
+  final ValueChanged<int?> onYearChanged;
+  final VoidCallback onSort;
+  final VoidCallback onReset;
+
+  _FilterHeaderDelegate({
+    required this.monthDropdownKey,
+    required this.attendanceDropdownKey,
+    required this.monthSelected,
+    required this.attendanceSelected,
+    required this.yearsSelected,
+    required this.listYears,
+    required this.onMonthChanged,
+    required this.onAttendanceChanged,
+    required this.onYearChanged,
+    required this.onSort,
+    required this.onReset,
+  });
+
+  @override
+  double get minExtent => 121.w;
+
+  @override
+  double get maxExtent => 121.w;
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    return Material(
+      color: AppColors.bg,
+      child: Padding(
+        padding: EdgeInsets.symmetric(vertical: 10.w),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 205.w,
+                height: 45.w,
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: AppColors.white,
+                ),
+                child: DropdownButtonFormField<MonthEnum>(
+                  key: monthDropdownKey,
+                  decoration: InputDecoration(border: InputBorder.none),
+                  isExpanded: true,
+                  hint: Center(
+                    child: Text(
+                      "-- default --",
+                      style: AppTextStyles.inter14MediumSecondary,
+                    ),
+                  ),
+                  style: AppTextStyles.inter14MediumSecondary,
+                  dropdownColor: AppColors.white,
+                  items: MonthEnum.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e.name,
+                            style: AppTextStyles.inter14MediumSecondary,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: onMonthChanged,
+                ),
+              ),
+              Container(
+                width: 110.w,
+                height: 45.w,
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: AppColors.white,
+                ),
+                child: DropdownButtonFormField<int>(
+                  decoration: InputDecoration(border: InputBorder.none),
+                  style: AppTextStyles.inter14MediumSecondary,
+                  dropdownColor: AppColors.white,
+                  initialValue: yearsSelected,
+                  items: listYears
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e.toString(),
+                            style: AppTextStyles.inter14MediumSecondary,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: onYearChanged,
+                ),
+              ),
+            ],
+          ),
+          SizedBox(height: 11.w),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Container(
+                width: 205.w,
+                height: 45.w,
+                padding: EdgeInsets.symmetric(horizontal: 20.w),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  color: AppColors.white,
+                ),
+                child: DropdownButtonFormField<AttendanceEnum>(
+                  key: attendanceDropdownKey,
+                  decoration: InputDecoration(border: InputBorder.none),
+                  isExpanded: true,
+                  hint: Center(
+                    child: Text(
+                      "-- default --",
+                      style: AppTextStyles.inter14MediumSecondary,
+                    ),
+                  ),
+                  style: AppTextStyles.inter14MediumSecondary,
+                  dropdownColor: AppColors.white,
+                  items: AttendanceEnum.values
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e,
+                          child: Text(
+                            e.name,
+                            style: AppTextStyles.inter14MediumSecondary,
+                          ),
+                        ),
+                      )
+                      .toList(),
+                  onChanged: onAttendanceChanged,
+                ),
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(10.w),
+                onTap: onSort,
+                child: Ink(
+                  width: 45.w,
+                  height: 45.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.w),
+                    color: AppColors.white,
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset('assets/icon/sort.svg'),
+                  ),
+                ),
+              ),
+              InkWell(
+                borderRadius: BorderRadius.circular(10.w),
+                onTap: onReset,
+                child: Ink(
+                  width: 45.w,
+                  height: 45.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.w),
+                    color: AppColors.white,
+                  ),
+                  child: Center(
+                    child: SvgPicture.asset('assets/icon/trash.svg'),
+                  ),
+                ),
+              ),
+            ],
+          ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
+  bool shouldRebuild(covariant _FilterHeaderDelegate oldDelegate) {
+    return oldDelegate.monthDropdownKey != monthDropdownKey ||
+        oldDelegate.attendanceDropdownKey != attendanceDropdownKey ||
+        oldDelegate.monthSelected != monthSelected ||
+        oldDelegate.attendanceSelected != attendanceSelected ||
+        oldDelegate.yearsSelected != yearsSelected;
   }
 }
