@@ -359,9 +359,7 @@ class DashboardPage extends StatelessWidget {
                     separatorBuilder: (context, index) =>
                         SizedBox(height: 10.w),
                   ),
-                  SliverToBoxAdapter(
-                    child: SizedBox(height: 10),
-                  )
+                  SliverToBoxAdapter(child: SizedBox(height: 10)),
                 ],
               ),
             );

@@ -28,11 +28,12 @@ class HistoryAttendanceBloc
     on<HistoryAttendanceEventFiltered>((event, emit) async {
       // TODO: implement event handler
       emit(HistoryAttendanceFilterLoadingState());
+      final statusParam = event.status?.toString().split('.').last.toLowerCase();
       final result = await filterHistoryAttendanceUsecase(
         event.page,
         event.month,
         event.year,
-        event.status.toString(),
+        statusParam,
       );
       result.fold(
         (l) => emit(
@@ -47,7 +48,7 @@ class HistoryAttendanceBloc
               r,
               event.summaryEntity,
               event.status,
-              event.month,
+              MonthEnum.values[event.month - 1],
               event.year,
             ),
           );
