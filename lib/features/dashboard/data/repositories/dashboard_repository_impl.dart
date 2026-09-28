@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
+import 'package:mingda_app/app/config/app_config.dart';
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_local_data_source.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
@@ -23,7 +24,9 @@ class DashboardRepositoryImpl implements DashboardRepository {
 
   Future<Either<Failure, void>> signOut() async {
     try {
-      await dio.post('/auth/logout');
+      if (!AppConfig.isOfflineMode) {
+        await dio.post('/auth/logout');
+      }
       await dashboardLocalDataSource.deleteToken();
       await dashboardLocalDataSource.deleteUser();
       return right(null);

@@ -2,6 +2,8 @@ import 'package:get_it/get_it.dart';
 import 'package:mingda_app/features/auth/domain/usecases/get_remember_usecase.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_local_data_source.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_local_data_source_impl.dart';
+import 'package:mingda_app/app/config/app_config.dart';
+import 'package:mingda_app/features/splash/data/datasources/splash_dummy_data_source_impl.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_remote_data_source.dart';
 import 'package:mingda_app/features/splash/data/datasources/splash_remote_data_source_impl.dart';
 import 'package:mingda_app/features/splash/data/repositories/splash_repository_impl.dart';
@@ -39,7 +41,9 @@ void initSplashInjection(GetIt sl) {
 
   // data source
   sl.registerLazySingleton<SplashRemoteDataSource>(
-    () => SplashRemoteDataSourceImpl(),
+    () => AppConfig.isOfflineMode
+        ? SplashDummyDataSourceImpl()
+        : SplashRemoteDataSourceImpl(),
   );
   sl.registerLazySingleton<SplashLocalDataSource>(
     () => SplashLocalDataSourceImpl(sharedPreferences: sl<SharedPreferences>()),

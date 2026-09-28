@@ -1,6 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mingda_app/app/config/app_config.dart';
 import 'package:mingda_app/app/config/dio_client.dart';
+import 'package:mingda_app/features/dashboard/data/datasources/dashboard_dummy_data_source_impl.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_local_data_source.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_local_data_source_impl.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
@@ -60,6 +62,8 @@ void initDashboardInjection(GetIt sl) {
   );
 
   sl.registerLazySingleton<DashboardRemoteDataSource>(
-    () => DashboardRemoteDataSourceImpl(dio: sl<Dio>()),
+    () => AppConfig.isOfflineMode
+        ? DashboardDummyDataSourceImpl()
+        : DashboardRemoteDataSourceImpl(dio: sl<Dio>()),
   );
 }

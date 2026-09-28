@@ -1,5 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
+import 'package:mingda_app/app/config/app_config.dart';
+import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_dummy_data_source_impl.dart';
 import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_remote_data_source.dart';
 import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_remote_data_source_impl.dart';
 import 'package:mingda_app/features/history_attendance/data/repositories/history_attendance_repository_impl.dart';
@@ -32,6 +34,8 @@ void initHistoryAttendanceInjection(GetIt sl) {
 
   // data source
   sl.registerLazySingleton<HistoryAttendanceRemoteDataSource>(
-    () => HistoryAttendanceRemoteDataSourceImpl(dio: sl<Dio>()),
+    () => AppConfig.isOfflineMode
+        ? HistoryAttendanceDummyDataSourceImpl()
+        : HistoryAttendanceRemoteDataSourceImpl(dio: sl<Dio>()),
   );
 }

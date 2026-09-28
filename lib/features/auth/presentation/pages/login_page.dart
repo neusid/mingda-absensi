@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/app/config/app_config.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/core/widgets/skeleton.dart';
@@ -23,8 +24,12 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
+    if (AppConfig.isOfflineMode) {
+      emailTextC.text = 'admin@mingda.co.id';
+      passwordTextC.text = 'password123';
+      isChecked = true;
+    }
   }
 
   @override
