@@ -1,6 +1,10 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48">
-  <rect width="48" height="48" rx="14" ry="14" fill="#FEECEE" />
-  <circle cx="24" cy="24" r="17" fill="#ED2736" />
-  <line x1="18.5" y1="18.5" x2="29.5" y2="29.5" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" />
-  <line x1="29.5" y1="18.5" x2="18.5" y2="29.5" stroke="#FFFFFF" stroke-width="3.2" stroke-linecap="round" />
+<svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+ <g transform="translate(-21, -20)">
+ <rect x="21" y="20" width="48" height="48" rx="15" fill="#FFFFFF" stroke="#99F6E4" stroke-width="1.2" />
+
+ <path d="M45 30L56 35V45C56 52 50.5 57 45 58.5C39.5 57 34 52 34 45V35Z" fill="#ED2736" />
+
+ <path d="M40 39L50 49M50 39L40 49" stroke="white" stroke-width="2.8" stroke-linecap="round" />
+
+ </g>
 </svg>

@@ -36,8 +36,8 @@ void main() {
       expect(AttendanceStatType.alpha.label, 'TOTAL ALPHA');
       expect(AttendanceStatType.alpha.svgBadgePath, 'assets/icon/stat_badge_alpha.svg');
       expect(AttendanceStatType.alpha.toAttendanceEnum, AttendanceEnum.Alpha);
-      expect(AttendanceStatType.alpha.cardBorderColor, const Color(0xFFFECDD3));
-      expect(AttendanceStatType.alpha.labelColor, const Color(0xFFED2736));
+      expect(AttendanceStatType.alpha.cardBorderColor, const Color(0xFFCCFBF1));
+      expect(AttendanceStatType.alpha.labelColor, const Color(0xFF64748B));
 
       expect(AttendanceStatType.izin.label, 'TOTAL IZIN');
       expect(AttendanceStatType.izin.svgBadgePath, 'assets/icon/stat_badge_izin.svg');
@@ -107,7 +107,7 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('uses AppShadows.shadow094, 10.w radius, and no colored border', (tester) async {
+    testWidgets('uses AppShadows.shadow094, 16.r radius, and Mingda Absensi (36) styling', (tester) async {
       await tester.pumpWidget(
         _buildTestableWidget(
           AttendanceStatCard(
@@ -128,8 +128,8 @@ void main() {
       final decoration = container.decoration as BoxDecoration;
 
       expect(decoration.boxShadow, contains(AppShadows.shadow094));
-      expect(decoration.border, isNull);
-      expect(decoration.color, Colors.white);
+      expect(decoration.border, isNotNull);
+      expect(decoration.color, const Color(0xFFF0FDFA));
       expect(find.text('1'), findsOneWidget);
       expect(find.text('TOTAL ALPHA'), findsOneWidget);
     });

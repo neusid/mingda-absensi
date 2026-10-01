@@ -66,56 +66,50 @@ enum AttendanceStatType {
     }
   }
 
-  /// Warna solid cerah khas Gojek
+  /// Path ke kartu SVG lengkap dari folder Mingda Absensi (36)
+  String get svgCardPath {
+    switch (this) {
+      case AttendanceStatType.hadir:
+        return 'assets/icon/stat_card_hadir.svg';
+      case AttendanceStatType.terlambat:
+        return 'assets/icon/stat_card_terlambat.svg';
+      case AttendanceStatType.alpha:
+        return 'assets/icon/stat_card_alpha.svg';
+      case AttendanceStatType.izin:
+        return 'assets/icon/stat_card_izin.svg';
+      case AttendanceStatType.cuti:
+        return 'assets/icon/stat_card_cuti.svg';
+      case AttendanceStatType.sakit:
+        return 'assets/icon/stat_card_sakit.svg';
+    }
+  }
+
+  /// Warna solid cerah khas Figma Mingda Absensi (36)
   Color get accentColor {
     switch (this) {
       case AttendanceStatType.hadir:
-        return const Color(0xFF00AA13); // Gojek Green
+        return const Color(0xFF00AA13);
       case AttendanceStatType.terlambat:
-        return const Color(0xFFFF9800); // Gojek Amber
+        return const Color(0xFFD97706);
       case AttendanceStatType.alpha:
-        return const Color(0xFFED2736); // Gojek Red
+        return const Color(0xFFED2736);
       case AttendanceStatType.izin:
-        return const Color(0xFF00AED6); // Gojek Blue / Cyan
+        return const Color(0xFF0284C7);
       case AttendanceStatType.cuti:
-        return const Color(0xFF7C3AED); // Gojek Purple
+        return const Color(0xFF4F46E5);
       case AttendanceStatType.sakit:
-        return const Color(0xFFFF5722); // Gojek Coral / Deep Orange
+        return const Color(0xFF0D9488);
     }
   }
 
   /// Background pastel lembut untuk kontainer squircle
-  Color get containerBgColor {
-    switch (this) {
-      case AttendanceStatType.hadir:
-        return const Color(0xFFE6F7EB);
-      case AttendanceStatType.terlambat:
-        return const Color(0xFFFFF8E6);
-      case AttendanceStatType.alpha:
-        return const Color(0xFFFEECEE);
-      case AttendanceStatType.izin:
-        return const Color(0xFFE6F7FB);
-      case AttendanceStatType.cuti:
-        return const Color(0xFFF2EBFD);
-      case AttendanceStatType.sakit:
-        return const Color(0xFFFEEFEA);
-    }
-  }
+  Color get containerBgColor => const Color(0xFFF0FDFA);
 
-  Color get cardBorderColor {
-    // Pada screenshot Figma, Total Alpha memiliki border bernuansa merah/pink halus
-    if (this == AttendanceStatType.alpha) {
-      return const Color(0xFFFECDD3);
-    }
-    return const Color(0xFFE2E8F0);
-  }
+  Color get cardBgColor => const Color(0xFFF0FDFA);
 
-  Color get labelColor {
-    if (this == AttendanceStatType.alpha) {
-      return const Color(0xFFED2736);
-    }
-    return const Color(0xFF64748B);
-  }
+  Color get cardBorderColor => const Color(0xFFCCFBF1);
+
+  Color get labelColor => const Color(0xFF64748B);
 }
 
 /// Data model item statistik
@@ -218,16 +212,20 @@ class AttendanceStatCard extends StatelessWidget {
     return Container(
       height: 72.w,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.w),
+        color: type.cardBgColor,
+        borderRadius: BorderRadius.circular(16.r),
+        border: Border.all(
+          color: type.cardBorderColor,
+          width: 1.2.w,
+        ),
         boxShadow: [AppShadows.shadow094],
-        color: Colors.white,
       ),
       child: onTap != null
           ? Material(
               color: Colors.transparent,
               child: InkWell(
                 onTap: onTap,
-                borderRadius: BorderRadius.circular(10.w),
+                borderRadius: BorderRadius.circular(16.r),
                 splashColor: type.accentColor.withValues(alpha: 0.12),
                 highlightColor: type.accentColor.withValues(alpha: 0.05),
                 child: cardContent,
