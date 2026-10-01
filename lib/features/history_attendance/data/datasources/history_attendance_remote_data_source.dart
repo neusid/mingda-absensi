@@ -1,4 +1,5 @@
 import 'package:mingda_app/features/dashboard/data/models/attendance_history_model.dart';
+import 'package:mingda_app/features/dashboard/data/models/attendance_summary_model.dart';
 
 abstract class HistoryAttendanceRemoteDataSource {
   Future<AttendanceHistoryModel> filterHistoryAttendanceDatasource(
@@ -13,5 +14,10 @@ abstract class HistoryAttendanceRemoteDataSource {
     int? month,
     int? year,
     String? status,
+  );
+
+  Future<AttendanceSummaryModel> getAttendanceSummaryDatasource(
+    int? month,
+    int? year,
   );
 }

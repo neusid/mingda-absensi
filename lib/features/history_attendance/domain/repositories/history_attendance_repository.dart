@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
+import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
 
 abstract class HistoryAttendanceRepository {
   Future<Either<Failure, AttendanceHistoryEntity>>
@@ -18,4 +19,11 @@ abstract class HistoryAttendanceRepository {
     int? year,
     String? status,
   );
+
+  Future<Either<Failure, AttendanceSummaryEntity>>
+  getAttendanceSummaryRepository(
+    int? month,
+    int? year,
+  );
 }
+

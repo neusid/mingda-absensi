@@ -6,10 +6,10 @@ import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 
 class CardLongHistoryAttendanceWidget extends StatelessWidget {
-  final color;
-  final icon;
-  final title;
-  final subTitle;
+  final Color color;
+  final String icon;
+  final String title;
+  final String subTitle;
 
   const CardLongHistoryAttendanceWidget({
     super.key,

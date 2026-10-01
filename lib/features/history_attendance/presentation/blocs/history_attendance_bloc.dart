@@ -1,10 +1,13 @@
 import 'package:bloc/bloc.dart';
+import 'package:dartz/dartz.dart';
 import 'package:equatable/equatable.dart';
+import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/month_enum.dart';
 import 'package:mingda_app/features/history_attendance/domain/usecases/filter_history_attendance_usecase.dart';
+import 'package:mingda_app/features/history_attendance/domain/usecases/get_history_attendance_summary_usecase.dart';
 
 part 'history_attendance_event.dart';
 part 'history_attendance_state.dart';
@@ -12,10 +15,13 @@ part 'history_attendance_state.dart';
 class HistoryAttendanceBloc
     extends Bloc<HistoryAttendanceEvent, HistoryAttendanceState> {
   final FilterHistoryAttendanceUsecase filterHistoryAttendanceUsecase;
-  HistoryAttendanceBloc({required this.filterHistoryAttendanceUsecase})
-    : super(HistoryAttendanceInitialState()) {
+  final GetHistoryAttendanceSummaryUsecase getHistoryAttendanceSummaryUsecase;
+
+  HistoryAttendanceBloc({
+    required this.filterHistoryAttendanceUsecase,
+    required this.getHistoryAttendanceSummaryUsecase,
+  }) : super(HistoryAttendanceInitialState()) {
     on<HistoryAttendanceEventStarted>((event, emit) {
-      // TODO: implement event handler
       emit(HistoryAttendanceEarlyLoadingState());
       emit(
         HistoryAttendanceEarlyLoadedState(
@@ -26,30 +32,64 @@ class HistoryAttendanceBloc
     });
 
     on<HistoryAttendanceEventFiltered>((event, emit) async {
-      // TODO: implement event handler
       emit(HistoryAttendanceFilterLoadingState());
-      final statusParam = event.status?.toString().split('.').last.toLowerCase();
-      final result = await filterHistoryAttendanceUsecase(
+
+      String? statusParam;
+      if (event.status is AttendanceEnum) {
+        statusParam = (event.status as AttendanceEnum).name.toLowerCase();
+      } else if (event.status is String) {
+        final s = event.status.toString().trim().toLowerCase();
+        if (s.isNotEmpty && s != 'all' && s != 'semua' && s != '-- default --') {
+          statusParam = s;
+        }
+      }
+
+      final historyFuture = filterHistoryAttendanceUsecase(
         event.page,
         event.month,
         event.year,
         statusParam,
       );
-      result.fold(
+      final summaryFuture = getHistoryAttendanceSummaryUsecase(
+        event.month,
+        event.year,
+      );
+
+      final results = await Future.wait([historyFuture, summaryFuture]);
+      final historyResult =
+          results[0] as Either<Failure, AttendanceHistoryEntity>;
+      final summaryResult =
+          results[1] as Either<Failure, AttendanceSummaryEntity>;
+
+      historyResult.fold(
         (l) => emit(
           HistoryAttendanceFailedFilterState(
             event.historyEntity,
             event.summaryEntity,
           ),
         ),
-        (r) {
+        (historyData) {
+          final updatedSummary = summaryResult.fold(
+            (l) => event.summaryEntity,
+            (summaryData) => summaryData,
+          );
+
+          final MonthEnum? resolvedMonth =
+              (event.month != null && event.month! >= 1 && event.month! <= 12)
+                  ? MonthEnum.values[event.month! - 1]
+                  : null;
+
+          final AttendanceEnum? resolvedStatus = event.status is AttendanceEnum
+              ? event.status as AttendanceEnum
+              : null;
+
           emit(
             HistoryAttendanceFilterLoadedState(
-              r,
-              event.summaryEntity,
-              event.status,
-              MonthEnum.values[event.month - 1],
-              event.year,
+              historyData,
+              updatedSummary,
+              resolvedStatus,
+              resolvedMonth,
+              event.year ?? DateTime.now().year,
             ),
           );
         },
@@ -57,3 +97,4 @@ class HistoryAttendanceBloc
     });
   }
 }
+

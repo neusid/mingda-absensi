@@ -5,18 +5,25 @@ import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/core/utils/date_formatter.dart';
-import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
-import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_active_card_widget.dart';
-import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_not_active_card_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/card_dashboard_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/profile_network_image.dart';
+import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_attendance_card.dart';
 
 class DashboardPage extends StatelessWidget {
-  DashboardPage({super.key});
+  const DashboardPage({super.key});
 
-  ProfileEntity? entity;
+  void _openHistory(BuildContext context, SuccessDashboardState state) {
+    Navigator.of(context, rootNavigator: true).pushNamed(
+      '/history-attendance',
+      arguments: {
+        'history_attendance': state.attendanceHistoryEntity,
+        'summary_attendance': state.attendanceSummaryEntity,
+        'profile': state.profileEntity,
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -76,6 +83,11 @@ class DashboardPage extends StatelessWidget {
           }
 
           if (state is SuccessDashboardState) {
+            final recentAttendanceItems =
+                DashboardAttendanceItem.fromAttendanceList(
+              state.attendanceHistoryEntity.data,
+              limit: 4,
+            );
             return Container(
               width: double.infinity,
               height: double.infinity,
@@ -99,7 +111,7 @@ class DashboardPage extends StatelessWidget {
                                 Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Container(
+                                    SizedBox(
                                       width: 100.w,
                                       child: Text(
                                         "Good Morning,",
@@ -108,7 +120,7 @@ class DashboardPage extends StatelessWidget {
                                             .inter128MediumSecondary,
                                       ),
                                     ),
-                                    Container(
+                                    SizedBox(
                                       width: 200.w,
                                       child: Text(
                                         state.profileEntity.name,
@@ -187,23 +199,21 @@ class DashboardPage extends StatelessWidget {
                                     icon: 'calendar-tick',
                                     title: 'Hadir',
                                     subTitle: 'this month',
-                                    day:
-                                        state.attendanceSummaryEntity.hadir
-                                            .toString() ??
-                                        '0',
+                                    day: state.attendanceSummaryEntity.hadir
+                                        .toString(),
                                     description: 'TOTAL PRESENT',
+                                    onTap: () => _openHistory(context, state),
                                   ),
                                   CardDashboardWidget(
                                     icon: 'calendar-search',
                                     title: 'Terlambat',
                                     subTitle: 'this month',
-                                    day:
-                                        state
-                                            .attendanceSummaryEntity
-                                            .totalLateMinutes
-                                            .toString() ??
-                                        '0',
+                                    day: state
+                                        .attendanceSummaryEntity
+                                        .terlambat
+                                        .toString(),
                                     description: 'TOTAL LATE',
+                                    onTap: () => _openHistory(context, state),
                                   ),
                                 ],
                               ),
@@ -215,11 +225,11 @@ class DashboardPage extends StatelessWidget {
                                     icon: 'calendar-remove',
                                     title: 'Izin Sakit',
                                     subTitle: 'this month',
-                                    day:
-                                        state.attendanceSummaryEntity.izin
-                                            .toString() ??
-                                        '0',
+                                    day: (state.attendanceSummaryEntity.izin +
+                                            state.attendanceSummaryEntity.sakit)
+                                        .toString(),
                                     description: 'WORK PERMIT',
+                                    onTap: () => _openHistory(context, state),
                                   ),
                                   CardDashboardWidget(
                                     icon: 'calendar',
@@ -228,6 +238,7 @@ class DashboardPage extends StatelessWidget {
                                     day: state.attendanceSummaryEntity.cuti
                                         .toString(),
                                     description: 'WORK LEAVE',
+                                    onTap: () => _openHistory(context, state),
                                   ),
                                 ],
                               ),
@@ -267,6 +278,7 @@ class DashboardPage extends StatelessWidget {
                                             state.attendanceHistoryEntity,
                                         'summary_attendance':
                                             state.attendanceSummaryEntity,
+                                        'profile': state.profileEntity,
                                       },
                                     );
                                   },
@@ -299,67 +311,42 @@ class DashboardPage extends StatelessWidget {
                       ],
                     ),
                   ),
-                  SliverList.separated(
-                    itemCount: state.attendanceHistoryEntity.data.length > 4
-                        ? 4
-                        : state.attendanceHistoryEntity.data.length,
-                    itemBuilder: (context, index) {
-                      final attendance =
-                          state.attendanceHistoryEntity.data[index];
-                      if (index == 0) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () =>
-                                Navigator.of(
-                                  context,
-                                  rootNavigator: true,
-                                ).pushNamed(
-                                  '/detail-attendance',
-                                  arguments: {
-                                    'profile': state.profileEntity,
-                                    'attendance': attendance,
-                                  },
-                                ),
-                            child: AttendanceActiveCardWidget(
-                              status: attendance.status,
-                              day: attendance.attendanceDate
-                                  .toIndonesianDateString(),
-                              checkIn: attendance.checkIn ?? '-',
-                              checkOut: attendance.checkOut ?? '-',
-                            ),
-                          ),
+                  if (recentAttendanceItems.isEmpty)
+                    SliverToBoxAdapter(
+                      child: Container(
+                        padding: EdgeInsets.symmetric(vertical: 24.w),
+                        alignment: Alignment.center,
+                        child: Text(
+                          'Belum ada riwayat absensi',
+                          style: AppTextStyles.inter128RegularSecondary,
+                        ),
+                      ),
+                    )
+                  else
+                    SliverList.separated(
+                      itemCount: recentAttendanceItems.length,
+                      itemBuilder: (context, index) {
+                        final item = recentAttendanceItems[index];
+                        return DashboardAttendanceCard(
+                          item: item,
+                          onTap: () {
+                            Navigator.of(
+                              context,
+                              rootNavigator: true,
+                            ).pushNamed(
+                              '/detail-attendance',
+                              arguments: {
+                                'profile': state.profileEntity,
+                                'attendance': item.attendance,
+                              },
+                            );
+                          },
                         );
-                      } else {
-                        return Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () =>
-                                Navigator.of(
-                                  context,
-                                  rootNavigator: true,
-                                ).pushNamed(
-                                  '/detail-attendance',
-                                  arguments: {
-                                    'profile': state.profileEntity,
-                                    'attendance': attendance,
-                                  },
-                                ),
-                            child: AttendanceNotActiveCardWidget(
-                              status: attendance.status,
-                              day: attendance.attendanceDate
-                                  .toIndonesianDateString(),
-                              checkIn: attendance.checkIn ?? '-',
-                              checkOut: attendance.checkOut ?? '-',
-                            ),
-                          ),
-                        );
-                      }
-                    },
-                    separatorBuilder: (context, index) =>
-                        SizedBox(height: 10.w),
-                  ),
-                  SliverToBoxAdapter(child: SizedBox(height: 10)),
+                      },
+                      separatorBuilder: (context, index) =>
+                          SizedBox(height: 10.w),
+                    ),
+                  SliverToBoxAdapter(child: SizedBox(height: 16.w)),
                 ],
               ),
             );

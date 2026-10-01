@@ -5,20 +5,20 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
-import 'package:mingda_app/core/utils/date_formatter.dart';
 import 'package:mingda_app/core/widgets/skeleton.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
-import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_active_card_widget.dart';
-import 'package:mingda_app/features/dashboard/presentation/widgets/attendance_not_active_card_widget.dart';
+import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/month_enum.dart';
 import 'package:mingda_app/features/history_attendance/presentation/blocs/history_attendance_bloc.dart';
 import 'package:mingda_app/features/history_attendance/presentation/widgets/card_history_attendance_widget.dart';
+import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_attendance_card.dart';
 import 'package:mingda_app/features/history_attendance/presentation/widgets/history_skeleton.dart';
 
 class HistoryAttendancePage extends StatefulWidget {
-  const HistoryAttendancePage({super.key});
+  final ProfileEntity? profileEntity;
+  const HistoryAttendancePage({super.key, this.profileEntity});
 
   @override
   State<HistoryAttendancePage> createState() => _HistoryAttendancePageState();
@@ -40,16 +40,31 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
   AttendanceHistoryEntity? _lastHistory;
   AttendanceSummaryEntity? _lastSummary;
 
+  void _selectAttendanceStatus(AttendanceEnum? status) {
+    setState(() {
+      if (attendanceSelected == status) {
+        attendanceSelected = null;
+      } else {
+        attendanceSelected = status;
+      }
+    });
+    _applyFilter();
+  }
+
   void _applyFilter({int page = 1}) {
     final bloc = context.read<HistoryAttendanceBloc>();
     final current = bloc.state;
     if (current is! HistoryAttendanceLoadedState) return;
+
+    final int? selectedMonth =
+        monthSelected != null ? monthSelected!.index + 1 : null;
+
     bloc.add(
       HistoryAttendanceEventFiltered(
         historyEntity: current.historyEntity,
         summaryEntity: current.summaryEntity,
         page: page,
-        month: (monthSelected?.index ?? DateTime.now().month - 1) + 1,
+        month: selectedMonth,
         year: yearsSelected,
         status: attendanceSelected,
       ),
@@ -61,6 +76,95 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
     int start = ((current - 1) ~/ visiblePageCount) * visiblePageCount + 1;
     int end = (start + visiblePageCount - 1).clamp(1, last);
     return List.generate(end - start + 1, (i) => start + i);
+  }
+
+  ProfileEntity get _effectiveProfile =>
+      widget.profileEntity ??
+      const ProfileEntity(
+        id: 1,
+        employeeCode: 'MD-2024-001',
+        nik: '3578012345670001',
+        name: 'Karyawan',
+        gender: 'Laki-laki',
+        birthPlace: 'Surabaya',
+        birthDate: '2000-01-01',
+        maritalStatus: 'Belum Menikah',
+        agama: 'Islam',
+        bangsa: 'Indonesia',
+        statusKependudukan: 'WNI',
+        tanggunganAnak: 0,
+        namaIbuKandung: 'Ibu',
+        ktp: '3578012345670001',
+        kartuKeluarga: '3578012345670002',
+        departmentId: 1,
+        subDepartmentId: 1,
+        positionId: 1,
+        joinDate: '2023-01-01',
+        employmentStatus: 'Karyawan Tetap',
+        serikat: 'Tidak',
+        lulusanSekolah: 'S1',
+        workScheduleId: 1,
+        bank: 'BCA',
+        nomorRekening: '1234567890',
+        taxNpwp: '12.345.678.9-000.000',
+        bpjsKesehatan: '00000000000',
+        bpjsKetenagakerjaan: '00000000000',
+        address: 'Kantor Mingda',
+        city: 'Surabaya',
+        province: 'Jawa Timur',
+        desa: '-',
+        kecamatan: '-',
+        kabupaten: 'Surabaya',
+        postalCode: '60000',
+        phone: '08123456789',
+        email: 'karyawan@mingda.co.id',
+        emergencyContactName: '-',
+        emergencyContactPhone: '-',
+        userId: 1,
+        status: 'active',
+        profilePhoto: 'assets/img/mingda_logo.png',
+        createdAt: '2023-01-01',
+        updatedAt: '2023-01-01',
+        shiftType: 'Normal',
+        profilePhotoUrl: '',
+        department: DepartmentEntity(
+          id: 1,
+          name: 'General',
+          description: '-',
+          createdAt: '2023-01-01',
+          updatedAt: '2023-01-01',
+        ),
+        position: PositionEntity(
+          id: 1,
+          code: 'STF',
+          name: 'Staff',
+          description: '-',
+          status: 'active',
+          createdAt: '2023-01-01',
+          updatedAt: '2023-01-01',
+          displayName: 'Staff',
+        ),
+        workSchedule: WorkScheduleEntity(
+          id: 1,
+          name: 'Reguler',
+          startTime: '08:00',
+          endTime: '17:00',
+          lateTolerance: 15,
+          overtimeThreshold: 30,
+          isActive: true,
+          createdAt: '2023-01-01',
+          updatedAt: '2023-01-01',
+        ),
+      );
+
+  void _openDetail(AttendanceItemEntity attendance) {
+    Navigator.of(context, rootNavigator: true).pushNamed(
+      '/detail-attendance',
+      arguments: {
+        'profile': _effectiveProfile,
+        'attendance': attendance,
+      },
+    );
   }
 
   @override
@@ -111,6 +215,10 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
             );
           }
 
+          final attendanceItems = DashboardAttendanceItem.fromAttendanceList(
+            history.data,
+          );
+
           return Padding(
             padding: EdgeInsets.symmetric(horizontal: 25.w),
             child: CustomScrollView(
@@ -127,12 +235,21 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             icon: 'assets/icon/calendar-tick-2.svg',
                             title: summary.hadir.toString(),
                             subTitle: 'TOTAL HADIR',
+                            isSelected:
+                                attendanceSelected == AttendanceEnum.Hadir,
+                            onTap: () =>
+                                _selectAttendanceStatus(AttendanceEnum.Hadir),
                           ),
                           CardHistoryAttendanceWidget(
                             color: AppColors.yellow250,
                             icon: 'assets/icon/calendar-search-2.svg',
                             title: summary.terlambat.toString(),
                             subTitle: 'TOTAL TERLAMBAT',
+                            isSelected:
+                                attendanceSelected == AttendanceEnum.Terlambat,
+                            onTap: () => _selectAttendanceStatus(
+                              AttendanceEnum.Terlambat,
+                            ),
                           ),
                         ],
                       ),
@@ -145,12 +262,20 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             icon: 'assets/icon/calendar-remove-2.svg',
                             title: summary.alpha.toString(),
                             subTitle: 'TOTAL ALPHA',
+                            isSelected:
+                                attendanceSelected == AttendanceEnum.Alpha,
+                            onTap: () =>
+                                _selectAttendanceStatus(AttendanceEnum.Alpha),
                           ),
                           CardHistoryAttendanceWidget(
                             color: AppColors.charcoalSlate50,
                             icon: 'assets/icon/calendar-edit-2.svg',
                             title: summary.izin.toString(),
                             subTitle: 'TOTAL IZIN',
+                            isSelected:
+                                attendanceSelected == AttendanceEnum.Izin,
+                            onTap: () =>
+                                _selectAttendanceStatus(AttendanceEnum.Izin),
                           ),
                         ],
                       ),
@@ -163,12 +288,20 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             icon: 'assets/icon/calendar-clock-2.svg',
                             title: summary.cuti.toString(),
                             subTitle: 'TOTAL CUTI',
+                            isSelected:
+                                attendanceSelected == AttendanceEnum.Cuti,
+                            onTap: () =>
+                                _selectAttendanceStatus(AttendanceEnum.Cuti),
                           ),
                           CardHistoryAttendanceWidget(
                             color: AppColors.charcoalSlate50,
                             icon: 'assets/icon/calendar-add-2.svg',
                             title: summary.sakit.toString(),
                             subTitle: 'TOTAL SAKIT',
+                            isSelected:
+                                attendanceSelected == AttendanceEnum.Sakit,
+                            onTap: () =>
+                                _selectAttendanceStatus(AttendanceEnum.Sakit),
                           ),
                         ],
                       ),
@@ -186,7 +319,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              'Riwayat Absensi - Month',
+                              'Riwayat Absensi${attendanceSelected != null ? " - ${attendanceSelected!.name}" : ""}${monthSelected != null ? " - ${monthSelected!.name}" : ""} $yearsSelected',
                               style: AppTextStyles.inter13RegularPrimary,
                             ),
                           ],
@@ -240,7 +373,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                   SliverList.separated(
                     itemCount: 4,
                     itemBuilder: (context, index) => SkeletonLoading(
-                      child: SkeletonBox(width: double.infinity, height: 65.w),
+                      child: SkeletonBox(width: double.infinity, height: 76.w),
                     ),
                     separatorBuilder: (context, index) =>
                         SizedBox(height: 10.w),
@@ -257,7 +390,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                       ),
                     ),
                   )
-                else if (history.data.isEmpty)
+                else if (attendanceItems.isEmpty)
                   SliverToBoxAdapter(
                     child: Padding(
                       padding: EdgeInsets.symmetric(vertical: 60.w),
@@ -271,38 +404,13 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                   )
                 else
                   SliverList.separated(
-                    itemCount: history.data.length,
+                    itemCount: attendanceItems.length,
                     itemBuilder: (context, index) {
-                      final attendance = history.data[index];
-                      if (index == 0) {
-                        return Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => true,
-                            child: AttendanceActiveCardWidget(
-                              status: attendance.status,
-                              day: attendance.attendanceDate
-                                  .toIndonesianDateString(),
-                              checkIn: attendance.checkIn ?? '-',
-                              checkOut: attendance.checkOut ?? '-',
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Material(
-                          color: Colors.transparent,
-                          child: InkWell(
-                            onTap: () => true,
-                            child: AttendanceNotActiveCardWidget(
-                              status: attendance.status,
-                              day: attendance.attendanceDate
-                                  .toIndonesianDateString(),
-                              checkIn: attendance.checkIn ?? '-',
-                              checkOut: attendance.checkOut ?? '-',
-                            ),
-                          ),
-                        );
-                      }
+                      final item = attendanceItems[index];
+                      return DashboardAttendanceCard(
+                        item: item,
+                        onTap: () => _openDetail(item.attendance),
+                      );
                     },
                     separatorBuilder: (context, index) =>
                         SizedBox(height: 10.w),
@@ -454,29 +562,37 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                     borderRadius: BorderRadius.circular(10.w),
                     color: AppColors.white,
                   ),
-                  child: DropdownButtonFormField<MonthEnum>(
+                  child: DropdownButtonFormField<MonthEnum?>(
                     key: monthDropdownKey,
-                    decoration: InputDecoration(border: InputBorder.none),
+                    initialValue: monthSelected,
+                    decoration: const InputDecoration(border: InputBorder.none),
                     isExpanded: true,
                     hint: Center(
                       child: Text(
-                        "-- default --",
+                        "-- Semua Bulan --",
                         style: AppTextStyles.inter14MediumSecondary,
                       ),
                     ),
                     style: AppTextStyles.inter14MediumSecondary,
                     dropdownColor: AppColors.white,
-                    items: MonthEnum.values
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e.name,
-                              style: AppTextStyles.inter14MediumSecondary,
-                            ),
+                    items: [
+                      DropdownMenuItem<MonthEnum?>(
+                        value: null,
+                        child: Text(
+                          "-- Semua Bulan --",
+                          style: AppTextStyles.inter14MediumSecondary,
+                        ),
+                      ),
+                      ...MonthEnum.values.map(
+                        (e) => DropdownMenuItem<MonthEnum?>(
+                          value: e,
+                          child: Text(
+                            e.name,
+                            style: AppTextStyles.inter14MediumSecondary,
                           ),
-                        )
-                        .toList(),
+                        ),
+                      ),
+                    ],
                     onChanged: onMonthChanged,
                   ),
                 ),
@@ -489,10 +605,10 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                     color: AppColors.white,
                   ),
                   child: DropdownButtonFormField<int>(
-                    decoration: InputDecoration(border: InputBorder.none),
+                    initialValue: yearsSelected,
+                    decoration: const InputDecoration(border: InputBorder.none),
                     style: AppTextStyles.inter14MediumSecondary,
                     dropdownColor: AppColors.white,
-                    initialValue: yearsSelected,
                     items: listYears
                         .map(
                           (e) => DropdownMenuItem(
@@ -521,29 +637,37 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                     borderRadius: BorderRadius.circular(10.w),
                     color: AppColors.white,
                   ),
-                  child: DropdownButtonFormField<AttendanceEnum>(
+                  child: DropdownButtonFormField<AttendanceEnum?>(
                     key: attendanceDropdownKey,
-                    decoration: InputDecoration(border: InputBorder.none),
+                    initialValue: attendanceSelected,
+                    decoration: const InputDecoration(border: InputBorder.none),
                     isExpanded: true,
                     hint: Center(
                       child: Text(
-                        "-- default --",
+                        "-- Semua Kehadiran --",
                         style: AppTextStyles.inter14MediumSecondary,
                       ),
                     ),
                     style: AppTextStyles.inter14MediumSecondary,
                     dropdownColor: AppColors.white,
-                    items: AttendanceEnum.values
-                        .map(
-                          (e) => DropdownMenuItem(
-                            value: e,
-                            child: Text(
-                              e.name,
-                              style: AppTextStyles.inter14MediumSecondary,
-                            ),
+                    items: [
+                      DropdownMenuItem<AttendanceEnum?>(
+                        value: null,
+                        child: Text(
+                          "-- Semua Kehadiran --",
+                          style: AppTextStyles.inter14MediumSecondary,
+                        ),
+                      ),
+                      ...AttendanceEnum.values.map(
+                        (e) => DropdownMenuItem<AttendanceEnum?>(
+                          value: e,
+                          child: Text(
+                            e.name,
+                            style: AppTextStyles.inter14MediumSecondary,
                           ),
-                        )
-                        .toList(),
+                        ),
+                      ),
+                    ],
                     onChanged: onAttendanceChanged,
                   ),
                 ),

@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:dartz/dartz.dart';
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
+import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
 import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_remote_data_source.dart';
 import 'package:mingda_app/features/history_attendance/domain/repositories/history_attendance_repository.dart';
 
@@ -12,6 +13,7 @@ class HistoryAttendanceRepositoryImpl implements HistoryAttendanceRepository {
     required this.historyAttendanceRemoteDataSource,
   });
 
+  @override
   Future<Either<Failure, AttendanceHistoryEntity>>
   filterHistoryAttendanceRepository(
     int? page,
@@ -32,6 +34,7 @@ class HistoryAttendanceRepositoryImpl implements HistoryAttendanceRepository {
     }
   }
 
+  @override
   Future<Either<Failure, AttendanceHistoryEntity>>
   paginationHistoryAttendanceRepository(
     int? page,
@@ -51,4 +54,24 @@ class HistoryAttendanceRepositoryImpl implements HistoryAttendanceRepository {
       return left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, AttendanceSummaryEntity>>
+  getAttendanceSummaryRepository(
+    int? month,
+    int? year,
+  ) async {
+    try {
+      final result = await historyAttendanceRemoteDataSource
+          .getAttendanceSummaryDatasource(month, year);
+      return right(result);
+    } on Failure catch (f) {
+      return left(f);
+    } on SocketException {
+      return left(NetworkFailure());
+    } catch (e) {
+      return left(ServerFailure(e.toString()));
+    }
+  }
 }
+

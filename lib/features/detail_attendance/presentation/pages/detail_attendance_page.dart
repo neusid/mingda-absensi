@@ -7,18 +7,50 @@ import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/core/utils/date_formatter.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
+import 'package:mingda_app/features/dashboard/presentation/widgets/profile_network_image.dart';
 import 'package:mingda_app/features/detail_attendance/presentation/widgets/card_detail_attendance.dart';
 import 'package:mingda_app/features/detail_attendance/presentation/widgets/card_long_detail_attendance.dart';
 import 'package:mingda_app/features/detail_attendance/presentation/widgets/image_not_found_widget.dart';
 
 class DetailAttendancePage extends StatelessWidget {
-  ProfileEntity profileEntity;
-  AttendanceItemEntity attendanceItemEntity;
-  DetailAttendancePage({
+  final ProfileEntity profileEntity;
+  final AttendanceItemEntity attendanceItemEntity;
+  const DetailAttendancePage({
     super.key,
     required this.profileEntity,
     required this.attendanceItemEntity,
   });
+
+  Widget _buildAttendancePhoto(String? photo) {
+    if (photo == null || photo.trim().isEmpty || photo.trim() == 'null') {
+      return const ImageNotFoundWidget();
+    }
+    final cleanPhoto = photo.trim();
+    if (cleanPhoto.startsWith('http://') || cleanPhoto.startsWith('https://')) {
+      return ProfileNetworkImage(
+        url: cleanPhoto,
+        width: 158.w,
+        height: 130.w,
+        radius: 10.w,
+        fit: BoxFit.cover,
+        fallback: const ImageNotFoundWidget(),
+      );
+    }
+    if (cleanPhoto.startsWith('assets/')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(10.w),
+        child: Image.asset(
+          cleanPhoto,
+          width: 158.w,
+          height: 130.w,
+          fit: BoxFit.cover,
+          errorBuilder: (context, error, stackTrace) =>
+              const ImageNotFoundWidget(),
+        ),
+      );
+    }
+    return const ImageNotFoundWidget();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -256,17 +288,7 @@ class DetailAttendancePage extends StatelessWidget {
                           boxShadow: [AppShadows.shadow094],
                           borderRadius: BorderRadius.circular(10.w),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.w),
-                          child: attendanceItemEntity.photoIn != null
-                              ? Image.network(
-                                  attendanceItemEntity.photoIn.toString(),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      ImageNotFoundWidget(),
-                                )
-                              : ImageNotFoundWidget(),
-                        ),
+                        child: _buildAttendancePhoto(attendanceItemEntity.photoIn),
                       ),
                       Container(
                         width: 158.w,
@@ -299,17 +321,7 @@ class DetailAttendancePage extends StatelessWidget {
                           boxShadow: [AppShadows.shadow094],
                           borderRadius: BorderRadius.circular(10.w),
                         ),
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(10.w),
-                          child: attendanceItemEntity.photoOut != null
-                              ? Image.network(
-                                  attendanceItemEntity.photoOut.toString(),
-                                  fit: BoxFit.cover,
-                                  errorBuilder: (context, error, stackTrace) =>
-                                      ImageNotFoundWidget(),
-                                )
-                              : ImageNotFoundWidget(),
-                        ),
+                        child: _buildAttendancePhoto(attendanceItemEntity.photoOut),
                       ),
                       Container(
                         width: 158.w,

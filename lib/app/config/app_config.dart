@@ -1,6 +1,6 @@
 class AppConfig {
   /// Mode offline:
-  /// Ketika bernilai `true`, aplikasi berjalan 100% offline menggunakan dummy data
-  /// tanpa melakukan panggilan HTTP/API ke server.
-  static const bool isOfflineMode = true;
+  /// Ketika bernilai `false`, aplikasi berjalan menggunakan Real API backend (live)
+  /// dan tidak menggunakan data dummy/mock.
+  static const bool isOfflineMode = false;
 }

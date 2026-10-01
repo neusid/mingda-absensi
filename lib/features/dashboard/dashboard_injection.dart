@@ -64,6 +64,6 @@ void initDashboardInjection(GetIt sl) {
   sl.registerLazySingleton<DashboardRemoteDataSource>(
     () => AppConfig.isOfflineMode
         ? DashboardDummyDataSourceImpl()
-        : DashboardRemoteDataSourceImpl(dio: sl<Dio>()),
+        : DashboardRemoteDataSourceImpl(dio: sl<DioClient>().dio),
   );
 }

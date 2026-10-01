@@ -1,12 +1,13 @@
-import 'package:dio/dio.dart';
 import 'package:get_it/get_it.dart';
 import 'package:mingda_app/app/config/app_config.dart';
+import 'package:mingda_app/app/config/dio_client.dart';
 import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_dummy_data_source_impl.dart';
 import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_remote_data_source.dart';
 import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_remote_data_source_impl.dart';
 import 'package:mingda_app/features/history_attendance/data/repositories/history_attendance_repository_impl.dart';
 import 'package:mingda_app/features/history_attendance/domain/repositories/history_attendance_repository.dart';
 import 'package:mingda_app/features/history_attendance/domain/usecases/filter_history_attendance_usecase.dart';
+import 'package:mingda_app/features/history_attendance/domain/usecases/get_history_attendance_summary_usecase.dart';
 import 'package:mingda_app/features/history_attendance/presentation/blocs/history_attendance_bloc.dart';
 
 void initHistoryAttendanceInjection(GetIt sl) {
@@ -14,12 +15,20 @@ void initHistoryAttendanceInjection(GetIt sl) {
   sl.registerFactory<HistoryAttendanceBloc>(
     () => HistoryAttendanceBloc(
       filterHistoryAttendanceUsecase: sl<FilterHistoryAttendanceUsecase>(),
+      getHistoryAttendanceSummaryUsecase:
+          sl<GetHistoryAttendanceSummaryUsecase>(),
     ),
   );
 
   // usecase
   sl.registerLazySingleton<FilterHistoryAttendanceUsecase>(
     () => FilterHistoryAttendanceUsecase(
+      historyAttendanceRepository: sl<HistoryAttendanceRepository>(),
+    ),
+  );
+
+  sl.registerLazySingleton<GetHistoryAttendanceSummaryUsecase>(
+    () => GetHistoryAttendanceSummaryUsecase(
       historyAttendanceRepository: sl<HistoryAttendanceRepository>(),
     ),
   );
@@ -36,6 +45,6 @@ void initHistoryAttendanceInjection(GetIt sl) {
   sl.registerLazySingleton<HistoryAttendanceRemoteDataSource>(
     () => AppConfig.isOfflineMode
         ? HistoryAttendanceDummyDataSourceImpl()
-        : HistoryAttendanceRemoteDataSourceImpl(dio: sl<Dio>()),
+        : HistoryAttendanceRemoteDataSourceImpl(dio: sl<DioClient>().dio),
   );
 }

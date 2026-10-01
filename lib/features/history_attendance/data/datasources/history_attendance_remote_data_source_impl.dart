@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/data/models/attendance_history_model.dart';
+import 'package:mingda_app/features/dashboard/data/models/attendance_summary_model.dart';
 import 'package:mingda_app/features/history_attendance/data/datasources/history_attendance_remote_data_source.dart';
 
 class HistoryAttendanceRemoteDataSourceImpl
@@ -8,6 +9,7 @@ class HistoryAttendanceRemoteDataSourceImpl
   final Dio dio;
   HistoryAttendanceRemoteDataSourceImpl({required this.dio});
 
+  @override
   Future<AttendanceHistoryModel> filterHistoryAttendanceDatasource(
     int? page,
     int? month,
@@ -49,6 +51,7 @@ class HistoryAttendanceRemoteDataSourceImpl
     }
   }
 
+  @override
   Future<AttendanceHistoryModel> paginationHistoryAttendanceDatasource(
     int? page,
     int? month,
@@ -89,4 +92,40 @@ class HistoryAttendanceRemoteDataSourceImpl
       throw ServerFailure(apiMessage ?? 'Server error: $statusCode');
     }
   }
+
+  @override
+  Future<AttendanceSummaryModel> getAttendanceSummaryDatasource(
+    int? month,
+    int? year,
+  ) async {
+    try {
+      final response = await dio.get(
+        '/mobile/v1/attendance/summary',
+        queryParameters: {
+          if (month != null) 'month': month,
+          if (year != null) 'year': year,
+        },
+      );
+
+      return AttendanceSummaryModel.fromJson(response.data);
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final apiMessage = e.response?.data['message']?.toString();
+
+      print("DioException getAttendanceSummaryDatasource StatusCode: $statusCode");
+
+      if (statusCode == 401) {
+        throw AuthFailure(
+          apiMessage ?? 'Token sudah tidak berlaku, mohon login ulang',
+        );
+      }
+
+      if (statusCode == 405) {
+        throw AuthFailure(apiMessage.toString());
+      }
+
+      throw ServerFailure(apiMessage ?? 'Server error: $statusCode');
+    }
+  }
 }
+

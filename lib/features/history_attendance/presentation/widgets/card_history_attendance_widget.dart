@@ -6,10 +6,12 @@ import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 
 class CardHistoryAttendanceWidget extends StatelessWidget {
-  final color;
-  final icon;
-  final title;
-  final subTitle;
+  final Color color;
+  final String icon;
+  final String title;
+  final String subTitle;
+  final VoidCallback? onTap;
+  final bool isSelected;
 
   const CardHistoryAttendanceWidget({
     super.key,
@@ -17,49 +19,63 @@ class CardHistoryAttendanceWidget extends StatelessWidget {
     required this.icon,
     required this.title,
     required this.subTitle,
+    this.onTap,
+    this.isSelected = false,
   });
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      width: 159.w,
-      height: 62.w,
-      padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 11.w),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        boxShadow: [AppShadows.shadow094],
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
         borderRadius: BorderRadius.circular(10.w),
-      ),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Container(
-            width: 40.w,
-            height: 40.w,
-            decoration: BoxDecoration(
-              color: color,
-              borderRadius: BorderRadius.circular(5.w),
-            ),
-            child: Center(child: SvgPicture.asset(icon)),
+        onTap: onTap,
+        child: Container(
+          width: 159.w,
+          height: 62.w,
+          padding: EdgeInsets.symmetric(horizontal: 11.w, vertical: 11.w),
+          decoration: BoxDecoration(
+            color: AppColors.white,
+            boxShadow: [AppShadows.shadow094],
+            borderRadius: BorderRadius.circular(10.w),
+            border: isSelected
+                ? Border.all(color: color, width: 2.w)
+                : Border.all(color: Colors.transparent, width: 2.w),
           ),
-          SizedBox(width: 14.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              Text(
-                title,
-                style: AppTextStyles.inter16MediumPrimary,
-                overflow: TextOverflow.ellipsis,
+              Container(
+                width: 40.w,
+                height: 40.w,
+                decoration: BoxDecoration(
+                  color: color,
+                  borderRadius: BorderRadius.circular(5.w),
+                ),
+                child: Center(child: SvgPicture.asset(icon)),
               ),
-              Spacer(),
-              Text(
-                subTitle,
-                style: AppTextStyles.inter8MediumSecondary,
-                overflow: TextOverflow.ellipsis,
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: AppTextStyles.inter16MediumPrimary,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                    const Spacer(),
+                    Text(
+                      subTitle,
+                      style: AppTextStyles.inter8MediumSecondary,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
+                ),
               ),
             ],
           ),
-        ],
+        ),
       ),
     );
   }

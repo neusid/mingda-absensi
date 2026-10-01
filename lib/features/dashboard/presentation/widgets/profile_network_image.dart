@@ -3,21 +3,22 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/painting.dart';
 
-/// Menampilkan gambar profil dari jaringan.
+/// Menampilkan gambar dari jaringan dengan dukungan Cloudflare R2 dan validasi byte stream.
 ///
-/// Cloudflare R2 (`*.r2.dev`) terkadang punya masalah sertifikat SSL
-/// (hostname mismatch) sehingga `NetworkImage` biasa gagal dimuat.
-/// Widget ini memakai [HttpClient] custom yang hanya menerima sertifikat
-/// untuk host `r2.dev`, supaya gambar profil tetap tampil tanpa
-/// memengaruhi verifikasi SSL untuk domain lain.
+/// Cloudflare R2 (`*.r2.dev`) terkadang memiliki masalah sertifikat SSL
+/// (hostname mismatch) sehingga `NetworkImage` standar gagal dimuat.
+/// Widget ini memakai [HttpClient] khusus untuk host `r2.dev`, memverifikasi
+/// integritas magic bytes gambar sebelum diteruskan ke native decoder, dan
+/// langsung menampilkan fallback bila URL kosong atau tidak valid untuk
+/// mencegah error `ImageDecoder$DecodeException: unimplemented`.
 class ProfileNetworkImage extends StatelessWidget {
   final String url;
   final double? width;
   final double? height;
   final double radius;
   final BoxFit fit;
+  final Widget? fallback;
 
   const ProfileNetworkImage({
     super.key,
@@ -26,11 +27,18 @@ class ProfileNetworkImage extends StatelessWidget {
     this.height,
     this.radius = 10,
     this.fit = BoxFit.cover,
+    this.fallback,
   });
 
   @override
   Widget build(BuildContext context) {
-    final imageProvider = _InsecureR2NetworkImage(url);
+    final cleanUrl = url.trim();
+    if (cleanUrl.isEmpty ||
+        (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://'))) {
+      return fallback ?? _buildDefaultFallback();
+    }
+
+    final imageProvider = _InsecureR2NetworkImage(cleanUrl);
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(radius),
@@ -40,18 +48,22 @@ class ProfileNetworkImage extends StatelessWidget {
         height: height,
         fit: fit,
         errorBuilder: (context, error, stack) {
-          return Container(
-            width: width,
-            height: height,
-            color: Colors.grey.shade200,
-            alignment: Alignment.center,
-            child: Icon(
-              Icons.person,
-              size: (width ?? 50) * 0.6,
-              color: Colors.grey,
-            ),
-          );
+          return fallback ?? _buildDefaultFallback();
         },
+      ),
+    );
+  }
+
+  Widget _buildDefaultFallback() {
+    return Container(
+      width: width,
+      height: height,
+      color: Colors.grey.shade200,
+      alignment: Alignment.center,
+      child: Icon(
+        Icons.person,
+        size: (width ?? 50) * 0.6,
+        color: Colors.grey,
       ),
     );
   }
@@ -80,6 +92,44 @@ class _InsecureR2NetworkImage extends ImageProvider<_InsecureR2NetworkImage> {
     );
   }
 
+  static bool _isValidImageBytes(Uint8List bytes) {
+    if (bytes.length < 12) return false;
+    // PNG: 89 50 4E 47
+    if (bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4E &&
+        bytes[3] == 0x47) {
+      return true;
+    }
+    // JPEG: FF D8 FF
+    if (bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF) {
+      return true;
+    }
+    // GIF: GIF8
+    if (bytes[0] == 0x47 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x38) {
+      return true;
+    }
+    // WebP: RIFF .... WEBP
+    if (bytes[0] == 0x52 &&
+        bytes[1] == 0x49 &&
+        bytes[2] == 0x46 &&
+        bytes[3] == 0x46 &&
+        bytes[8] == 0x57 &&
+        bytes[9] == 0x45 &&
+        bytes[10] == 0x42 &&
+        bytes[11] == 0x50) {
+      return true;
+    }
+    // BMP: BM
+    if (bytes[0] == 0x42 && bytes[1] == 0x4D) {
+      return true;
+    }
+    return false;
+  }
+
   Future<ui.Codec> _loadAsync(
     _InsecureR2NetworkImage key,
     ImageDecoderCallback decode,
@@ -90,15 +140,25 @@ class _InsecureR2NetworkImage extends ImageProvider<_InsecureR2NetworkImage> {
       };
 
     try {
-      final request = await client.getUrl(Uri.parse(url));
+      final uri = Uri.tryParse(url);
+      if (uri == null || !uri.hasScheme) {
+        throw const FormatException('Invalid image URI');
+      }
+
+      final request = await client.getUrl(uri);
       final response = await request.close();
       if (response.statusCode != HttpStatus.ok) {
         throw HttpException(
           'HTTP ${response.statusCode} loading $url',
-          uri: Uri.parse(url),
+          uri: uri,
         );
       }
       final bytes = await consolidateHttpClientResponseBytes(response);
+      if (!_isValidImageBytes(bytes)) {
+        throw FormatException(
+          'Response bytes from $url are not a supported image format',
+        );
+      }
       final buffer = await ui.ImmutableBuffer.fromUint8List(bytes);
       return await decode(buffer);
     } finally {

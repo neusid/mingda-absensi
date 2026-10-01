@@ -19,10 +19,11 @@ class HistoryAttendanceEventStarted extends HistoryAttendanceEvent {
 class HistoryAttendanceEventFiltered extends HistoryAttendanceEvent {
   final AttendanceHistoryEntity historyEntity;
   final AttendanceSummaryEntity summaryEntity;
-  final page;
-  final month;
-  final year;
-  final status;
+  final int page;
+  final int? month;
+  final int? year;
+  final dynamic status;
+
   const HistoryAttendanceEventFiltered({
     required this.historyEntity,
     required this.summaryEntity,
@@ -31,4 +32,15 @@ class HistoryAttendanceEventFiltered extends HistoryAttendanceEvent {
     required this.year,
     required this.status,
   });
+
+  @override
+  List<Object?> get props => [
+        historyEntity,
+        summaryEntity,
+        page,
+        month,
+        year,
+        status,
+      ];
 }
+

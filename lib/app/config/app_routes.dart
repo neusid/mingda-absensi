@@ -53,6 +53,7 @@ class AppRoutes {
             args['summary_attendance'] as AttendanceSummaryEntity;
         final historyAttendance =
             args['history_attendance'] as AttendanceHistoryEntity;
+        final profile = args['profile'] as ProfileEntity?;
 
         return MaterialPageRoute(
           builder: (context) => BlocProvider(
@@ -63,7 +64,7 @@ class AppRoutes {
                   summaryEntity: summaryAttendance,
                 ),
               ),
-            child: HistoryAttendancePage(),
+            child: HistoryAttendancePage(profileEntity: profile),
           ),
         );
       case '/work-leave':
