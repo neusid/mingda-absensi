@@ -12,7 +12,7 @@ import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dar
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/month_enum.dart';
 import 'package:mingda_app/features/history_attendance/presentation/blocs/history_attendance_bloc.dart';
-import 'package:mingda_app/features/history_attendance/presentation/widgets/card_history_attendance_widget.dart';
+import 'package:mingda_app/features/history_attendance/presentation/widgets/attendance_stat_card.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_attendance_card.dart';
 import 'package:mingda_app/features/history_attendance/presentation/widgets/history_skeleton.dart';
 
@@ -229,80 +229,80 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                     children: [
                       SizedBox(height: 20.w),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CardHistoryAttendanceWidget(
-                            color: AppColors.green250,
-                            icon: 'assets/icon/calendar-tick-2.svg',
-                            title: summary.hadir.toString(),
-                            subTitle: 'TOTAL HADIR',
-                            isSelected:
-                                attendanceSelected == AttendanceEnum.Hadir,
-                            onTap: () =>
-                                _selectAttendanceStatus(AttendanceEnum.Hadir),
+                          Expanded(
+                            child: AttendanceStatCard(
+                              type: AttendanceStatType.hadir,
+                              count: summary.hadir,
+                              isSelected:
+                                  attendanceSelected == AttendanceEnum.Hadir,
+                              onTap: () =>
+                                  _selectAttendanceStatus(AttendanceEnum.Hadir),
+                            ),
                           ),
-                          CardHistoryAttendanceWidget(
-                            color: AppColors.yellow250,
-                            icon: 'assets/icon/calendar-search-2.svg',
-                            title: summary.terlambat.toString(),
-                            subTitle: 'TOTAL TERLAMBAT',
-                            isSelected:
-                                attendanceSelected == AttendanceEnum.Terlambat,
-                            onTap: () => _selectAttendanceStatus(
-                              AttendanceEnum.Terlambat,
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: AttendanceStatCard(
+                              type: AttendanceStatType.terlambat,
+                              count: summary.terlambat,
+                              isSelected: attendanceSelected ==
+                                  AttendanceEnum.Terlambat,
+                              onTap: () => _selectAttendanceStatus(
+                                AttendanceEnum.Terlambat,
+                              ),
                             ),
                           ),
                         ],
                       ),
                       SizedBox(height: 10.w),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CardHistoryAttendanceWidget(
-                            color: AppColors.red50,
-                            icon: 'assets/icon/calendar-remove-2.svg',
-                            title: summary.alpha.toString(),
-                            subTitle: 'TOTAL ALPHA',
-                            isSelected:
-                                attendanceSelected == AttendanceEnum.Alpha,
-                            onTap: () =>
-                                _selectAttendanceStatus(AttendanceEnum.Alpha),
+                          Expanded(
+                            child: AttendanceStatCard(
+                              type: AttendanceStatType.alpha,
+                              count: summary.alpha,
+                              isSelected:
+                                  attendanceSelected == AttendanceEnum.Alpha,
+                              onTap: () =>
+                                  _selectAttendanceStatus(AttendanceEnum.Alpha),
+                            ),
                           ),
-                          CardHistoryAttendanceWidget(
-                            color: AppColors.charcoalSlate50,
-                            icon: 'assets/icon/calendar-edit-2.svg',
-                            title: summary.izin.toString(),
-                            subTitle: 'TOTAL IZIN',
-                            isSelected:
-                                attendanceSelected == AttendanceEnum.Izin,
-                            onTap: () =>
-                                _selectAttendanceStatus(AttendanceEnum.Izin),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: AttendanceStatCard(
+                              type: AttendanceStatType.izin,
+                              count: summary.izin,
+                              isSelected:
+                                  attendanceSelected == AttendanceEnum.Izin,
+                              onTap: () =>
+                                  _selectAttendanceStatus(AttendanceEnum.Izin),
+                            ),
                           ),
                         ],
                       ),
                       SizedBox(height: 10.w),
                       Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          CardHistoryAttendanceWidget(
-                            color: AppColors.charcoalSlate50,
-                            icon: 'assets/icon/calendar-clock-2.svg',
-                            title: summary.cuti.toString(),
-                            subTitle: 'TOTAL CUTI',
-                            isSelected:
-                                attendanceSelected == AttendanceEnum.Cuti,
-                            onTap: () =>
-                                _selectAttendanceStatus(AttendanceEnum.Cuti),
+                          Expanded(
+                            child: AttendanceStatCard(
+                              type: AttendanceStatType.cuti,
+                              count: summary.cuti,
+                              isSelected:
+                                  attendanceSelected == AttendanceEnum.Cuti,
+                              onTap: () =>
+                                  _selectAttendanceStatus(AttendanceEnum.Cuti),
+                            ),
                           ),
-                          CardHistoryAttendanceWidget(
-                            color: AppColors.charcoalSlate50,
-                            icon: 'assets/icon/calendar-add-2.svg',
-                            title: summary.sakit.toString(),
-                            subTitle: 'TOTAL SAKIT',
-                            isSelected:
-                                attendanceSelected == AttendanceEnum.Sakit,
-                            onTap: () =>
-                                _selectAttendanceStatus(AttendanceEnum.Sakit),
+                          SizedBox(width: 10.w),
+                          Expanded(
+                            child: AttendanceStatCard(
+                              type: AttendanceStatType.sakit,
+                              count: summary.sakit,
+                              isSelected:
+                                  attendanceSelected == AttendanceEnum.Sakit,
+                              onTap: () =>
+                                  _selectAttendanceStatus(AttendanceEnum.Sakit),
+                            ),
                           ),
                         ],
                       ),
