@@ -102,12 +102,27 @@ enum AttendanceStatType {
     }
   }
 
-  /// Background pastel lembut untuk kontainer squircle
-  Color get containerBgColor => const Color(0xFFF0FDFA);
+  /// Background pastel lembut untuk kontainer squircle badge
+  Color get containerBgColor {
+    switch (this) {
+      case AttendanceStatType.hadir:
+        return const Color(0xFFE6F7EB);
+      case AttendanceStatType.terlambat:
+        return const Color(0xFFFFF8E6);
+      case AttendanceStatType.alpha:
+        return const Color(0xFFFEECEE);
+      case AttendanceStatType.izin:
+        return const Color(0xFFE6F7FB);
+      case AttendanceStatType.cuti:
+        return const Color(0xFFEEF2FF);
+      case AttendanceStatType.sakit:
+        return const Color(0xFFF0FDFA);
+    }
+  }
 
-  Color get cardBgColor => const Color(0xFFF0FDFA);
+  Color get cardBgColor => Colors.white;
 
-  Color get cardBorderColor => const Color(0xFFCCFBF1);
+  Color get cardBorderColor => Colors.transparent;
 
   Color get labelColor => const Color(0xFF64748B);
 }
@@ -212,12 +227,8 @@ class AttendanceStatCard extends StatelessWidget {
     return Container(
       height: 72.w,
       decoration: BoxDecoration(
-        color: type.cardBgColor,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: type.cardBorderColor,
-          width: 1.2.w,
-        ),
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10.w),
         boxShadow: [AppShadows.shadow094],
       ),
       child: onTap != null
@@ -225,7 +236,7 @@ class AttendanceStatCard extends StatelessWidget {
               color: Colors.transparent,
               child: InkWell(
                 onTap: onTap,
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(10.w),
                 splashColor: type.accentColor.withValues(alpha: 0.12),
                 highlightColor: type.accentColor.withValues(alpha: 0.05),
                 child: cardContent,
