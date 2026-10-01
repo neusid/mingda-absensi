@@ -270,12 +270,12 @@ class _AnnouncementCarouselWidgetState
                     ],
                   ),
 
-                  // Title (Teks di Tengah)
+                  // Title (Teks di Tengah - Dibatasi hingga tengah card agar ganti baris)
                   SizedBox(
-                    width: 220.w,
+                    width: 155.w,
                     child: Text(
                       item.title,
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Inter',
