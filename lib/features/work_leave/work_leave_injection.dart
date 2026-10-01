@@ -33,7 +33,7 @@ void initWorkLeaveInjection(GetIt sl) {
 
   // data source
   sl.registerLazySingleton<WorkLeaveRemoteDataSource>(
-    () => AppConfig.isOfflineMode
+    () => (AppConfig.isOfflineMode || AppConfig.isWorkLeaveMockMode)
         ? WorkLeaveDummyDataSourceImpl()
         : WorkLeaveRemoteDataSourceImpl(dio: sl<DioClient>().dio),
   );
