@@ -275,36 +275,39 @@ class DashboardPage extends StatelessWidget {
                                 'Your activity',
                                 style: AppTextStyles.inter14MediumPrimary,
                               ),
-                              Material(
-                                child: InkWell(
-                                  onTap: () {
-                                    Navigator.of(
-                                      context,
-                                      rootNavigator: true,
-                                    ).pushNamed(
-                                      '/history-attendance',
-                                      arguments: {
-                                        'history_attendance':
-                                            state.attendanceHistoryEntity,
-                                        'summary_attendance':
-                                            state.attendanceSummaryEntity,
-                                        'profile': state.profileEntity,
-                                      },
-                                    );
-                                  },
-                                  child: Ink(
-                                    width: 96.w,
-                                    height: 27.w,
-                                    decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(5.w),
-                                      color: AppColors.deepTeal,
-                                      gradient: LinearGradient(
-                                        colors: [
-                                          AppColors.deepTeal,
-                                          AppColors.blueGradient,
-                                        ],
-                                      ),
-                                    ),
+                              Container(
+                                width: 96.w,
+                                height: 27.w,
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(5.w),
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFF0F766E),
+                                      Color(0xFF14B8A6),
+                                    ],
+                                  ),
+                                ),
+                                child: Material(
+                                  color: Colors.transparent,
+                                  child: InkWell(
+                                    borderRadius: BorderRadius.circular(5.w),
+                                    onTap: () {
+                                      Navigator.of(
+                                        context,
+                                        rootNavigator: true,
+                                      ).pushNamed(
+                                        '/history-attendance',
+                                        arguments: {
+                                          'history_attendance':
+                                              state.attendanceHistoryEntity,
+                                          'summary_attendance':
+                                              state.attendanceSummaryEntity,
+                                          'profile': state.profileEntity,
+                                        },
+                                      );
+                                    },
                                     child: Center(
                                       child: Text(
                                         'View all',

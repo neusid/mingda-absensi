@@ -232,22 +232,21 @@ class DashboardAttendanceCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Wrap(
-                      crossAxisAlignment: WrapCrossAlignment.center,
-                      spacing: 6.w,
-                      runSpacing: 2.w,
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
                         Text(
                           item.title,
                           style: TextStyle(
                             fontFamily: 'Inter',
-                            fontSize: 16.sp,
+                            fontSize: 16.w,
                             fontWeight: FontWeight.w700,
                             color: isToday
                                 ? Colors.white
                                 : const Color(0xFF0F172A),
                           ),
                         ),
+                        SizedBox(width: 6.w),
                         _buildStatusBadge(isToday),
                       ],
                     ),
@@ -272,7 +271,7 @@ class DashboardAttendanceCard extends StatelessWidget {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                               fontFamily: 'Inter',
-                              fontSize: 13.sp,
+                              fontSize: 11.w,
                               fontWeight: FontWeight.w400,
                               color: isToday
                                   ? Colors.white.withValues(alpha: 0.9)
@@ -295,7 +294,7 @@ class DashboardAttendanceCard extends StatelessWidget {
                     item.timeText,
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      fontSize: 18.sp,
+                      fontSize: 18.w,
                       fontWeight: FontWeight.w700,
                       color: isToday
                           ? Colors.white
@@ -307,7 +306,7 @@ class DashboardAttendanceCard extends StatelessWidget {
                     item.method,
                     style: TextStyle(
                       fontFamily: 'Inter',
-                      fontSize: 12.sp,
+                      fontSize: 11.w,
                       fontWeight: FontWeight.w500,
                       color: isToday
                           ? Colors.white.withValues(alpha: 0.9)
@@ -339,7 +338,7 @@ class DashboardAttendanceCard extends StatelessWidget {
       } else if (item.isLate) {
         iconWidget = Icon(
           Icons.access_time_rounded,
-          size: 24.sp,
+          size: 24.w,
           color: Colors.white,
         );
       } else if (item.type == DashboardAttendanceType.masuk) {
@@ -420,7 +419,7 @@ class DashboardAttendanceCard extends StatelessWidget {
         alignment: Alignment.center,
         child: Icon(
           Icons.access_time_rounded,
-          size: 24.sp,
+          size: 24.w,
           color: const Color(0xFFD97706),
         ),
       );
@@ -479,7 +478,7 @@ class DashboardAttendanceCard extends StatelessWidget {
   Widget _buildStatusBadge(bool isToday) {
     if (isToday) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.w),
+        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.w),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.20),
           borderRadius: BorderRadius.circular(20.r),
@@ -492,8 +491,8 @@ class DashboardAttendanceCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 5.w,
-              height: 5.w,
+              width: 4.w,
+              height: 4.w,
               decoration: BoxDecoration(
                 color: item.isLate
                     ? const Color(0xFFF87171)
@@ -501,7 +500,7 @@ class DashboardAttendanceCard extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            SizedBox(width: 4.w),
+            SizedBox(width: 3.w),
             Flexible(
               child: Text(
                 item.statusText,
@@ -509,7 +508,7 @@ class DashboardAttendanceCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Inter',
-                  fontSize: 11.sp,
+                  fontSize: 9.w,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -548,7 +547,7 @@ class DashboardAttendanceCard extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 3.w),
+      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.w),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(20.r),
@@ -558,14 +557,14 @@ class DashboardAttendanceCard extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 5.w,
-            height: 5.w,
+            width: 4.w,
+            height: 4.w,
             decoration: BoxDecoration(
               color: dotColor,
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: 4.w),
+          SizedBox(width: 3.w),
           Flexible(
             child: Text(
               item.statusText,
@@ -573,7 +572,7 @@ class DashboardAttendanceCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: 'Inter',
-                fontSize: 11.sp,
+                fontSize: 9.w,
                 fontWeight: FontWeight.w600,
                 color: textColor,
               ),

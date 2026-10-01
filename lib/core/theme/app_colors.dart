@@ -47,4 +47,22 @@ class AppColors {
 
   // Input Border Color
   static const Color inputColorBorder = Color(0xFF71717A);
+
+  // Filter Design System (from filter_riwayat_compact.svg)
+  static const Color filterSlateBg = Color(0xFFF8FAFC);
+  static const Color filterSlateBorder = Color(0xFFE2E8F0);
+  static const Color filterSlateIcon = Color(0xFF64748B);
+  static const Color filterFrostedTealBg = Color(0xFFF0FDFA);
+  static const Color filterFrostedTealBorder = Color(0xFF99F6E4);
+  static const Color filterTealAccent = Color(0xFF0D9488);
+  static const Color filterGradientStart = Color(0xFF0F766E);
+  static const Color filterGradientEnd = Color(0xFF14B8A6);
+  static const Color filterStatusGreen = Color(0xFF00AA13);
+  static const Color filterStatusAmber = Color(0xFFD97706);
+  static const Color filterStatusRed = Color(0xFFED2736);
+  static const Color filterStatusBlue = Color(0xFF0284C7);
+  static const Color filterStatusPurple = Color(0xFF7C3AED);
+  static const Color filterStatusOrange = Color(0xFFFF5722);
+  static const Color filterDarkText = Color(0xFF0F172A);
+  static const Color filterItemText = Color(0xFF334155);
 }
