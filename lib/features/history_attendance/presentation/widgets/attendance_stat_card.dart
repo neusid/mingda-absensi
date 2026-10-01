@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
 
@@ -120,7 +121,7 @@ enum AttendanceStatType {
     }
   }
 
-  Color get cardBgColor => Colors.white;
+  Color get cardBgColor => AppColors.white;
 
   Color get cardBorderColor => Colors.transparent;
 
@@ -227,7 +228,7 @@ class AttendanceStatCard extends StatelessWidget {
     return Container(
       height: 72.w,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: AppColors.white,
         borderRadius: BorderRadius.circular(10.w),
         boxShadow: [AppShadows.shadow094],
       ),
