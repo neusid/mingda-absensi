@@ -110,46 +110,31 @@ class _AnnouncementCarouselWidgetState
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 1. Full Image Banner View (Infinite Smooth Carousel with Right Edge Fade)
+        // 1. Full Image Banner View (Infinite Smooth Carousel)
         SizedBox(
           width: 326.w,
           height: 135.w,
-          child: ShaderMask(
-            shaderCallback: (Rect bounds) {
-              return const LinearGradient(
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-                colors: [
-                  Colors.white,
-                  Colors.white,
-                  Colors.transparent,
-                ],
-                stops: [0.0, 0.85, 1.0],
-              ).createShader(bounds);
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is ScrollStartNotification &&
+                  notification.dragDetails != null) {
+                _stopAutoScroll();
+              } else if (notification is ScrollEndNotification) {
+                _startAutoScroll();
+              }
+              return false;
             },
-            blendMode: BlendMode.dstIn,
-            child: NotificationListener<ScrollNotification>(
-              onNotification: (notification) {
-                if (notification is ScrollStartNotification &&
-                    notification.dragDetails != null) {
-                  _stopAutoScroll();
-                } else if (notification is ScrollEndNotification) {
-                  _startAutoScroll();
-                }
-                return false;
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index % _announcements.length;
+                });
               },
-              child: PageView.builder(
-                controller: _pageController,
-                onPageChanged: (index) {
-                  setState(() {
-                    _currentIndex = index % _announcements.length;
-                  });
-                },
-                itemBuilder: (context, index) {
-                  final item = _announcements[index % _announcements.length];
-                  return _buildBannerCard(item);
-                },
-              ),
+              itemBuilder: (context, index) {
+                final item = _announcements[index % _announcements.length];
+                return _buildBannerCard(item);
+              },
             ),
           ),
         ),
