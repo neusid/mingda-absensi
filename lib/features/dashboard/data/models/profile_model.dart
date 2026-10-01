@@ -139,13 +139,22 @@ class DepartmentModel extends DepartmentEntity {
     required super.updatedAt,
   });
 
-  factory DepartmentModel.fromJson(Map<String, dynamic> json) {
+  factory DepartmentModel.fromJson(dynamic json) {
+    if (json is! Map<String, dynamic>) {
+      return const DepartmentModel(
+        id: 0,
+        name: '-',
+        description: '-',
+        createdAt: '',
+        updatedAt: '',
+      );
+    }
     return DepartmentModel(
       id: parseIntValue(json['id']),
-      name: json['name'] ?? '',
-      description: json['description'] ?? '',
-      createdAt: json['created_at'] ?? '',
-      updatedAt: json['updated_at'] ?? '',
+      name: json['name']?.toString() ?? '-',
+      description: json['description']?.toString() ?? '-',
+      createdAt: json['created_at']?.toString() ?? '',
+      updatedAt: json['updated_at']?.toString() ?? '',
     );
   }
 }
@@ -163,17 +172,31 @@ class PositionModel extends PositionEntity {
     required super.displayName,
   });
 
-  factory PositionModel.fromJson(Map<String, dynamic> json) {
+  factory PositionModel.fromJson(dynamic json) {
+    if (json is! Map<String, dynamic>) {
+      return const PositionModel(
+        id: 0,
+        code: '-',
+        name: '-',
+        description: '-',
+        status: '-',
+        createdAt: '',
+        updatedAt: '',
+        displayName: '-',
+      );
+    }
     return PositionModel(
       id: parseIntValue(json['id']),
-      code: json['code'] ?? '',
-      name: json['name'] ?? '',
-      level: json['level'],
-      description: json['description'] ?? '',
-      status: json['status'] ?? '',
-      createdAt: json['created_at'] ?? '',
-      updatedAt: json['updated_at'] ?? '',
-      displayName: json['display_name'] ?? '',
+      code: json['code']?.toString() ?? '',
+      name: json['name']?.toString() ?? '-',
+      level: json['level']?.toString(),
+      description: json['description']?.toString() ?? '',
+      status: json['status']?.toString() ?? '',
+      createdAt: json['created_at']?.toString() ?? '',
+      updatedAt: json['updated_at']?.toString() ?? '',
+      displayName: json['display_name']?.toString() ??
+          json['name']?.toString() ??
+          '-',
     );
   }
 }
@@ -191,17 +214,30 @@ class WorkScheduleModel extends WorkScheduleEntity {
     required super.updatedAt,
   });
 
-  factory WorkScheduleModel.fromJson(Map<String, dynamic> json) {
+  factory WorkScheduleModel.fromJson(dynamic json) {
+    if (json is! Map<String, dynamic>) {
+      return const WorkScheduleModel(
+        id: 0,
+        name: 'Reguler',
+        startTime: '08:00',
+        endTime: '17:00',
+        lateTolerance: 15,
+        overtimeThreshold: 30,
+        isActive: true,
+        createdAt: '',
+        updatedAt: '',
+      );
+    }
     return WorkScheduleModel(
       id: parseIntValue(json['id']),
-      name: json['name'] ?? '',
-      startTime: json['start_time'] ?? '',
-      endTime: json['end_time'] ?? '',
+      name: json['name']?.toString() ?? 'Reguler',
+      startTime: json['start_time']?.toString() ?? '08:00',
+      endTime: json['end_time']?.toString() ?? '17:00',
       lateTolerance: parseIntValue(json['late_tolerance']),
       overtimeThreshold: parseIntValue(json['overtime_threshold']),
       isActive: parseBoolValue(json['is_active']),
-      createdAt: json['created_at'] ?? '',
-      updatedAt: json['updated_at'] ?? '',
+      createdAt: json['created_at']?.toString() ?? '',
+      updatedAt: json['updated_at']?.toString() ?? '',
     );
   }
 }

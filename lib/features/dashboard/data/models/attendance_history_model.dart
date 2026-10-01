@@ -19,25 +19,48 @@ class AttendanceHistoryModel extends AttendanceHistoryEntity {
   });
 
   factory AttendanceHistoryModel.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] as Map<String, dynamic>;
+    Map<String, dynamic> paginationMap = {};
+    List rawList = [];
+
+    final rawData = json['data'];
+    if (rawData is Map<String, dynamic>) {
+      paginationMap = rawData;
+      if (rawData['data'] is List) {
+        rawList = rawData['data'] as List;
+      }
+    } else if (rawData is List) {
+      rawList = rawData;
+      paginationMap = json;
+    } else if (json['data'] is List) {
+      rawList = json['data'] as List;
+      paginationMap = json;
+    }
+
+    final rawLinks = paginationMap['links'];
+    final List<AttendanceLinkModel> links = (rawLinks is List)
+        ? rawLinks
+            .whereType<Map<String, dynamic>>()
+            .map((e) => AttendanceLinkModel.fromJson(e))
+            .toList()
+        : [];
+
     return AttendanceHistoryModel(
-      currentPage: parseIntValue(data['current_page']),
-      data: (data['data'] as List)
+      currentPage: parseIntValue(paginationMap['current_page'] ?? 1),
+      data: rawList
+          .whereType<Map<String, dynamic>>()
           .map((e) => AttendanceItemModel.fromJson(e))
           .toList(),
-      firstPageUrl: data['first_page_url'],
-      from: parseIntValue(data['from']),
-      lastPage: parseIntValue(data['last_page']),
-      lastPageUrl: data['last_page_url'],
-      links: (data['links'] as List)
-          .map((e) => AttendanceLinkModel.fromJson(e))
-          .toList(),
-      nextPageUrl: data['next_page_url'],
-      path: data['path'],
-      perPage: parseIntValue(data['per_page']),
-      prevPageUrl: data['prev_page_url'],
-      to: parseIntValue(data['to']),
-      total: parseIntValue(data['total']),
+      firstPageUrl: paginationMap['first_page_url']?.toString() ?? '',
+      from: parseIntValue(paginationMap['from']),
+      lastPage: parseIntValue(paginationMap['last_page'] ?? 1),
+      lastPageUrl: paginationMap['last_page_url']?.toString() ?? '',
+      links: links,
+      nextPageUrl: paginationMap['next_page_url']?.toString(),
+      path: paginationMap['path']?.toString() ?? '',
+      perPage: parseIntValue(paginationMap['per_page'] ?? 10),
+      prevPageUrl: paginationMap['prev_page_url']?.toString(),
+      to: parseIntValue(paginationMap['to']),
+      total: parseIntValue(paginationMap['total'] ?? rawList.length),
     );
   }
 }

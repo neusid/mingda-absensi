@@ -46,14 +46,28 @@ class DashboardBloc extends Bloc<DashboardEvent, DashboardState> {
           final attendance = await getattendanceSummaryUsecase();
           await attendance.fold(
             (l) async {
-              emit(FailureGetAttendanceSummaryDashboardState(l.message));
+              if (l is AuthFailure ||
+                  l.message.contains("Unauthenticated") ||
+                  l.message.contains("401")) {
+                await signoutUsecase();
+                emit(SignoutDashboardState());
+              } else {
+                emit(FailureGetAttendanceSummaryDashboardState(l.message));
+              }
             },
             (r2) async {
               final attendanceHistory = await getAttendanceHistoryUsecase();
               await attendanceHistory.fold(
-                (l3) async => emit(
-                  FailureGetAttendanceHistoryDashboardState(l3.message),
-                ),
+                (l3) async {
+                  if (l3 is AuthFailure ||
+                      l3.message.contains("Unauthenticated") ||
+                      l3.message.contains("401")) {
+                    await signoutUsecase();
+                    emit(SignoutDashboardState());
+                  } else {
+                    emit(FailureGetAttendanceHistoryDashboardState(l3.message));
+                  }
+                },
                 (r3) async => emit(
                   SuccessDashboardState(
                     profileEntity: r1,

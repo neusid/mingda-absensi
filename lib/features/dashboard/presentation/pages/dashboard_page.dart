@@ -73,9 +73,19 @@ class DashboardPage extends StatelessWidget {
                     ),
                   ],
                   SizedBox(height: 12.w),
-                  ElevatedButton(
-                    onPressed: () => dasboardBloc.add(DashboardStarted()),
-                    child: const Text('Coba lagi'),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () => dasboardBloc.add(DashboardStarted()),
+                        child: const Text('Coba lagi'),
+                      ),
+                      SizedBox(width: 12.w),
+                      OutlinedButton(
+                        onPressed: () => dasboardBloc.add(DashboardSignout()),
+                        child: const Text('Login Ulang'),
+                      ),
+                    ],
                   ),
                 ],
               ),

@@ -33,15 +33,20 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
   Future<ProfileModel> getProfile() async {
     try {
       final response = await dio.get('/mobile/v1/profile');
-      print(response.data);
       return ProfileModel.fromJson(response.data);
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
+      final apiMessage = e.response?.data is Map
+          ? (e.response?.data as Map)['message']?.toString()
+          : null;
 
-      final apiMessage = e.response?.data['message']?.toString();
-
-      print("DioException getProfile StatusCode: $statusCode");
-      print(apiMessage);
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const TimeoutFailure();
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkFailure();
+      }
 
       if (statusCode == 401) {
         throw AuthFailure(
@@ -50,25 +55,34 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       }
 
       if (statusCode == 405) {
-        print(apiMessage.toString());
-        throw AuthFailure(apiMessage.toString());
+        throw AuthFailure(apiMessage ?? 'Metode tidak didukung');
       }
 
-      throw ServerFailure(apiMessage ?? 'Server error: $statusCode');
+      throw ServerFailure(
+        apiMessage ?? 'Terjadi kendala pada server (Kode: $statusCode)',
+      );
+    } catch (e) {
+      throw ServerFailure('Gagal memproses data profil: $e');
     }
   }
 
   Future<AttendanceSummaryModel> getAttendanceSummary() async {
     try {
       final response = await dio.get('/mobile/v1/attendance/summary');
-      print(response.data);
       return AttendanceSummaryModel.fromJson(response.data);
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
+      final apiMessage = e.response?.data is Map
+          ? (e.response?.data as Map)['message']?.toString()
+          : null;
 
-      final apiMessage = e.response?.data['message']?.toString();
-
-      print("DioException getProfile StatusCode: $statusCode");
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const TimeoutFailure();
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkFailure();
+      }
 
       if (statusCode == 401) {
         throw AuthFailure(
@@ -77,25 +91,34 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       }
 
       if (statusCode == 405) {
-        print(apiMessage.toString());
-        throw AuthFailure(apiMessage.toString());
+        throw AuthFailure(apiMessage ?? 'Metode tidak didukung');
       }
 
-      throw ServerFailure(apiMessage ?? 'Server error: $statusCode');
+      throw ServerFailure(
+        apiMessage ?? 'Terjadi kendala pada server (Kode: $statusCode)',
+      );
+    } catch (e) {
+      throw ServerFailure('Gagal memproses ringkasan absensi: $e');
     }
   }
 
   Future<AttendanceHistoryModel> getAttendanceHistory() async {
     try {
       final response = await dio.get('/mobile/v1/attendance/history');
-      print(response.data);
       return AttendanceHistoryModel.fromJson(response.data);
     } on DioException catch (e) {
       final statusCode = e.response?.statusCode;
+      final apiMessage = e.response?.data is Map
+          ? (e.response?.data as Map)['message']?.toString()
+          : null;
 
-      final apiMessage = e.response?.data['message']?.toString();
-
-      print("DioException getProfile StatusCode: $statusCode");
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const TimeoutFailure();
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkFailure();
+      }
 
       if (statusCode == 401) {
         throw AuthFailure(
@@ -104,11 +127,14 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       }
 
       if (statusCode == 405) {
-        print(apiMessage.toString());
-        throw AuthFailure(apiMessage.toString());
+        throw AuthFailure(apiMessage ?? 'Metode tidak didukung');
       }
 
-      throw ServerFailure(apiMessage ?? 'Server error: $statusCode');
+      throw ServerFailure(
+        apiMessage ?? 'Terjadi kendala pada server (Kode: $statusCode)',
+      );
+    } catch (e) {
+      throw ServerFailure('Gagal memproses riwayat absensi: $e');
     }
   }
 }

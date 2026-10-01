@@ -25,17 +25,21 @@ class DashboardRepositoryImpl implements DashboardRepository {
   Future<Either<Failure, void>> signOut() async {
     try {
       if (!AppConfig.isOfflineMode) {
-        await dio.post('/auth/logout');
+        try {
+          await dio.post('/auth/logout');
+        } catch (e) {
+          debugPrint('Remote logout warning (safe to ignore): $e');
+        }
       }
       await dashboardLocalDataSource.deleteToken();
       await dashboardLocalDataSource.deleteUser();
       return right(null);
-    } on Failure catch (f) {
-      return left(f);
-    } on SocketException {
-      return left(NetworkFailure());
     } catch (e) {
-      return left(ServerFailure(e.toString()));
+      try {
+        await dashboardLocalDataSource.deleteToken();
+        await dashboardLocalDataSource.deleteUser();
+      } catch (_) {}
+      return right(null);
     }
   }
 

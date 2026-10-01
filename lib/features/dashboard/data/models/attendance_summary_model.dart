@@ -14,16 +14,33 @@ class AttendanceSummaryModel extends AttendanceSummaryEntity {
   });
 
   factory AttendanceSummaryModel.fromJson(Map<String, dynamic> json) {
-    final data = json['data'] as Map<String, dynamic>;
+    final rawData = json['data'];
+    final Map<String, dynamic> data = (rawData is Map<String, dynamic>)
+        ? rawData
+        : (json.containsKey('present') || json.containsKey('hadir') ? json : {});
+
+    final hadir = parseIntValue(data['hadir'] ?? data['present']);
+    final terlambat = parseIntValue(data['terlambat'] ?? data['late']);
+    final izin = parseIntValue(data['izin']);
+    final sakit = parseIntValue(data['sakit'] ?? data['sick']);
+    final alpha = parseIntValue(data['alpha']);
+    final cuti = parseIntValue(data['cuti'] ?? data['leave']);
+    final totalLateMinutes = parseIntValue(
+      data['total_late_minutes'] ?? data['late_minutes'] ?? data['overtime_hours'],
+    );
+    final total = parseIntValue(
+      data['total'] ?? (hadir + terlambat + izin + sakit + alpha + cuti),
+    );
+
     return AttendanceSummaryModel(
-      total: parseIntValue(data['total']),
-      hadir: parseIntValue(data['hadir']),
-      terlambat: parseIntValue(data['terlambat']),
-      izin: parseIntValue(data['izin']),
-      sakit: parseIntValue(data['sakit']),
-      alpha: parseIntValue(data['alpha']),
-      cuti: parseIntValue(data['cuti']),
-      totalLateMinutes: parseIntValue(data['total_late_minutes']),
+      total: total,
+      hadir: hadir,
+      terlambat: terlambat,
+      izin: izin,
+      sakit: sakit,
+      alpha: alpha,
+      cuti: cuti,
+      totalLateMinutes: totalLateMinutes,
     );
   }
 }
