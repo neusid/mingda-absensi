@@ -9,8 +9,7 @@ class AnnouncementItem {
   final String title;
   final String description;
   final String date;
-  final IconData icon;
-  final List<Color> gradientColors;
+  final String imagePath;
   final Color badgeColor;
 
   const AnnouncementItem({
@@ -18,8 +17,7 @@ class AnnouncementItem {
     required this.title,
     required this.description,
     required this.date,
-    required this.icon,
-    required this.gradientColors,
+    required this.imagePath,
     required this.badgeColor,
   });
 }
@@ -45,31 +43,28 @@ class _AnnouncementCarouselWidgetState
 
   static const List<AnnouncementItem> _defaultAnnouncements = [
     AnnouncementItem(
-      category: 'OPERASIONAL',
-      title: 'Penyesuaian Jadwal Shift Kerja',
-      description: 'Efektif per 15 Oktober 2026 untuk seluruh divisi pabrik.',
+      category: 'PRESENSI & BIOMETRIK',
+      title: 'Pembaruan Mesin Fingerprint & SOP',
+      description: 'Pastikan jari bersih saat tapping mesin presensi biometrik.',
       date: '01 Okt 2026',
-      icon: Icons.campaign_rounded,
-      gradientColors: [Color(0xFF0F766E), Color(0xFF14B8A6)],
+      imagePath: 'assets/img/announcement_biometric.jpg',
       badgeColor: Color(0xFF0D9488),
     ),
     AnnouncementItem(
-      category: 'KEBIJAKAN HR',
-      title: 'Prosedur Pengajuan Cuti Tahunan',
-      description: 'Pengajuan cuti wajib diajukan minimal H-3 melalui aplikasi.',
+      category: 'KESELAMATAN & K3',
+      title: 'Audit K3 & Standar APD Pabrik',
+      description: 'Wajib mengenakan helm & rompi safety di area produksi.',
       date: '28 Sep 2026',
-      icon: Icons.event_available_rounded,
-      gradientColors: [Color(0xFF1E293B), Color(0xFF334155)],
-      badgeColor: Color(0xFF475569),
+      imagePath: 'assets/img/announcement_safety.jpg',
+      badgeColor: Color(0xFFD97706),
     ),
     AnnouncementItem(
-      category: 'KESEHATAN & K3',
-      title: 'Medical Check-Up Tahunan 2026',
-      description: 'Pelaksanaan MCU berkala di Klinik Pratama PT Mingda.',
+      category: 'CUTI & LIBUR',
+      title: 'Pengumuman Cuti Bersama 2026',
+      description: 'Jadwal operasional libur nasional & cuti bersama karyawan.',
       date: '25 Sep 2026',
-      icon: Icons.health_and_safety_rounded,
-      gradientColors: [Color(0xFF0284C7), Color(0xFF0369A1)],
-      badgeColor: Color(0xFF0284C7),
+      imagePath: 'assets/img/announcement_holiday.jpg',
+      badgeColor: Color(0xFF4F46E5),
     ),
   ];
 
@@ -117,7 +112,7 @@ class _AnnouncementCarouselWidgetState
         // 1. Banner Card View
         SizedBox(
           width: 326.w,
-          height: 125.w,
+          height: 135.w,
           child: PageView.builder(
             controller: _pageController,
             itemCount: _announcements.length,
@@ -161,145 +156,157 @@ class _AnnouncementCarouselWidgetState
   Widget _buildBannerCard(AnnouncementItem item) {
     return Container(
       width: 326.w,
-      height: 125.w,
+      height: 135.w,
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(10.w),
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: item.gradientColors,
-        ),
         boxShadow: [AppShadows.shadow094],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          borderRadius: BorderRadius.circular(10.w),
-          canRequestFocus: false,
-          onTap: () {
-            // Ripple feedback only as agreed
-          },
-          child: Stack(
-            children: [
-              // Decorative background subtle shape
-              Positioned(
-                right: -15.w,
-                bottom: -20.w,
-                child: Container(
-                  width: 110.w,
-                  height: 110.w,
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    color: Colors.white.withValues(alpha: 0.08),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.w),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // 1. Background Photographic Image from Assets
+            Image.asset(
+              item.imagePath,
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                color: const Color(0xFF1E293B),
+                child: const Center(
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: Colors.white54,
+                    size: 32,
                   ),
                 ),
               ),
-              Positioned(
-                right: 18.w,
-                top: 0,
-                bottom: 0,
-                child: Center(
-                  child: Container(
-                    width: 48.w,
-                    height: 48.w,
-                    decoration: BoxDecoration(
-                      color: Colors.white.withValues(alpha: 0.16),
-                      borderRadius: BorderRadius.circular(12.w),
-                    ),
-                    child: Center(
-                      child: Icon(
-                        item.icon,
-                        size: 26.w,
-                        color: Colors.white,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
+            ),
 
-              // Content text & badge
-              Padding(
-                padding: EdgeInsets.symmetric(
-                  horizontal: 14.w,
-                  vertical: 12.w,
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    // Row 1: Category Tag + Date
-                    Row(
-                      children: [
-                        Container(
-                          padding: EdgeInsets.symmetric(
-                            horizontal: 6.w,
-                            vertical: 2.w,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.22),
-                            borderRadius: BorderRadius.circular(4.w),
-                          ),
-                          child: Text(
-                            item.category,
-                            style: TextStyle(
-                              fontFamily: 'Inter',
-                              fontSize: 8.5.w,
-                              fontWeight: FontWeight.w700,
-                              color: Colors.white,
-                              letterSpacing: 0.5,
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 8.w),
-                        Text(
-                          item.date,
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 9.w,
-                            fontWeight: FontWeight.w400,
-                            color: Colors.white.withValues(alpha: 0.75),
-                          ),
-                        ),
-                      ],
-                    ),
-
-                    // Title
-                    SizedBox(
-                      width: 220.w,
-                      child: Text(
-                        item.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 13.5.w,
-                          fontWeight: FontWeight.w700,
-                          color: Colors.white,
-                          height: 1.25,
-                        ),
-                      ),
-                    ),
-
-                    // Description
-                    SizedBox(
-                      width: 230.w,
-                      child: Text(
-                        item.description,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 10.w,
-                          fontWeight: FontWeight.w400,
-                          color: Colors.white.withValues(alpha: 0.90),
-                        ),
-                      ),
-                    ),
+            // 2. Scrim Gradient Overlay for Text Readability
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: const [0.0, 0.55, 1.0],
+                  colors: [
+                    Colors.black.withValues(alpha: 0.82),
+                    Colors.black.withValues(alpha: 0.55),
+                    Colors.black.withValues(alpha: 0.15),
                   ],
                 ),
               ),
-            ],
-          ),
+            ),
+
+            // 3. Subtle bottom gradient
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [0.5, 1.0],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.40),
+                  ],
+                ),
+              ),
+            ),
+
+            // 4. Content Text & Badge
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 12.w,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Row 1: Category Tag + Date
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 7.w,
+                          vertical: 2.5.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: item.badgeColor.withValues(alpha: 0.85),
+                          borderRadius: BorderRadius.circular(4.w),
+                        ),
+                        child: Text(
+                          item.category,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 8.5.w,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        item.date,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 9.w,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.80),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Title
+                  SizedBox(
+                    width: 220.w,
+                    child: Text(
+                      item.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14.w,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                        height: 1.25,
+                      ),
+                    ),
+                  ),
+
+                  // Description
+                  SizedBox(
+                    width: 240.w,
+                    child: Text(
+                      item.description,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 10.w,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white.withValues(alpha: 0.90),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            // 5. Interactive Ripple Feedback
+            Material(
+              color: Colors.transparent,
+              child: InkWell(
+                borderRadius: BorderRadius.circular(10.w),
+                canRequestFocus: false,
+                onTap: () {
+                  // Touch ripple feedback
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
