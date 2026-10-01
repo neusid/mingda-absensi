@@ -104,14 +104,6 @@ class _WorkLeaveView extends StatelessWidget {
                           child: WorkLeaveStatCard(
                             type: WorkLeaveStatType.disetujui,
                             value: '${summary.approved}',
-                            isSelected: selectedStat == WorkLeaveStatType.disetujui,
-                            onTap: () {
-                              context.read<WorkLeaveBloc>().add(
-                                    const WorkLeaveEventFilterByStat(
-                                      WorkLeaveStatType.disetujui,
-                                    ),
-                                  );
-                            },
                           ),
                         ),
                         SizedBox(width: 10.w),
@@ -119,14 +111,6 @@ class _WorkLeaveView extends StatelessWidget {
                           child: WorkLeaveStatCard(
                             type: WorkLeaveStatType.menunggu,
                             value: '${summary.pending}',
-                            isSelected: selectedStat == WorkLeaveStatType.menunggu,
-                            onTap: () {
-                              context.read<WorkLeaveBloc>().add(
-                                    const WorkLeaveEventFilterByStat(
-                                      WorkLeaveStatType.menunggu,
-                                    ),
-                                  );
-                            },
                           ),
                         ),
                       ],
@@ -138,14 +122,6 @@ class _WorkLeaveView extends StatelessWidget {
                           child: WorkLeaveStatCard(
                             type: WorkLeaveStatType.ditolak,
                             value: '${summary.rejected}',
-                            isSelected: selectedStat == WorkLeaveStatType.ditolak,
-                            onTap: () {
-                              context.read<WorkLeaveBloc>().add(
-                                    const WorkLeaveEventFilterByStat(
-                                      WorkLeaveStatType.ditolak,
-                                    ),
-                                  );
-                            },
                           ),
                         ),
                         SizedBox(width: 10.w),
@@ -153,14 +129,6 @@ class _WorkLeaveView extends StatelessWidget {
                           child: WorkLeaveStatCard(
                             type: WorkLeaveStatType.cutiTerpakai,
                             value: '${summary.leaveTaken}',
-                            isSelected: selectedStat == WorkLeaveStatType.cutiTerpakai,
-                            onTap: () {
-                              context.read<WorkLeaveBloc>().add(
-                                    const WorkLeaveEventFilterByStat(
-                                      WorkLeaveStatType.cutiTerpakai,
-                                    ),
-                                  );
-                            },
                           ),
                         ),
                       ],

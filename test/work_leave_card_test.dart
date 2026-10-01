@@ -136,7 +136,7 @@ void main() {
   });
 
   group('WorkLeavePage Integration Tests', () {
-    testWidgets('renders all stat cards and filters on tap with real bloc data', (tester) async {
+    testWidgets('renders all stat cards as purely informational without filtering on tap', (tester) async {
       tester.view.physicalSize = const Size(375 * 3, 812 * 3);
       tester.view.devicePixelRatio = 3.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -163,10 +163,9 @@ void main() {
       await tester.tap(find.text('DITOLAK'));
       await tester.pumpAndSettle();
 
-      // Only Ditolak item should be visible in list
-      expect(find.text('Izin Kerja'), findsOneWidget);
-      expect(find.text('Ditolak'), findsOneWidget);
-      expect(find.text('Cuti Tahunan'), findsNothing);
+      // Verify list is NOT filtered (stat cards are purely informational)
+      expect(find.text('Izin Sakit'), findsOneWidget);
+      expect(find.text('Cuti Tahunan'), findsWidgets);
     });
   });
 }

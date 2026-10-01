@@ -95,6 +95,77 @@ class WorkLeaveStatCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final cardContent = Padding(
+      padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // 1. Squircle Container dengan Lingkaran Solid Gojek Style di Tengah
+          Container(
+            width: 44.w,
+            height: 44.w,
+            decoration: BoxDecoration(
+              color: type.containerBgColor,
+              borderRadius: BorderRadius.circular(14.r),
+            ),
+            child: Center(
+              child: Container(
+                width: 32.w,
+                height: 32.w,
+                decoration: BoxDecoration(
+                  color: type.accentColor,
+                  shape: BoxShape.circle,
+                ),
+                child: Center(
+                  child: Icon(
+                    type.icon,
+                    color: Colors.white,
+                    size: 18.w,
+                  ),
+                ),
+              ),
+            ),
+          ),
+          SizedBox(width: 8.w),
+
+          // 2. Value & Label
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 22.sp,
+                    fontWeight: FontWeight.w800,
+                    color: const Color(0xFF0F172A), // Slate 900
+                    letterSpacing: -0.5,
+                    height: 1.1,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+                SizedBox(height: 3.w),
+                Text(
+                  type.label,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 9.8.sp,
+                    fontWeight: FontWeight.w700,
+                    color: type.labelColor,
+                    letterSpacing: 0.2,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+
     return Container(
       height: 72.w,
       decoration: BoxDecoration(
@@ -123,85 +194,18 @@ class WorkLeaveStatCard extends StatelessWidget {
           ),
         ],
       ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
-          splashColor: type.accentColor.withValues(alpha: 0.12),
-          highlightColor: type.accentColor.withValues(alpha: 0.05),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 10.w),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 1. Squircle Container dengan Lingkaran Solid Gojek Style di Tengah
-                Container(
-                  width: 44.w,
-                  height: 44.w,
-                  decoration: BoxDecoration(
-                    color: type.containerBgColor,
-                    borderRadius: BorderRadius.circular(14.r),
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: 32.w,
-                      height: 32.w,
-                      decoration: BoxDecoration(
-                        color: type.accentColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          type.icon,
-                          color: Colors.white,
-                          size: 18.w,
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(width: 8.w),
-
-                // 2. Value & Label
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        value,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 22.sp,
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF0F172A), // Slate 900
-                          letterSpacing: -0.5,
-                          height: 1.1,
-                          fontFeatures: const [FontFeature.tabularFigures()],
-                        ),
-                      ),
-                      SizedBox(height: 3.w),
-                      Text(
-                        type.label,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 9.8.sp,
-                          fontWeight: FontWeight.w700,
-                          color: type.labelColor,
-                          letterSpacing: 0.2,
-                        ),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
+      child: onTap != null
+          ? Material(
+              color: Colors.transparent,
+              child: InkWell(
+                onTap: onTap,
+                borderRadius: BorderRadius.circular(16.r),
+                splashColor: type.accentColor.withValues(alpha: 0.12),
+                highlightColor: type.accentColor.withValues(alpha: 0.05),
+                child: cardContent,
+              ),
+            )
+          : cardContent,
     );
   }
 }

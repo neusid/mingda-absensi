@@ -40,17 +40,6 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
   AttendanceHistoryEntity? _lastHistory;
   AttendanceSummaryEntity? _lastSummary;
 
-  void _selectAttendanceStatus(AttendanceEnum? status) {
-    setState(() {
-      if (attendanceSelected == status) {
-        attendanceSelected = null;
-      } else {
-        attendanceSelected = status;
-      }
-    });
-    _applyFilter();
-  }
-
   void _applyFilter({int page = 1}) {
     final bloc = context.read<HistoryAttendanceBloc>();
     final current = bloc.state;
@@ -234,10 +223,6 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             child: AttendanceStatCard(
                               type: AttendanceStatType.hadir,
                               count: summary.hadir,
-                              isSelected:
-                                  attendanceSelected == AttendanceEnum.Hadir,
-                              onTap: () =>
-                                  _selectAttendanceStatus(AttendanceEnum.Hadir),
                             ),
                           ),
                           SizedBox(width: 10.w),
@@ -245,11 +230,6 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             child: AttendanceStatCard(
                               type: AttendanceStatType.terlambat,
                               count: summary.terlambat,
-                              isSelected: attendanceSelected ==
-                                  AttendanceEnum.Terlambat,
-                              onTap: () => _selectAttendanceStatus(
-                                AttendanceEnum.Terlambat,
-                              ),
                             ),
                           ),
                         ],
@@ -261,10 +241,6 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             child: AttendanceStatCard(
                               type: AttendanceStatType.alpha,
                               count: summary.alpha,
-                              isSelected:
-                                  attendanceSelected == AttendanceEnum.Alpha,
-                              onTap: () =>
-                                  _selectAttendanceStatus(AttendanceEnum.Alpha),
                             ),
                           ),
                           SizedBox(width: 10.w),
@@ -272,10 +248,6 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             child: AttendanceStatCard(
                               type: AttendanceStatType.izin,
                               count: summary.izin,
-                              isSelected:
-                                  attendanceSelected == AttendanceEnum.Izin,
-                              onTap: () =>
-                                  _selectAttendanceStatus(AttendanceEnum.Izin),
                             ),
                           ),
                         ],
@@ -287,10 +259,6 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             child: AttendanceStatCard(
                               type: AttendanceStatType.cuti,
                               count: summary.cuti,
-                              isSelected:
-                                  attendanceSelected == AttendanceEnum.Cuti,
-                              onTap: () =>
-                                  _selectAttendanceStatus(AttendanceEnum.Cuti),
                             ),
                           ),
                           SizedBox(width: 10.w),
@@ -298,10 +266,6 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                             child: AttendanceStatCard(
                               type: AttendanceStatType.sakit,
                               count: summary.sakit,
-                              isSelected:
-                                  attendanceSelected == AttendanceEnum.Sakit,
-                              onTap: () =>
-                                  _selectAttendanceStatus(AttendanceEnum.Sakit),
                             ),
                           ),
                         ],
