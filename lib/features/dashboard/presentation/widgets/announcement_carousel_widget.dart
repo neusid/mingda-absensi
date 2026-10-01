@@ -133,7 +133,57 @@ class _AnnouncementCarouselWidgetState
               },
               itemBuilder: (context, index) {
                 final item = _announcements[index % _announcements.length];
-                return _buildBannerCard(item);
+                return AnimatedBuilder(
+                  animation: _pageController,
+                  builder: (context, child) {
+                    double pageOffset = 0.0;
+                    if (_pageController.hasClients &&
+                        _pageController.position.haveDimensions) {
+                      pageOffset =
+                          index - (_pageController.page ?? _initialPage.toDouble());
+                    } else {
+                      pageOffset = (index - _initialPage).toDouble();
+                    }
+
+                    final absOffset = pageOffset.abs().clamp(0.0, 1.0);
+                    if (absOffset < 0.005) {
+                      return child ?? const SizedBox.shrink();
+                    }
+
+                    // 1. Overall Opacity Fade: Card dissolves smoothly as it moves away from center
+                    final opacity = (1.0 - (absOffset * 0.85)).clamp(0.0, 1.0);
+
+                    // 2. Progressive Edge Dissolve: Left & right edges fade into soft gradient on exit/entry
+                    final fadeWidth = (absOffset * 0.35).clamp(0.05, 0.35);
+
+                    return Opacity(
+                      opacity: opacity,
+                      child: ShaderMask(
+                        shaderCallback: (Rect bounds) {
+                          return LinearGradient(
+                            begin: Alignment.centerLeft,
+                            end: Alignment.centerRight,
+                            colors: const [
+                              Colors.transparent,
+                              Colors.white,
+                              Colors.white,
+                              Colors.transparent,
+                            ],
+                            stops: [
+                              0.0,
+                              fadeWidth,
+                              1.0 - fadeWidth,
+                              1.0,
+                            ],
+                          ).createShader(bounds);
+                        },
+                        blendMode: BlendMode.dstIn,
+                        child: child,
+                      ),
+                    );
+                  },
+                  child: _buildBannerCard(item),
+                );
               },
             ),
           ),
