@@ -110,81 +110,46 @@ class _AnnouncementCarouselWidgetState
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 1. Full Image Banner View (Infinite Smooth Carousel)
+        // 1. Full Image Banner View (Infinite Smooth Carousel with Right Edge Fade)
         SizedBox(
           width: 326.w,
           height: 135.w,
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (notification) {
-              if (notification is ScrollStartNotification &&
-                  notification.dragDetails != null) {
-                _stopAutoScroll();
-              } else if (notification is ScrollEndNotification) {
-                _startAutoScroll();
-              }
-              return false;
+          child: ShaderMask(
+            shaderCallback: (Rect bounds) {
+              return const LinearGradient(
+                begin: Alignment.centerLeft,
+                end: Alignment.centerRight,
+                colors: [
+                  Colors.white,
+                  Colors.white,
+                  Colors.transparent,
+                ],
+                stops: [0.0, 0.85, 1.0],
+              ).createShader(bounds);
             },
-            child: PageView.builder(
-              controller: _pageController,
-              onPageChanged: (index) {
-                setState(() {
-                  _currentIndex = index % _announcements.length;
-                });
+            blendMode: BlendMode.dstIn,
+            child: NotificationListener<ScrollNotification>(
+              onNotification: (notification) {
+                if (notification is ScrollStartNotification &&
+                    notification.dragDetails != null) {
+                  _stopAutoScroll();
+                } else if (notification is ScrollEndNotification) {
+                  _startAutoScroll();
+                }
+                return false;
               },
-              itemBuilder: (context, index) {
-                final item = _announcements[index % _announcements.length];
-                return AnimatedBuilder(
-                  animation: _pageController,
-                  builder: (context, child) {
-                    double pageOffset = 0.0;
-                    if (_pageController.hasClients &&
-                        _pageController.position.haveDimensions) {
-                      pageOffset =
-                          index - (_pageController.page ?? _initialPage.toDouble());
-                    } else {
-                      pageOffset = (index - _initialPage).toDouble();
-                    }
-
-                    final absOffset = pageOffset.abs().clamp(0.0, 1.0);
-                    if (absOffset < 0.005) {
-                      return child ?? const SizedBox.shrink();
-                    }
-
-                    // 1. Overall Opacity Fade: Card dissolves smoothly as it moves away from center
-                    final opacity = (1.0 - (absOffset * 0.85)).clamp(0.0, 1.0);
-
-                    // 2. Progressive Edge Dissolve: Left & right edges fade into soft gradient on exit/entry
-                    final fadeWidth = (absOffset * 0.35).clamp(0.05, 0.35);
-
-                    return Opacity(
-                      opacity: opacity,
-                      child: ShaderMask(
-                        shaderCallback: (Rect bounds) {
-                          return LinearGradient(
-                            begin: Alignment.centerLeft,
-                            end: Alignment.centerRight,
-                            colors: const [
-                              Colors.transparent,
-                              Colors.white,
-                              Colors.white,
-                              Colors.transparent,
-                            ],
-                            stops: [
-                              0.0,
-                              fadeWidth,
-                              1.0 - fadeWidth,
-                              1.0,
-                            ],
-                          ).createShader(bounds);
-                        },
-                        blendMode: BlendMode.dstIn,
-                        child: child,
-                      ),
-                    );
-                  },
-                  child: _buildBannerCard(item),
-                );
-              },
+              child: PageView.builder(
+                controller: _pageController,
+                onPageChanged: (index) {
+                  setState(() {
+                    _currentIndex = index % _announcements.length;
+                  });
+                },
+                itemBuilder: (context, index) {
+                  final item = _announcements[index % _announcements.length];
+                  return _buildBannerCard(item);
+                },
+              ),
             ),
           ),
         ),
