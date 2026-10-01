@@ -6,12 +6,16 @@ import 'package:mingda_app/core/theme/app_shadows.dart';
 
 class AnnouncementItem {
   final String category;
+  final String title;
+  final String description;
   final String date;
   final String imagePath;
   final Color badgeColor;
 
   const AnnouncementItem({
     required this.category,
+    required this.title,
+    required this.description,
     required this.date,
     required this.imagePath,
     required this.badgeColor,
@@ -40,18 +44,24 @@ class _AnnouncementCarouselWidgetState
   static const List<AnnouncementItem> _defaultAnnouncements = [
     AnnouncementItem(
       category: 'PRESENSI & BIOMETRIK',
+      title: 'Pembaruan Mesin Fingerprint & SOP',
+      description: 'Pastikan jari bersih saat tapping mesin presensi biometrik.',
       date: '01 Okt 2026',
       imagePath: 'assets/img/announcement_biometric.jpg',
       badgeColor: Color(0xFF0D9488),
     ),
     AnnouncementItem(
       category: 'KESELAMATAN & K3',
+      title: 'Audit K3 & Standar APD Pabrik',
+      description: 'Wajib mengenakan helm & rompi safety di area produksi.',
       date: '28 Sep 2026',
       imagePath: 'assets/img/announcement_safety.jpg',
       badgeColor: Color(0xFFD97706),
     ),
     AnnouncementItem(
       category: 'CUTI & LIBUR',
+      title: 'Pengumuman Cuti Bersama 2026',
+      description: 'Jadwal operasional libur nasional & cuti bersama karyawan.',
       date: '25 Sep 2026',
       imagePath: 'assets/img/announcement_holiday.jpg',
       badgeColor: Color(0xFF4F46E5),
@@ -183,71 +193,112 @@ class _AnnouncementCarouselWidgetState
               ),
             ),
 
-            // 2. Subtle top vignette for tag & date readability
+            // 2. Scrim Gradient Overlay for Text Readability
             Container(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: const [0.0, 0.40],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: const [0.0, 0.55, 1.0],
                   colors: [
-                    Colors.black.withValues(alpha: 0.40),
-                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.85),
+                    Colors.black.withValues(alpha: 0.50),
+                    Colors.black.withValues(alpha: 0.15),
                   ],
                 ),
               ),
             ),
 
-            // 3. Tag (Top-Left) & Date (Top-Right)
+            // 3. Subtle bottom vignette
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [0.5, 1.0],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.40),
+                  ],
+                ),
+              ),
+            ),
+
+            // 4. Content Text, Tag & Date
             Padding(
-              padding: EdgeInsets.all(12.w),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              padding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 12.w,
+              ),
+              child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 3.5.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: item.badgeColor.withValues(alpha: 0.90),
-                      borderRadius: BorderRadius.circular(5.w),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.25),
-                          blurRadius: 4,
-                          offset: const Offset(0, 1),
+                  // Row 1: Category Tag + Date
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 7.w,
+                          vertical: 2.5.w,
                         ),
-                      ],
-                    ),
+                        decoration: BoxDecoration(
+                          color: item.badgeColor.withValues(alpha: 0.88),
+                          borderRadius: BorderRadius.circular(4.w),
+                        ),
+                        child: Text(
+                          item.category,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 8.5.w,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.white,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        item.date,
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 9.w,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.80),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Title (Teks di Tengah)
+                  SizedBox(
+                    width: 220.w,
                     child: Text(
-                      item.category,
+                      item.title,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontSize: 8.5.w,
+                        fontSize: 14.w,
                         fontWeight: FontWeight.w700,
                         color: Colors.white,
-                        letterSpacing: 0.4,
+                        height: 1.25,
                       ),
                     ),
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 8.w,
-                      vertical: 3.5.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: Colors.black.withValues(alpha: 0.50),
-                      borderRadius: BorderRadius.circular(5.w),
-                    ),
+
+                  // Description (Teks di Bawah)
+                  SizedBox(
+                    width: 240.w,
                     child: Text(
-                      item.date,
+                      item.description,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
                       style: TextStyle(
                         fontFamily: 'Inter',
-                        fontSize: 9.w,
-                        fontWeight: FontWeight.w500,
-                        color: Colors.white,
+                        fontSize: 10.w,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white.withValues(alpha: 0.90),
                       ),
                     ),
                   ),
@@ -255,7 +306,7 @@ class _AnnouncementCarouselWidgetState
               ),
             ),
 
-            // 4. Interactive Ripple Feedback
+            // 5. Interactive Ripple Feedback
             Material(
               color: Colors.transparent,
               child: InkWell(
