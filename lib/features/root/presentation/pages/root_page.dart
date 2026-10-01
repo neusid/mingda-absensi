@@ -13,14 +13,13 @@ import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
 import '../../../../core/di/injection_container.dart';
 
 class RootPage extends StatefulWidget {
-  RootPage({super.key});
+  const RootPage({super.key});
 
   @override
   State<RootPage> createState() => _RootPageState();
 }
 
 class _RootPageState extends State<RootPage> {
-  int _currentIndex = 0;
   late final List<Widget> _screens;
   final PersistentTabController _controller = PersistentTabController(
     initialIndex: 0,
