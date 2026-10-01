@@ -10,6 +10,7 @@ import 'package:mingda_app/features/dashboard/presentation/widgets/card_dashboar
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/profile_network_image.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_attendance_card.dart';
+import 'package:mingda_app/features/dashboard/presentation/widgets/announcement_carousel_widget.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -256,6 +257,8 @@ class DashboardPage extends StatelessWidget {
                             ],
                           ),
                         ),
+                        SizedBox(height: 17.w),
+                        const AnnouncementCarouselWidget(),
                         SizedBox(height: 17.w),
                         Container(
                           width: 326.w,
