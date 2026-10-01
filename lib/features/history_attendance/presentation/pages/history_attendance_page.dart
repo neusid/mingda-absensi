@@ -170,7 +170,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
           style: AppTextStyles.inter16MediumPrimary,
         ),
       ),
-      backgroundColor: AppColors.bg,
+      backgroundColor: AppColors.white,
       body: BlocConsumer<HistoryAttendanceBloc, HistoryAttendanceState>(
         bloc: historyAttendanceBloc,
         builder: (context, state) {
@@ -510,7 +510,7 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
     bool overlapsContent,
   ) {
     return Material(
-      color: AppColors.bg,
+      color: AppColors.white,
       child: Padding(
         padding: EdgeInsets.symmetric(vertical: 10.w),
         child: Column(
@@ -525,6 +525,7 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.w),
+                    boxShadow: [AppShadows.shadow094],
                     color: AppColors.white,
                   ),
                   child: DropdownButtonFormField<MonthEnum?>(
@@ -567,6 +568,7 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.w),
+                    boxShadow: [AppShadows.shadow094],
                     color: AppColors.white,
                   ),
                   child: DropdownButtonFormField<int>(
@@ -600,6 +602,7 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                   padding: EdgeInsets.symmetric(horizontal: 20.w),
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(10.w),
+                    boxShadow: [AppShadows.shadow094],
                     color: AppColors.white,
                   ),
                   child: DropdownButtonFormField<AttendanceEnum?>(
@@ -644,6 +647,7 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                     height: 45.w,
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(10.w),
+                      boxShadow: [AppShadows.shadow094],
                       color: AppColors.white,
                     ),
                     child: Center(
