@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/theme/app_shadows.dart';
 
 /// Kartu Riwayat Pengajuan Cuti & Izin (Product Design Standard)
 class WorkLeaveItemCard extends StatelessWidget {
@@ -77,30 +78,15 @@ class WorkLeaveItemCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.w),
+        boxShadow: [AppShadows.shadow094],
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: const Color(0xFFE2E8F0),
-          width: 1.2.w,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x0A0F172A),
-            blurRadius: 14.r,
-            offset: Offset(0, 4.w),
-          ),
-          BoxShadow(
-            color: const Color(0x050F172A),
-            blurRadius: 3.r,
-            offset: Offset(0, 1.w),
-          ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(16.r),
+          borderRadius: BorderRadius.circular(10.w),
           splashColor: _iconAccentColor.withValues(alpha: 0.12),
           highlightColor: _iconAccentColor.withValues(alpha: 0.05),
           child: Padding(

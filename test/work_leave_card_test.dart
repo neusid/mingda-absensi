@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mingda_app/core/di/injection_container.dart';
+import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/work_leave/data/datasources/work_leave_dummy_data_source_impl.dart';
 import 'package:mingda_app/features/work_leave/data/repositories/work_leave_repository_impl.dart';
 import 'package:mingda_app/features/work_leave/domain/usecases/get_leave_list_usecase.dart';
@@ -72,7 +73,7 @@ void main() {
       expect(find.text('DISETUJUI'), findsOneWidget);
     });
 
-    testWidgets('triggers onTap and shows active accent border when isSelected is true', (tester) async {
+    testWidgets('uses AppShadows.shadow094, 10.w radius, and no colored border', (tester) async {
       tester.view.physicalSize = const Size(375 * 3, 812 * 3);
       tester.view.devicePixelRatio = 3.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -99,9 +100,10 @@ void main() {
         ),
       );
       final decoration = container.decoration as BoxDecoration;
-      final border = decoration.border as Border;
 
-      expect(border.top.color, WorkLeaveStatType.ditolak.accentColor);
+      expect(decoration.boxShadow, contains(AppShadows.shadow094));
+      expect(decoration.border, isNull);
+      expect(decoration.color, Colors.white);
 
       await tester.tap(find.byType(WorkLeaveStatCard));
       await tester.pump();

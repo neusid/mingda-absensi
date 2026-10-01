@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
 import 'package:mingda_app/features/history_attendance/presentation/widgets/attendance_stat_card.dart';
 
@@ -106,7 +107,7 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('displays active accent border when isSelected is true', (tester) async {
+    testWidgets('uses AppShadows.shadow094, 10.w radius, and no colored border', (tester) async {
       await tester.pumpWidget(
         _buildTestableWidget(
           AttendanceStatCard(
@@ -125,9 +126,10 @@ void main() {
         ),
       );
       final decoration = container.decoration as BoxDecoration;
-      final border = decoration.border as Border;
 
-      expect(border.top.color, AttendanceStatType.alpha.accentColor);
+      expect(decoration.boxShadow, contains(AppShadows.shadow094));
+      expect(decoration.border, isNull);
+      expect(decoration.color, Colors.white);
       expect(find.text('1'), findsOneWidget);
       expect(find.text('TOTAL ALPHA'), findsOneWidget);
     });

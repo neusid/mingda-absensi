@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
 
 /// Jenis kategori statistik presensi
@@ -217,37 +218,16 @@ class AttendanceStatCard extends StatelessWidget {
     return Container(
       height: 72.w,
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.w),
+        boxShadow: [AppShadows.shadow094],
         color: Colors.white,
-        borderRadius: BorderRadius.circular(16.r),
-        border: Border.all(
-          color: isSelected ? type.accentColor : type.cardBorderColor,
-          width: isSelected ? 2.w : 1.2.w,
-        ),
-        boxShadow: [
-          if (isSelected)
-            BoxShadow(
-              color: type.accentColor.withValues(alpha: 0.20),
-              blurRadius: 10.r,
-              offset: Offset(0, 3.w),
-            ),
-          BoxShadow(
-            color: const Color(0x0A0F172A), // Soft ambient shadow
-            blurRadius: 14.r,
-            offset: Offset(0, 4.w),
-          ),
-          BoxShadow(
-            color: const Color(0x050F172A),
-            blurRadius: 3.r,
-            offset: Offset(0, 1.w),
-          ),
-        ],
       ),
       child: onTap != null
           ? Material(
               color: Colors.transparent,
               child: InkWell(
                 onTap: onTap,
-                borderRadius: BorderRadius.circular(16.r),
+                borderRadius: BorderRadius.circular(10.w),
                 splashColor: type.accentColor.withValues(alpha: 0.12),
                 highlightColor: type.accentColor.withValues(alpha: 0.05),
                 child: cardContent,
