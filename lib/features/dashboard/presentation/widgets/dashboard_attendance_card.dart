@@ -37,7 +37,7 @@ class DashboardAttendanceItem {
   static List<DashboardAttendanceItem> fromAttendanceList(
     List<AttendanceItemEntity> list, {
     int? limit,
-    bool treatLatestAsToday = false,
+    bool treatLatestAsToday = true,
   }) {
     final items = <DashboardAttendanceItem>[];
     final now = DateTime.now();

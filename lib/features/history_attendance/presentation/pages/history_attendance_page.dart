@@ -217,6 +217,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
 
           final attendanceItems = DashboardAttendanceItem.fromAttendanceList(
             history.data,
+            treatLatestAsToday: monthSelected == null,
           );
 
           return Padding(
