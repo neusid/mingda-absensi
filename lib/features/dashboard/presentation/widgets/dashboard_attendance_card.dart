@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
+import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 
 enum DashboardAttendanceType { masuk, pulang, other }
@@ -186,40 +187,39 @@ class DashboardAttendanceCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(18.r),
+        borderRadius: BorderRadius.circular(10.w),
         onTap: onTap,
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.w),
-          decoration: BoxDecoration(
-            color: isToday ? null : AppColors.white,
-            gradient: isToday
-                ? const LinearGradient(
+          decoration: isToday
+              ? BoxDecoration(
+                  gradient: const LinearGradient(
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
                     colors: [
                       Color(0xFF0F766E), // Teal 700 dari attendance_card_today_teal
                       Color(0xFF14B8A6), // Teal 500
                     ],
-                  )
-                : null,
-            borderRadius: BorderRadius.circular(18.r),
-            border: Border.all(
-              color: isToday
-                  ? Colors.white.withValues(alpha: 0.45)
-                  : const Color(0xFFE2E8F0),
-              width: isToday ? 1.5.w : 1.w,
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: isToday
-                    ? const Color(0x200F766E)
-                    : const Color(0x08000000),
-                blurRadius: isToday ? 10 : 8,
-                offset: const Offset(0, 2),
-              ),
-            ],
-          ),
+                  ),
+                  borderRadius: BorderRadius.circular(10.w),
+                  border: Border.all(
+                    color: Colors.white.withValues(alpha: 0.45),
+                    width: 1.5.w,
+                  ),
+                  boxShadow: [
+                    BoxShadow(
+                      color: const Color(0x200F766E),
+                      blurRadius: 10,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
+                )
+              : BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.w),
+                  boxShadow: [AppShadows.shadow094],
+                  color: AppColors.white,
+                ),
           child: Row(
             children: [
               // 1. Icon Container

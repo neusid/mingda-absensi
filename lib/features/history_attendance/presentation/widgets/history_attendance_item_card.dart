@@ -105,21 +105,15 @@ class HistoryAttendanceItemCard extends StatelessWidget {
     return Material(
       color: Colors.transparent,
       child: InkWell(
-        borderRadius: BorderRadius.circular(12.w),
+        borderRadius: BorderRadius.circular(10.w),
         onTap: onTap,
         child: Container(
           width: double.infinity,
           padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.w),
           decoration: BoxDecoration(
-            color: AppColors.white,
-            borderRadius: BorderRadius.circular(12.w),
+            borderRadius: BorderRadius.circular(10.w),
             boxShadow: [AppShadows.shadow094],
-            border: isLatest
-                ? Border.all(
-                    color: AppColors.deepTeal.withValues(alpha: 0.35),
-                    width: 1.5.w,
-                  )
-                : Border.all(color: Colors.transparent, width: 1.5.w),
+            color: AppColors.white,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
