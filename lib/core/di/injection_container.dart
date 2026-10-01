@@ -7,6 +7,7 @@ import 'package:mingda_app/features/auth/data/datasources/auth_local_data_source
 import 'package:mingda_app/features/dashboard/dashboard_injection.dart';
 import 'package:mingda_app/features/history_attendance/history_attendance_injection.dart';
 import 'package:mingda_app/features/splash/splash_injection.dart';
+import 'package:mingda_app/features/work_leave/work_leave_injection.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 final sl = GetIt.instance;
@@ -33,4 +34,5 @@ Future<void> init() async {
   initAuthInjection(sl);
   initDashboardInjection(sl);
   initHistoryAttendanceInjection(sl);
+  initWorkLeaveInjection(sl);
 }

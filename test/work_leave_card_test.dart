@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mingda_app/core/di/injection_container.dart';
+import 'package:mingda_app/features/work_leave/data/datasources/work_leave_dummy_data_source_impl.dart';
+import 'package:mingda_app/features/work_leave/data/repositories/work_leave_repository_impl.dart';
+import 'package:mingda_app/features/work_leave/domain/usecases/get_leave_list_usecase.dart';
+import 'package:mingda_app/features/work_leave/presentation/blocs/work_leave_bloc.dart';
 import 'package:mingda_app/features/work_leave/presentation/pages/work_leave_page.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_item_card.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_stat_card.dart';
@@ -18,6 +23,15 @@ Widget _buildTestableWidget(Widget child) {
 }
 
 void main() {
+  setUpAll(() {
+    if (!sl.isRegistered<WorkLeaveBloc>()) {
+      final ds = WorkLeaveDummyDataSourceImpl();
+      final repo = WorkLeaveRepositoryImpl(remoteDataSource: ds);
+      final uc = GetLeaveListUseCase(repository: repo);
+      sl.registerFactory<WorkLeaveBloc>(() => WorkLeaveBloc(getLeaveListUseCase: uc));
+    }
+  });
+
   group('WorkLeaveStatType tests', () {
     test('verifies label, colors, and icons for all 4 work leave types', () {
       expect(WorkLeaveStatType.disetujui.label, 'DISETUJUI');
@@ -122,7 +136,7 @@ void main() {
   });
 
   group('WorkLeavePage Integration Tests', () {
-    testWidgets('renders all stat cards and filters on tap', (tester) async {
+    testWidgets('renders all stat cards and filters on tap with real bloc data', (tester) async {
       tester.view.physicalSize = const Size(375 * 3, 812 * 3);
       tester.view.devicePixelRatio = 3.0;
       addTearDown(tester.view.resetPhysicalSize);
@@ -141,12 +155,17 @@ void main() {
       expect(find.text('DITOLAK'), findsOneWidget);
       expect(find.text('CUTI TERPAKAI'), findsOneWidget);
 
+      // Check items from dummy data source
+      expect(find.text('Izin Sakit'), findsOneWidget);
+      expect(find.text('Cuti Tahunan'), findsWidgets);
+
       // Tap on DITOLAK stat card
       await tester.tap(find.text('DITOLAK'));
       await tester.pumpAndSettle();
 
       // Only Ditolak item should be visible in list
-      expect(find.text('Izin Keperluan Mendesak'), findsOneWidget);
+      expect(find.text('Izin Kerja'), findsOneWidget);
+      expect(find.text('Ditolak'), findsOneWidget);
       expect(find.text('Cuti Tahunan'), findsNothing);
     });
   });
