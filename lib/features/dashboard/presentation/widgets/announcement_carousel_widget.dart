@@ -58,13 +58,16 @@ class _AnnouncementCarouselWidgetState
     ),
   ];
 
+  late final int _initialPage;
+
   List<AnnouncementItem> get _announcements =>
       widget.items ?? _defaultAnnouncements;
 
   @override
   void initState() {
     super.initState();
-    _pageController = PageController();
+    _initialPage = _announcements.length * 1000;
+    _pageController = PageController(initialPage: _initialPage);
     _startAutoScroll();
   }
 
@@ -72,10 +75,8 @@ class _AnnouncementCarouselWidgetState
     _timer?.cancel();
     _timer = Timer.periodic(const Duration(seconds: 4), (timer) {
       if (!mounted || !_pageController.hasClients) return;
-      final nextIndex = (_currentIndex + 1) % _announcements.length;
-      _pageController.animateToPage(
-        nextIndex,
-        duration: const Duration(milliseconds: 500),
+      _pageController.nextPage(
+        duration: const Duration(milliseconds: 700),
         curve: Curves.easeInOutCubic,
       );
     });
@@ -99,22 +100,32 @@ class _AnnouncementCarouselWidgetState
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 1. Full Image Banner View
+        // 1. Full Image Banner View (Infinite Smooth Carousel)
         SizedBox(
           width: 326.w,
           height: 135.w,
-          child: PageView.builder(
-            controller: _pageController,
-            itemCount: _announcements.length,
-            onPageChanged: (index) {
-              setState(() {
-                _currentIndex = index;
-              });
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (notification) {
+              if (notification is ScrollStartNotification &&
+                  notification.dragDetails != null) {
+                _stopAutoScroll();
+              } else if (notification is ScrollEndNotification) {
+                _startAutoScroll();
+              }
+              return false;
             },
-            itemBuilder: (context, index) {
-              final item = _announcements[index];
-              return _buildBannerCard(item);
-            },
+            child: PageView.builder(
+              controller: _pageController,
+              onPageChanged: (index) {
+                setState(() {
+                  _currentIndex = index % _announcements.length;
+                });
+              },
+              itemBuilder: (context, index) {
+                final item = _announcements[index % _announcements.length];
+                return _buildBannerCard(item);
+              },
+            ),
           ),
         ),
         SizedBox(height: 8.w),
@@ -125,8 +136,8 @@ class _AnnouncementCarouselWidgetState
           children: List.generate(_announcements.length, (index) {
             final isActive = index == _currentIndex;
             return AnimatedContainer(
-              duration: const Duration(milliseconds: 250),
-              curve: Curves.easeOut,
+              duration: const Duration(milliseconds: 350),
+              curve: Curves.easeOutCubic,
               margin: EdgeInsets.symmetric(horizontal: 3.w),
               width: isActive ? 16.w : 6.w,
               height: 6.w,
