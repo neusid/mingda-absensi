@@ -145,6 +145,7 @@ class DashboardPage extends StatelessWidget {
                             ),
                             InkWell(
                               borderRadius: BorderRadius.circular(10.w),
+                              canRequestFocus: false,
                               onTap: () => true,
                               child: Ink(
                                 width: 40.w,
@@ -293,6 +294,7 @@ class DashboardPage extends StatelessWidget {
                                   color: Colors.transparent,
                                   child: InkWell(
                                     borderRadius: BorderRadius.circular(5.w),
+                                    canRequestFocus: false,
                                     onTap: () {
                                       Navigator.of(
                                         context,
@@ -341,6 +343,7 @@ class DashboardPage extends StatelessWidget {
                       itemBuilder: (context, index) {
                         final item = recentAttendanceItems[index];
                         return DashboardAttendanceCard(
+                          key: ValueKey('dash_${item.attendance.id}_$index'),
                           item: item,
                           onTap: () {
                             Navigator.of(

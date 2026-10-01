@@ -188,6 +188,7 @@ class DashboardAttendanceCard extends StatelessWidget {
       color: Colors.transparent,
       child: InkWell(
         borderRadius: BorderRadius.circular(10.w),
+        canRequestFocus: false,
         onTap: onTap,
         child: Container(
           width: double.infinity,
