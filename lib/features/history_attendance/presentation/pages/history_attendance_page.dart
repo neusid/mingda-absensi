@@ -272,20 +272,91 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                       ),
                       SizedBox(height: 10.w),
                       Container(
-                        width: 326.w,
-                        height: 27.w,
-                        padding: EdgeInsets.only(left: 11.w),
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 14.w,
+                          vertical: 10.w,
+                        ),
                         decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(5.w),
-                          boxShadow: [AppShadows.shadow094],
                           color: AppColors.white,
+                          borderRadius: BorderRadius.circular(10.w),
+                          border: Border.all(
+                            color: const Color(0xFFE2E8F0),
+                            width: 1.2.w,
+                          ),
+                          boxShadow: [AppShadows.shadow094],
                         ),
                         child: Row(
-                          mainAxisAlignment: MainAxisAlignment.start,
                           children: [
-                            Text(
-                              'Riwayat Absensi${attendanceSelected != null ? " - ${attendanceSelected!.name}" : ""}${monthSelected != null ? " - ${monthSelected!.name}" : ""} $yearsSelected',
-                              style: AppTextStyles.inter13RegularPrimary,
+                            Container(
+                              width: 32.w,
+                              height: 32.w,
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFF1F5F9),
+                                borderRadius: BorderRadius.circular(8.w),
+                              ),
+                              child: Center(
+                                child: SvgPicture.asset(
+                                  'assets/icon/calendar.svg',
+                                  width: 15.w,
+                                  height: 15.w,
+                                  colorFilter: const ColorFilter.mode(
+                                    Color(0xFF0F172A),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 10.w),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    'Riwayat Absensi',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 13.5.sp,
+                                      fontWeight: FontWeight.w700,
+                                      color: const Color(0xFF0F172A),
+                                    ),
+                                  ),
+                                  SizedBox(height: 1.w),
+                                  Text(
+                                    attendanceSelected != null ||
+                                            monthSelected != null
+                                        ? '${monthSelected?.name ?? "Semua Bulan"} • ${attendanceSelected?.name ?? "Semua Status"} • $yearsSelected'
+                                        : 'Tahun $yearsSelected',
+                                    style: TextStyle(
+                                      fontFamily: 'Inter',
+                                      fontSize: 10.5.sp,
+                                      fontWeight: FontWeight.w500,
+                                      color: const Color(0xFF64748B),
+                                    ),
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Container(
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 10.w,
+                                vertical: 4.w,
+                              ),
+                              decoration: BoxDecoration(
+                                color: const Color(0xFFE6F7EB),
+                                borderRadius: BorderRadius.circular(20.w),
+                              ),
+                              child: Text(
+                                '${history.data.length} Data',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 11.sp,
+                                  fontWeight: FontWeight.w700,
+                                  color: const Color(0xFF00AA13),
+                                ),
+                              ),
                             ),
                           ],
                         ),
@@ -498,10 +569,10 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
   });
 
   @override
-  double get minExtent => 121.w;
+  double get minExtent => 118.w;
 
   @override
-  double get maxExtent => 121.w;
+  double get maxExtent => 118.w;
 
   @override
   Widget build(
@@ -517,70 +588,146 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
           mainAxisSize: MainAxisSize.min,
           children: [
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 205.w,
-                  height: 45.w,
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.w),
-                    color: AppColors.white,
-                  ),
-                  child: DropdownButtonFormField<MonthEnum?>(
-                    key: monthDropdownKey,
-                    initialValue: monthSelected,
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    isExpanded: true,
-                    hint: Center(
-                      child: Text(
-                        "-- Semua Bulan --",
-                        style: AppTextStyles.inter14MediumSecondary,
+                // 1. Dropdown Bulan
+                Expanded(
+                  child: Container(
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(10.w),
+                      border: Border.all(
+                        color: const Color(0xFFE2E8F0),
+                        width: 1.2.w,
                       ),
+                      boxShadow: [AppShadows.shadow094],
                     ),
-                    style: AppTextStyles.inter14MediumSecondary,
-                    dropdownColor: AppColors.white,
-                    items: [
-                      DropdownMenuItem<MonthEnum?>(
-                        value: null,
-                        child: Text(
-                          "-- Semua Bulan --",
-                          style: AppTextStyles.inter14MediumSecondary,
-                        ),
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: DropdownButtonFormField<MonthEnum?>(
+                      key: monthDropdownKey,
+                      initialValue: monthSelected,
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Color(0xFF64748B),
+                        size: 20,
                       ),
-                      ...MonthEnum.values.map(
-                        (e) => DropdownMenuItem<MonthEnum?>(
-                          value: e,
-                          child: Text(
-                            e.name,
-                            style: AppTextStyles.inter14MediumSecondary,
+                      decoration: InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(right: 8.w),
+                          child: Icon(
+                            Icons.calendar_month_outlined,
+                            size: 18.w,
+                            color: const Color(0xFF64748B),
                           ),
                         ),
+                        prefixIconConstraints: BoxConstraints(
+                          minWidth: 24.w,
+                          maxHeight: 24.w,
+                        ),
                       ),
-                    ],
-                    onChanged: onMonthChanged,
+                      isExpanded: true,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 12.5.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF0F172A),
+                      ),
+                      dropdownColor: AppColors.white,
+                      borderRadius: BorderRadius.circular(10.w),
+                      items: [
+                        DropdownMenuItem<MonthEnum?>(
+                          value: null,
+                          child: Text(
+                            "-- Semua Bulan --",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12.5.sp,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ),
+                        ...MonthEnum.values.map(
+                          (e) => DropdownMenuItem<MonthEnum?>(
+                            value: e,
+                            child: Text(
+                              e.name,
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 12.5.sp,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF0F172A),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      onChanged: onMonthChanged,
+                    ),
                   ),
                 ),
+                SizedBox(width: 10.w),
+                // 2. Dropdown Tahun
                 Container(
                   width: 110.w,
-                  height: 45.w,
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
+                  height: 44.w,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.w),
                     color: AppColors.white,
+                    borderRadius: BorderRadius.circular(10.w),
+                    border: Border.all(
+                      color: const Color(0xFFE2E8F0),
+                      width: 1.2.w,
+                    ),
+                    boxShadow: [AppShadows.shadow094],
                   ),
+                  padding: EdgeInsets.symmetric(horizontal: 10.w),
                   child: DropdownButtonFormField<int>(
                     initialValue: yearsSelected,
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    style: AppTextStyles.inter14MediumSecondary,
+                    icon: const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: Color(0xFF64748B),
+                      size: 20,
+                    ),
+                    decoration: InputDecoration(
+                      isDense: true,
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                      prefixIcon: Padding(
+                        padding: EdgeInsets.only(right: 6.w),
+                        child: Icon(
+                          Icons.date_range_rounded,
+                          size: 18.w,
+                          color: const Color(0xFF64748B),
+                        ),
+                      ),
+                      prefixIconConstraints: BoxConstraints(
+                        minWidth: 24.w,
+                        maxHeight: 24.w,
+                      ),
+                    ),
+                    style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 12.5.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF0F172A),
+                    ),
                     dropdownColor: AppColors.white,
+                    borderRadius: BorderRadius.circular(10.w),
                     items: listYears
                         .map(
                           (e) => DropdownMenuItem(
                             value: e,
                             child: Text(
                               e.toString(),
-                              style: AppTextStyles.inter14MediumSecondary,
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 12.5.sp,
+                                fontWeight: FontWeight.w600,
+                                color: const Color(0xFF0F172A),
+                              ),
                             ),
                           ),
                         )
@@ -590,64 +737,119 @@ class _FilterHeaderDelegate extends SliverPersistentHeaderDelegate {
                 ),
               ],
             ),
-            SizedBox(height: 11.w),
+            SizedBox(height: 10.w),
             Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  width: 270.w,
-                  height: 45.w,
-                  padding: EdgeInsets.symmetric(horizontal: 20.w),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(10.w),
-                    color: AppColors.white,
-                  ),
-                  child: DropdownButtonFormField<AttendanceEnum?>(
-                    key: attendanceDropdownKey,
-                    initialValue: attendanceSelected,
-                    decoration: const InputDecoration(border: InputBorder.none),
-                    isExpanded: true,
-                    hint: Center(
-                      child: Text(
-                        "-- Semua Kehadiran --",
-                        style: AppTextStyles.inter14MediumSecondary,
+                // 3. Dropdown Kehadiran
+                Expanded(
+                  child: Container(
+                    height: 44.w,
+                    decoration: BoxDecoration(
+                      color: AppColors.white,
+                      borderRadius: BorderRadius.circular(10.w),
+                      border: Border.all(
+                        color: const Color(0xFFE2E8F0),
+                        width: 1.2.w,
                       ),
+                      boxShadow: [AppShadows.shadow094],
                     ),
-                    style: AppTextStyles.inter14MediumSecondary,
-                    dropdownColor: AppColors.white,
-                    items: [
-                      DropdownMenuItem<AttendanceEnum?>(
-                        value: null,
-                        child: Text(
-                          "-- Semua Kehadiran --",
-                          style: AppTextStyles.inter14MediumSecondary,
+                    padding: EdgeInsets.symmetric(horizontal: 10.w),
+                    child: DropdownButtonFormField<AttendanceEnum?>(
+                      key: attendanceDropdownKey,
+                      initialValue: attendanceSelected,
+                      icon: const Icon(
+                        Icons.keyboard_arrow_down_rounded,
+                        color: Color(0xFF64748B),
+                        size: 20,
+                      ),
+                      decoration: InputDecoration(
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                        prefixIcon: Padding(
+                          padding: EdgeInsets.only(right: 8.w),
+                          child: Icon(
+                            Icons.filter_list_rounded,
+                            size: 18.w,
+                            color: const Color(0xFF64748B),
+                          ),
+                        ),
+                        prefixIconConstraints: BoxConstraints(
+                          minWidth: 24.w,
+                          maxHeight: 24.w,
                         ),
                       ),
-                      ...AttendanceEnum.values.map(
-                        (e) => DropdownMenuItem<AttendanceEnum?>(
-                          value: e,
+                      isExpanded: true,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 12.5.sp,
+                        fontWeight: FontWeight.w500,
+                        color: const Color(0xFF0F172A),
+                      ),
+                      dropdownColor: AppColors.white,
+                      borderRadius: BorderRadius.circular(10.w),
+                      items: [
+                        DropdownMenuItem<AttendanceEnum?>(
+                          value: null,
                           child: Text(
-                            e.name,
-                            style: AppTextStyles.inter14MediumSecondary,
+                            "-- Semua Kehadiran --",
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12.5.sp,
+                              fontWeight: FontWeight.w500,
+                              color: const Color(0xFF64748B),
+                            ),
+                          ),
+                        ),
+                        ...AttendanceEnum.values.map(
+                          (e) => DropdownMenuItem<AttendanceEnum?>(
+                            value: e,
+                            child: Text(
+                              e.name,
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 12.5.sp,
+                                fontWeight: FontWeight.w500,
+                                color: const Color(0xFF0F172A),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                      onChanged: onAttendanceChanged,
+                    ),
+                  ),
+                ),
+                SizedBox(width: 10.w),
+                // 4. Tombol Reset Filter
+                Container(
+                  width: 44.w,
+                  height: 44.w,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10.w),
+                    border: Border.all(
+                      color: const Color(0xFFE2E8F0),
+                      width: 1.2.w,
+                    ),
+                    boxShadow: [AppShadows.shadow094],
+                    color: AppColors.white,
+                  ),
+                  child: Material(
+                    color: Colors.transparent,
+                    child: InkWell(
+                      borderRadius: BorderRadius.circular(10.w),
+                      onTap: onReset,
+                      child: Center(
+                        child: SvgPicture.asset(
+                          'assets/icon/trash.svg',
+                          width: 18.w,
+                          height: 18.w,
+                          colorFilter: const ColorFilter.mode(
+                            Color(0xFFEF4444),
+                            BlendMode.srcIn,
                           ),
                         ),
                       ),
-                    ],
-                    onChanged: onAttendanceChanged,
-                  ),
-                ),
-                InkWell(
-                  borderRadius: BorderRadius.circular(10.w),
-                  onTap: onReset,
-                  child: Ink(
-                    width: 45.w,
-                    height: 45.w,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(10.w),
-                      color: AppColors.white,
-                    ),
-                    child: Center(
-                      child: SvgPicture.asset('assets/icon/trash.svg'),
                     ),
                   ),
                 ),
