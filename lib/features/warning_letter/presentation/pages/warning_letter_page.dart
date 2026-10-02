@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
+import 'package:mingda_app/core/widgets/mingda_page_transition_wrapper.dart';
 import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_card.dart';
 import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_filter_dropdown.dart';
 import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_policy_banner.dart';
@@ -165,32 +166,37 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget content;
     // Tier 1: Initial mount / route transition
     if (_isInitialLoading) {
-      return const Scaffold(
-        backgroundColor: AppColors.bg,
-        body: MingdaPageLoading(),
+      content = const KeyedSubtree(
+        key: ValueKey('wl_initial_loading'),
+        child: Scaffold(
+          backgroundColor: AppColors.bg,
+          body: MingdaPageLoading(),
+        ),
       );
-    }
-
-    // Tier 2: Fetching data in progress
-    if (_isFetching) {
-      return const Scaffold(
-        backgroundColor: AppColors.bg,
-        body: SafeArea(
-          bottom: false,
-          child: SingleChildScrollView(
-            child: WarningLetterSkeleton(),
+    } else if (_isFetching) {
+      content = const KeyedSubtree(
+        key: ValueKey('wl_fetching'),
+        child: Scaffold(
+          backgroundColor: AppColors.bg,
+          body: SafeArea(
+            bottom: false,
+            child: SingleChildScrollView(
+              child: WarningLetterSkeleton(),
+            ),
           ),
         ),
       );
-    }
+    } else {
+      final filteredList = _filteredWarnings;
 
-    final filteredList = _filteredWarnings;
-
-    return Scaffold(
-      backgroundColor: AppColors.bg,
-      body: SafeArea(
+      content = KeyedSubtree(
+        key: const ValueKey('wl_content'),
+        child: Scaffold(
+          backgroundColor: AppColors.bg,
+          body: SafeArea(
         bottom: false,
         child: RefreshIndicator(
           onRefresh: _onRefresh,
@@ -353,7 +359,10 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
               ),
             ),
       ),
-    );
+    ));
+    }
+
+    return MingdaPageTransitionWrapper(child: content);
   }
 }
 
