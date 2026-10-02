@@ -97,7 +97,8 @@ class _MonthFilterDropdownState extends State<MonthFilterDropdown> {
 
   @override
   void dispose() {
-    _close();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     super.dispose();
   }
 
@@ -342,7 +343,8 @@ class _YearFilterDropdownState extends State<YearFilterDropdown> {
 
   @override
   void dispose() {
-    _close();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     super.dispose();
   }
 
@@ -540,7 +542,8 @@ class _StatusFilterDropdownState extends State<StatusFilterDropdown> {
 
   @override
   void dispose() {
-    _close();
+    _overlayEntry?.remove();
+    _overlayEntry = null;
     super.dispose();
   }
 

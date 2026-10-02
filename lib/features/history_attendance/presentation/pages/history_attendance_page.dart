@@ -6,6 +6,7 @@ import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
+import 'package:mingda_app/core/widgets/mingda_page_transition_wrapper.dart';
 import 'package:mingda_app/core/widgets/skeleton.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
@@ -186,50 +187,59 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
       body: BlocConsumer<HistoryAttendanceBloc, HistoryAttendanceState>(
         bloc: historyAttendanceBloc,
         builder: (context, state) {
+          Widget content;
           // Tier 1: Initial mount / route transition
           if (_isPageTransitioning || state is HistoryAttendanceInitialState) {
-            return const MingdaPageLoading();
-          }
-
-          // Tier 2: Fetching data in progress
-          if (state is HistoryAttendanceEarlyLoadingState) {
-            return const HistorySkeleton();
-          }
-
-          final bool isFilterLoading =
-              state is HistoryAttendanceFilterLoadingState;
-          final bool isError = state is HistoryAttendanceFailedFilterState;
-
-          AttendanceHistoryEntity history;
-          AttendanceSummaryEntity summary;
-          if (state is HistoryAttendanceLoadedState) {
-            // Simpan snapshot data terakhir agar bisa ditampilkan saat filter loading
-            _lastHistory = state.historyEntity;
-            _lastSummary = state.summaryEntity;
-            history = state.historyEntity;
-            summary = state.summaryEntity;
-          } else if (isFilterLoading &&
-              _lastHistory != null &&
-              _lastSummary != null) {
-            history = _lastHistory!;
-            summary = _lastSummary!;
-          } else {
-            return Center(
-              child: Text(
-                'Failed to Get Profile',
-                style: AppTextStyles.inter16MediumPrimary,
-              ),
+            content = const KeyedSubtree(
+              key: ValueKey('ha_loading'),
+              child: MingdaPageLoading(),
             );
-          }
+          } else if (state is HistoryAttendanceEarlyLoadingState) {
+            content = const KeyedSubtree(
+              key: ValueKey('ha_skeleton'),
+              child: HistorySkeleton(),
+            );
+          } else {
+            final bool isFilterLoading =
+                state is HistoryAttendanceFilterLoadingState;
+            final bool isError = state is HistoryAttendanceFailedFilterState;
 
-          final attendanceItems = DashboardAttendanceItem.fromAttendanceList(
-            history.data,
-            treatLatestAsToday: monthSelected == null,
-          );
+            AttendanceHistoryEntity history;
+            AttendanceSummaryEntity summary;
+            if (state is HistoryAttendanceLoadedState) {
+              // Simpan snapshot data terakhir agar bisa ditampilkan saat filter loading
+              _lastHistory = state.historyEntity;
+              _lastSummary = state.summaryEntity;
+              history = state.historyEntity;
+              summary = state.summaryEntity;
+            } else if (isFilterLoading &&
+                _lastHistory != null &&
+                _lastSummary != null) {
+              history = _lastHistory!;
+              summary = _lastSummary!;
+            } else {
+              content = KeyedSubtree(
+                key: const ValueKey('ha_failed'),
+                child: Center(
+                  child: Text(
+                    'Failed to Get Profile',
+                    style: AppTextStyles.inter16MediumPrimary,
+                  ),
+                ),
+              );
+              return MingdaPageTransitionWrapper(child: content);
+            }
 
-          return Padding(
-            padding: EdgeInsets.symmetric(horizontal: 25.w),
-            child: CustomScrollView(
+            final attendanceItems = DashboardAttendanceItem.fromAttendanceList(
+              history.data,
+              treatLatestAsToday: monthSelected == null,
+            );
+
+            content = KeyedSubtree(
+              key: const ValueKey('ha_content'),
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 25.w),
+                child: CustomScrollView(
               slivers: [
                 SliverToBoxAdapter(
                   child: Column(
@@ -478,8 +488,12 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                 SliverToBoxAdapter(child: SizedBox(height: 50.w)),
               ],
             ),
-          );
-        },
+          ),
+        );
+      }
+
+      return MingdaPageTransitionWrapper(child: content);
+    },
         listener: (context, state) {},
       ),
     );
