@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mingda_app/core/di/injection_container.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
-import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
 import 'package:mingda_app/features/dashboard/presentation/pages/dashboard_page.dart';
 import 'package:mingda_app/features/dashboard/presentation/pages/profile_page.dart';
 import 'package:mingda_app/features/work_leave/presentation/pages/work_leave_page.dart';
 import 'package:mingda_app/features/warning_letter/presentation/pages/warning_letter_page.dart';
-import 'package:persistent_bottom_nav_bar/persistent_bottom_nav_bar.dart';
-
-import '../../../../core/di/injection_container.dart';
 
 class RootPage extends StatefulWidget {
   const RootPage({super.key});
@@ -20,17 +18,36 @@ class RootPage extends StatefulWidget {
 }
 
 class _RootPageState extends State<RootPage> {
+  int _currentIndex = 0;
   late final List<Widget> _screens;
-  final PersistentTabController _controller = PersistentTabController(
-    initialIndex: 0,
-  );
+
+  final List<String> _iconsActive = const [
+    'assets/icon/home-2.svg',
+    'assets/icon/note-add.svg',
+    'assets/icon/message-remove.svg',
+    'assets/icon/empty-wallet.svg',
+    'assets/icon/profile.svg',
+  ];
+
+  final List<String> _iconsNotActive = const [
+    'assets/icon/home-2-not-active.svg',
+    'assets/icon/note-add.svg',
+    'assets/icon/message-remove.svg',
+    'assets/icon/empty-wallet.svg',
+    'assets/icon/profile-not-active.svg',
+  ];
+
+  final List<String> _titles = const [
+    'Home',
+    'Cuti',
+    'Peringatan',
+    'Wallet',
+    'Profile',
+  ];
 
   @override
   void initState() {
     super.initState();
-
-    _controller.addListener(() => setState(() {}));
-
     _screens = [
       DashboardPage(),
       const WorkLeavePage(),
@@ -38,46 +55,6 @@ class _RootPageState extends State<RootPage> {
       const Center(child: Text('Wallet')),
       const ProfilePage(),
     ];
-  }
-
-  List<PersistentBottomNavBarItem> _navBarsItems() {
-    final iconsActive = [
-      'assets/icon/home-2.svg',
-      'assets/icon/note-add.svg',
-      'assets/icon/message-remove.svg',
-      'assets/icon/empty-wallet.svg',
-      'assets/icon/profile.svg',
-    ];
-
-    final iconsNotActive = [
-      'assets/icon/home-2-not-active.svg',
-      'assets/icon/note-add.svg',
-      'assets/icon/message-remove.svg',
-      'assets/icon/empty-wallet.svg',
-      'assets/icon/profile-not-active.svg',
-    ];
-
-    final titles = ['Home', 'Cuti', 'Peringatan', 'Wallet', 'Profile'];
-
-    return List.generate(titles.length, (index) {
-      final isActive = _controller.index == index;
-      return PersistentBottomNavBarItem(
-        icon: SvgPicture.asset(
-          isActive ? iconsActive[index] : iconsNotActive[index],
-        ),
-        title: titles[index],
-        textStyle: AppTextStyles.inter12MediumDeepTeal,
-        activeColorPrimary: AppColors.deepTeal,
-        inactiveColorPrimary: Colors.grey,
-      );
-    });
-  }
-
-  @override
-  void dispose() {
-    // TODO: implement dispose
-    _controller.dispose();
-    super.dispose();
   }
 
   @override
@@ -93,16 +70,129 @@ class _RootPageState extends State<RootPage> {
             );
           }
         },
-        child: PersistentTabView(
-          context,
-          controller: _controller,
-          screens: _screens,
-          items: _navBarsItems(),
-          backgroundColor: Colors.white,
-          handleAndroidBackButtonPress: true,
-          resizeToAvoidBottomInset: true,
-          stateManagement: true,
-          navBarStyle: NavBarStyle.style1,
+        child: PopScope(
+          canPop: _currentIndex == 0,
+          onPopInvokedWithResult: (didPop, result) {
+            if (didPop) return;
+            if (_currentIndex != 0) {
+              setState(() {
+                _currentIndex = 0;
+              });
+            }
+          },
+          child: Scaffold(
+            body: Stack(
+              fit: StackFit.expand,
+              children: List.generate(_screens.length, (index) {
+                final isSelected = _currentIndex == index;
+                return AnimatedOpacity(
+                  opacity: isSelected ? 1.0 : 0.0,
+                  duration: const Duration(milliseconds: 260),
+                  curve: Curves.easeInOutCubic,
+                  child: IgnorePointer(
+                    ignoring: !isSelected,
+                    child: _screens[index],
+                  ),
+                );
+              }),
+            ),
+            bottomNavigationBar: Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border(
+                  top: BorderSide(
+                    color: const Color(0xFFF1F5F9),
+                    width: 1.w,
+                  ),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.05),
+                    offset: const Offset(0, -2),
+                    blurRadius: 10,
+                  ),
+                ],
+              ),
+              child: SafeArea(
+                top: false,
+                child: SizedBox(
+                  height: 58.w,
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 16.w),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: List.generate(_titles.length, (index) {
+                        final isActive = _currentIndex == index;
+                        return GestureDetector(
+                          onTap: () {
+                            if (_currentIndex != index) {
+                              setState(() {
+                                _currentIndex = index;
+                              });
+                            }
+                          },
+                          behavior: HitTestBehavior.opaque,
+                          child: AnimatedContainer(
+                            duration: const Duration(milliseconds: 260),
+                            curve: Curves.easeInOutCubic,
+                            height: 40.w,
+                            padding: EdgeInsets.symmetric(
+                              horizontal: isActive ? 14.w : 8.w,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isActive
+                                  ? AppColors.deepTeal50
+                                  : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SvgPicture.asset(
+                                  isActive
+                                      ? _iconsActive[index]
+                                      : _iconsNotActive[index],
+                                  width: 22.w,
+                                  height: 22.w,
+                                  colorFilter: ColorFilter.mode(
+                                    isActive
+                                        ? AppColors.deepTeal
+                                        : const Color(0xFF484C52),
+                                    BlendMode.srcIn,
+                                  ),
+                                ),
+                                AnimatedSize(
+                                  duration: const Duration(milliseconds: 260),
+                                  curve: Curves.easeInOutCubic,
+                                  child: isActive
+                                      ? Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            SizedBox(width: 6.w),
+                                            Text(
+                                              _titles[index],
+                                              style: TextStyle(
+                                                fontFamily: 'Inter',
+                                                fontSize: 12.5.sp,
+                                                fontWeight: FontWeight.w700,
+                                                color: AppColors.deepTeal,
+                                              ),
+                                            ),
+                                          ],
+                                        )
+                                      : const SizedBox.shrink(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        );
+                      }),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
         ),
       ),
     );

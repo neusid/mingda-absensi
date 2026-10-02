@@ -6,6 +6,7 @@ import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/core/utils/date_formatter.dart';
 import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
+import 'package:mingda_app/core/widgets/mingda_page_transition_wrapper.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/card_dashboard_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
@@ -217,14 +218,18 @@ class _DashboardPageState extends State<DashboardPage> {
         bloc: dasboardBloc,
         listener: (context, state) {},
         builder: (context, state) {
+          Widget content;
           // Tier 1: Initial mount / route transition
           if (_isPageTransitioning || state is InitialDashboardState) {
-            return const MingdaPageLoading();
-          }
-
-          // Tier 2: Fetching data in progress
-          if (state is LoadingDashboardState) {
-            return const DashboardSkeleton();
+            content = const KeyedSubtree(
+              key: ValueKey('dash_loading'),
+              child: MingdaPageLoading(),
+            );
+          } else if (state is LoadingDashboardState) {
+            content = const KeyedSubtree(
+              key: ValueKey('dash_skeleton'),
+              child: DashboardSkeleton(),
+            );
           }
 
           if (state is FailureDashboardState ||
@@ -239,54 +244,57 @@ class _DashboardPageState extends State<DashboardPage> {
                 ? state.message
                 : 'Gagal memuat data';
 
-            return Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
-                  SizedBox(height: 12.w),
-                  Text(
-                    'Gagal memuat data',
-                    style: AppTextStyles.inter16MediumPrimary,
-                  ),
-                  if (message.isNotEmpty) ...[
-                    SizedBox(height: 8.w),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 24.w),
-                      child: Text(
-                        message,
-                        textAlign: TextAlign.center,
-                        style: AppTextStyles.inter128RegularSecondary,
-                      ),
+            content = KeyedSubtree(
+              key: const ValueKey('dash_failure'),
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Icon(Icons.error_outline, size: 48.w, color: Colors.grey),
+                    SizedBox(height: 12.w),
+                    Text(
+                      'Gagal memuat data',
+                      style: AppTextStyles.inter16MediumPrimary,
                     ),
-                  ],
-                  SizedBox(height: 12.w),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      ElevatedButton(
-                        onPressed: () => dasboardBloc.add(DashboardStarted()),
-                        child: const Text('Coba lagi'),
-                      ),
-                      SizedBox(width: 12.w),
-                      OutlinedButton(
-                        onPressed: () => dasboardBloc.add(DashboardSignout()),
-                        child: const Text('Login Ulang'),
+                    if (message.isNotEmpty) ...[
+                      SizedBox(height: 8.w),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 24.w),
+                        child: Text(
+                          message,
+                          textAlign: TextAlign.center,
+                          style: AppTextStyles.inter128RegularSecondary,
+                        ),
                       ),
                     ],
-                  ),
-                ],
+                    SizedBox(height: 12.w),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        ElevatedButton(
+                          onPressed: () => dasboardBloc.add(DashboardStarted()),
+                          child: const Text('Coba lagi'),
+                        ),
+                        SizedBox(width: 12.w),
+                        OutlinedButton(
+                          onPressed: () => dasboardBloc.add(DashboardSignout()),
+                          child: const Text('Login Ulang'),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
               ),
             );
-          }
-
-          if (state is SuccessDashboardState) {
+          } else if (state is SuccessDashboardState) {
             final recentAttendanceItems =
                 DashboardAttendanceItem.fromAttendanceList(
               state.attendanceHistoryEntity.data,
               limit: 4,
             );
-            return Container(
+            content = KeyedSubtree(
+              key: const ValueKey('dash_success'),
+              child: Container(
               width: double.infinity,
               height: double.infinity,
               padding: EdgeInsets.only(left: 25.w, right: 25.w, top: 58.w),
@@ -557,10 +565,15 @@ class _DashboardPageState extends State<DashboardPage> {
                   SliverToBoxAdapter(child: SizedBox(height: 16.w)),
                 ],
               ),
+            ));
+          } else {
+            content = const KeyedSubtree(
+              key: ValueKey('dash_default'),
+              child: DashboardSkeleton(),
             );
           }
 
-          return const DashboardSkeleton();
+          return MingdaPageTransitionWrapper(child: content);
         },
       ),
     );

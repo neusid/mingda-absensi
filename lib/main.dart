@@ -6,6 +6,8 @@ import 'package:intl/date_symbol_data_local.dart';
 import 'package:mingda_app/app/config/app_routes.dart';
 import 'package:mingda_app/app/config/global_bloc_observer.dart';
 import 'package:mingda_app/core/di/injection_container.dart' as di;
+import 'package:mingda_app/core/routes/mingda_page_route.dart';
+import 'package:mingda_app/core/theme/app_colors.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,7 +18,7 @@ void main() async {
 
   GoogleFonts.config.allowRuntimeFetching = false;
 
-  runApp(MyApp());
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -31,6 +33,15 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       builder: (context, child) {
         return MaterialApp(
+          theme: ThemeData(
+            scaffoldBackgroundColor: AppColors.bg,
+            pageTransitionsTheme: const PageTransitionsTheme(
+              builders: {
+                TargetPlatform.android: MingdaFadePageTransitionsBuilder(),
+                TargetPlatform.iOS: MingdaFadePageTransitionsBuilder(),
+              },
+            ),
+          ),
           onGenerateRoute: _appRoutes.onRoute,
           initialRoute: '/',
         );

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mingda_app/core/di/injection_container.dart';
+import 'package:mingda_app/core/routes/mingda_page_route.dart';
 import 'package:mingda_app/features/auth/presentation/blocs/auth_bloc.dart';
 import 'package:mingda_app/features/auth/presentation/pages/login_page.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
@@ -21,29 +22,35 @@ class AppRoutes {
   Route onRoute(RouteSettings settings) {
     switch (settings.name) {
       case '/':
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
+        return MingdaPageRoute(
+          settings: settings,
+          child: BlocProvider(
             create: (context) => sl<SplashBloc>(),
             child: SplashPage(),
           ),
         );
       case '/login':
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
+        return MingdaPageRoute(
+          settings: settings,
+          child: BlocProvider(
             create: (context) => sl<AuthBloc>()..add(AuthStarted()),
-            child: LoginPage(),
+            child: const LoginPage(),
           ),
         );
       case '/root':
-        return MaterialPageRoute(builder: (context) => RootPage());
+        return MingdaPageRoute(
+          settings: settings,
+          child: const RootPage(),
+        );
       case '/detail-attendance':
         final args = settings.arguments as Map<String, dynamic>;
 
         final profile = args['profile'] as ProfileEntity;
         final attendance = args['attendance'] as AttendanceItemEntity;
 
-        return MaterialPageRoute(
-          builder: (context) => DetailAttendancePage(
+        return MingdaPageRoute(
+          settings: settings,
+          child: DetailAttendancePage(
             profileEntity: profile,
             attendanceItemEntity: attendance,
           ),
@@ -57,8 +64,9 @@ class AppRoutes {
             args['history_attendance'] as AttendanceHistoryEntity;
         final profile = args['profile'] as ProfileEntity?;
 
-        return MaterialPageRoute(
-          builder: (context) => BlocProvider(
+        return MingdaPageRoute(
+          settings: settings,
+          child: BlocProvider(
             create: (context) => sl<HistoryAttendanceBloc>()
               ..add(
                 HistoryAttendanceEventStarted(
@@ -70,11 +78,15 @@ class AppRoutes {
           ),
         );
       case '/work-leave':
-        return MaterialPageRoute(builder: (context) => const WorkLeavePage());
+        return MingdaPageRoute(
+          settings: settings,
+          child: const WorkLeavePage(),
+        );
       case '/add-work-leave':
         final workLeaveBloc = settings.arguments as WorkLeaveBloc?;
-        return MaterialPageRoute(
-          builder: (context) => workLeaveBloc != null
+        return MingdaPageRoute(
+          settings: settings,
+          child: workLeaveBloc != null
               ? BlocProvider.value(
                   value: workLeaveBloc,
                   child: const AddWorkLeavePage(),
@@ -85,18 +97,15 @@ class AppRoutes {
                 ),
         );
       case '/warning-letter':
-        return MaterialPageRoute(
-          builder: (context) => const WarningLetterPage(),
+        return MingdaPageRoute(
+          settings: settings,
+          child: const WarningLetterPage(),
         );
-      // case '/dashboard':
-      //   return MaterialPageRoute(
-      //     builder: (context) => BlocProvider(
-      //       create: (context) => sl<DashboardBloc>()..add(DashboardStarted()),
-      //       child: DashboardPage(),
-      //     ),
-      //   );
       default:
-        return MaterialPageRoute(builder: (context) => LoginPage());
+        return MingdaPageRoute(
+          settings: settings,
+          child: const LoginPage(),
+        );
     }
   }
 }

@@ -7,6 +7,7 @@ import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
 import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
+import 'package:mingda_app/core/widgets/mingda_page_transition_wrapper.dart';
 import 'package:mingda_app/core/widgets/skeleton.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/profile_header_card.dart';
 
@@ -34,23 +35,31 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    Widget content;
     // Tier 1: Initial mount / route transition
     if (_isPageTransitioning) {
-      return const Scaffold(
-        backgroundColor: AppColors.bg,
-        body: MingdaPageLoading(),
+      content = const KeyedSubtree(
+        key: ValueKey('profile_loading'),
+        child: Scaffold(
+          backgroundColor: AppColors.bg,
+          body: MingdaPageLoading(),
+        ),
+      );
+    } else {
+      content = KeyedSubtree(
+        key: const ValueKey('profile_body'),
+        child: BlocBuilder<DashboardBloc, DashboardState>(
+          builder: (context, state) {
+            if (state is! SuccessDashboardState) {
+              return const _ProfileSkeleton();
+            }
+            return _ProfileContent(profile: state.profileEntity);
+          },
+        ),
       );
     }
 
-    // Tier 2: Fetching data in progress
-    return BlocBuilder<DashboardBloc, DashboardState>(
-      builder: (context, state) {
-        if (state is! SuccessDashboardState) {
-          return const _ProfileSkeleton();
-        }
-        return _ProfileContent(profile: state.profileEntity);
-      },
-    );
+    return MingdaPageTransitionWrapper(child: content);
   }
 }
 
