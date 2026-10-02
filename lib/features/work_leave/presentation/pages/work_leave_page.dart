@@ -9,7 +9,11 @@ import 'package:mingda_app/features/work_leave/presentation/pages/add_work_leave
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_detail_sheet.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_filter_dropdown.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_item_card.dart';
+import 'package:mingda_app/core/routes/mingda_page_route.dart';
 import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
+import 'package:mingda_app/core/widgets/mingda_page_transition_wrapper.dart';
+import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_policy_banner.dart';
+import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_policy_dialog.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_skeleton.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_stat_card.dart';
 
@@ -50,8 +54,8 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
   void _openAddLeave(BuildContext context) {
     final bloc = context.read<WorkLeaveBloc>();
     Navigator.of(context, rootNavigator: true).push(
-      MaterialPageRoute(
-        builder: (_) => BlocProvider.value(
+      MingdaPageRoute(
+        child: BlocProvider.value(
           value: bloc,
           child: const AddWorkLeavePage(),
         ),
@@ -66,81 +70,85 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
       body: SafeArea(
         child: BlocBuilder<WorkLeaveBloc, WorkLeaveState>(
           builder: (context, state) {
+            Widget content;
             // Tier 1: Initial mount / route transition
             if (_isPageTransitioning || state is WorkLeaveInitialState) {
-              return const MingdaPageLoading();
-            }
-
-            // Tier 2: Fetching data in progress
-            if (state is WorkLeaveLoadingState) {
-              return const WorkLeaveSkeleton();
-            }
-
-            if (state is WorkLeaveFailureState) {
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Icon(
-                        Icons.error_outline_rounded,
-                        size: 48.w,
-                        color: AppColors.red,
-                      ),
-                      SizedBox(height: 12.w),
-                      Text(
-                        state.message,
-                        textAlign: TextAlign.center,
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 14.sp,
-                          color: const Color(0xFF64748B),
+              content = const KeyedSubtree(
+                key: ValueKey('wl_loading'),
+                child: MingdaPageLoading(),
+              );
+            } else if (state is WorkLeaveLoadingState) {
+              content = const KeyedSubtree(
+                key: ValueKey('wl_skeleton'),
+                child: WorkLeaveSkeleton(),
+              );
+            } else if (state is WorkLeaveFailureState) {
+              content = KeyedSubtree(
+                key: const ValueKey('wl_failure'),
+                child: Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Icon(
+                          Icons.error_outline_rounded,
+                          size: 48.w,
+                          color: AppColors.red,
                         ),
-                      ),
-                      SizedBox(height: 16.w),
-                      ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: AppColors.deepTeal,
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10.r),
+                        SizedBox(height: 12.w),
+                        Text(
+                          state.message,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 14.sp,
+                            color: const Color(0xFF64748B),
                           ),
                         ),
-                        onPressed: () {
-                          context.read<WorkLeaveBloc>().add(const WorkLeaveEventFetch());
-                        },
-                        icon: const Icon(Icons.refresh_rounded),
-                        label: const Text('Coba Lagi'),
-                      ),
-                    ],
+                        SizedBox(height: 16.w),
+                        ElevatedButton.icon(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: AppColors.deepTeal,
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                          ),
+                          onPressed: () {
+                            context.read<WorkLeaveBloc>().add(const WorkLeaveEventFetch());
+                          },
+                          icon: const Icon(Icons.refresh_rounded),
+                          label: const Text('Coba Lagi'),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               );
-            }
+            } else if (state is WorkLeaveLoadedState) {
+              final summary = state.summary;
+              final selectedStat = state.selectedStat;
+              final filteredLeaves = state.filteredLeaves;
 
-            if (state is! WorkLeaveLoadedState) {
-              return const SizedBox.shrink();
-            }
-
-            final summary = state.summary;
-            final selectedStat = state.selectedStat;
-            final filteredLeaves = state.filteredLeaves;
-
-            return RefreshIndicator(
-              onRefresh: () async {
-                context.read<WorkLeaveBloc>().add(const WorkLeaveEventFetch());
-              },
-              child: SingleChildScrollView(
-                physics: const AlwaysScrollableScrollPhysics(),
-                padding: EdgeInsets.symmetric(horizontal: 20.w),
+              content = KeyedSubtree(
+                key: const ValueKey('wl_content'),
+                child: RefreshIndicator(
+                  onRefresh: () async {
+                    context.read<WorkLeaveBloc>().add(const WorkLeaveEventFetch());
+                  },
+                  child: SingleChildScrollView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: EdgeInsets.symmetric(horizontal: 20.w),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     SizedBox(height: 16.w),
 
-                    // ==================== 0. BANNER PENGUMUMAN CUTI ====================
-                    _buildBannerCard(),
+                    // ==================== 0. BANNER EDUKASI & KEBIJAKAN CUTI ====================
+                    WorkLeavePolicyBanner(
+                      onTap: () => WorkLeavePolicyDialog.show(context),
+                    ),
 
                     SizedBox(height: 14.w),
 
@@ -342,155 +350,17 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                   ],
                 ),
               ),
-            );
+            ),
+          );
+        } else {
+          content = const KeyedSubtree(
+            key: ValueKey('wl_empty'),
+            child: SizedBox.shrink(),
+          );
+        }
+
+            return MingdaPageTransitionWrapper(child: content);
           },
-        ),
-      ),
-    );
-  }
-
-  Widget _buildBannerCard() {
-    return Container(
-      width: double.infinity,
-      height: 135.w,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(10.w),
-        boxShadow: [AppShadows.shadow094],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(10.w),
-        child: Stack(
-          fit: StackFit.expand,
-          children: [
-            // 1. Background Photographic Image from Assets
-            Image.asset(
-              'assets/img/work_leave_banner.jpg',
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) => Container(
-                color: const Color(0xFF1E293B),
-                child: const Center(
-                  child: Icon(
-                    Icons.image_outlined,
-                    color: Colors.white54,
-                    size: 32,
-                  ),
-                ),
-              ),
-            ),
-
-            // 2. Scrim Gradient Overlay for Text Readability
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
-                  stops: const [0.0, 0.55, 1.0],
-                  colors: [
-                    Colors.black.withValues(alpha: 0.85),
-                    Colors.black.withValues(alpha: 0.50),
-                    Colors.black.withValues(alpha: 0.15),
-                  ],
-                ),
-              ),
-            ),
-
-            // 3. Subtle bottom vignette
-            Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  stops: const [0.5, 1.0],
-                  colors: [
-                    Colors.transparent,
-                    Colors.black.withValues(alpha: 0.40),
-                  ],
-                ),
-              ),
-            ),
-
-            // 4. Content Text, Tag & Date
-            Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 14.w,
-                vertical: 12.w,
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Row 1: Category Tag + Date
-                  Row(
-                    children: [
-                      Container(
-                        padding: EdgeInsets.symmetric(
-                          horizontal: 7.w,
-                          vertical: 2.5.w,
-                        ),
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF4F46E5).withValues(alpha: 0.88),
-                          borderRadius: BorderRadius.circular(4.w),
-                        ),
-                        child: Text(
-                          'CUTI & LIBUR',
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 8.5.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.white,
-                            letterSpacing: 0.4,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Text(
-                        '25 Sep 2026',
-                        style: TextStyle(
-                          fontFamily: 'Inter',
-                          fontSize: 9.sp,
-                          fontWeight: FontWeight.w500,
-                          color: Colors.white.withValues(alpha: 0.80),
-                        ),
-                      ),
-                    ],
-                  ),
-
-                  // Title
-                  SizedBox(
-                    width: 170.w,
-                    child: Text(
-                      'Pengumuman Cuti Bersama 2026',
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                        height: 1.25,
-                      ),
-                    ),
-                  ),
-
-                  // Description
-                  SizedBox(
-                    width: 250.w,
-                    child: Text(
-                      'Jadwal operasional libur nasional & cuti bersama karyawan.',
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
-                      style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 10.sp,
-                        fontWeight: FontWeight.w400,
-                        color: Colors.white.withValues(alpha: 0.90),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
         ),
       ),
     );
