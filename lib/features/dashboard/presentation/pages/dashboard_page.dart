@@ -5,15 +5,34 @@ import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/core/utils/date_formatter.dart';
+import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/card_dashboard_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
-import 'package:mingda_app/features/dashboard/presentation/widgets/profile_network_image.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_attendance_card.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/announcement_carousel_widget.dart';
 
-class DashboardPage extends StatelessWidget {
+class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState();
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  bool _isPageTransitioning = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        setState(() {
+          _isPageTransitioning = false;
+        });
+      }
+    });
+  }
 
   void _openHistory(BuildContext context, SuccessDashboardState state) {
     Navigator.of(context, rootNavigator: true).pushNamed(
@@ -31,6 +50,164 @@ class DashboardPage extends StatelessWidget {
     return status[0].toUpperCase() + status.substring(1).toLowerCase();
   }
 
+  String _getInitials(String name) {
+    final trimmed = name.trim();
+    if (trimmed.isEmpty) return 'MD';
+    final parts = trimmed.split(RegExp(r'\s+')).where((p) => p.isNotEmpty).toList();
+    if (parts.length >= 2) {
+      return '${parts[0][0]}${parts[1][0]}'.toUpperCase();
+    }
+    if (trimmed.length >= 2) {
+      return trimmed.substring(0, 2).toUpperCase();
+    }
+    return trimmed.toUpperCase();
+  }
+
+  Widget _buildAvatar(String name) {
+    final initials = _getInitials(name);
+    final size = 52.w;
+
+    return SizedBox(
+      width: size,
+      height: size,
+      child: Stack(
+        clipBehavior: Clip.none,
+        children: [
+          Container(
+            width: size,
+            height: size,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(14.r),
+              border: Border.all(
+                color: Colors.white,
+                width: 1.5.w,
+              ),
+              gradient: const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.filterGradientStart,
+                  AppColors.filterGradientEnd,
+                ],
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Text(
+              initials,
+              style: TextStyle(
+                fontFamily: 'Inter',
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w800,
+                color: Colors.white,
+                letterSpacing: -0.5,
+              ),
+            ),
+          ),
+          Positioned(
+            right: -1.w,
+            bottom: -1.w,
+            child: Container(
+              width: 11.w,
+              height: 11.w,
+              decoration: BoxDecoration(
+                color: const Color(0xFF00AA13),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 1.8.w,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGreetingAndName(String name) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Text(
+          'Selamat Datang 👋',
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 11.sp,
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF64748B),
+            letterSpacing: 0.1,
+          ),
+        ),
+        SizedBox(height: 3.w),
+        SizedBox(
+          width: 200.w,
+          child: Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontSize: 16.sp,
+              fontWeight: FontWeight.w700,
+              color: AppColors.deepTeal,
+              letterSpacing: -0.2,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildNotificationButton() {
+    return Container(
+      width: 40.w,
+      height: 40.w,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF8FAFC),
+        borderRadius: BorderRadius.circular(13.r),
+        border: Border.all(
+          color: const Color(0xFFE2E8F0),
+          width: 1.w,
+        ),
+        boxShadow: const [AppShadows.shadow094],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(13.r),
+          onTap: () {},
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Icon(
+                Icons.notifications_none_rounded,
+                size: 20.w,
+                color: const Color(0xFF0F172A),
+              ),
+              Positioned(
+                top: 8.w,
+                right: 8.w,
+                child: Container(
+                  width: 8.w,
+                  height: 8.w,
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFED2736),
+                    shape: BoxShape.circle,
+                    border: Border.all(
+                      color: Colors.white,
+                      width: 1.5.w,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final dasboardBloc = context.read<DashboardBloc>();
@@ -40,8 +217,13 @@ class DashboardPage extends StatelessWidget {
         bloc: dasboardBloc,
         listener: (context, state) {},
         builder: (context, state) {
-          if (state is LoadingDashboardState ||
-              state is InitialDashboardState) {
+          // Tier 1: Initial mount / route transition
+          if (_isPageTransitioning || state is InitialDashboardState) {
+            return const MingdaPageLoading();
+          }
+
+          // Tier 2: Fetching data in progress
+          if (state is LoadingDashboardState) {
             return const DashboardSkeleton();
           }
 
@@ -117,53 +299,13 @@ class DashboardPage extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Row(
-                              spacing: 20.w,
                               children: [
-                                ProfileNetworkImage(
-                                  url: state.profileEntity.profilePhotoUrl,
-                                  width: 50.w,
-                                  height: 50.w,
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    SizedBox(
-                                      width: 100.w,
-                                      child: Text(
-                                        "Good Morning,",
-                                        overflow: TextOverflow.ellipsis,
-                                        style: AppTextStyles
-                                            .inter128MediumSecondary,
-                                      ),
-                                    ),
-                                    SizedBox(
-                                      width: 200.w,
-                                      child: Text(
-                                        state.profileEntity.name,
-                                        overflow: TextOverflow.ellipsis,
-                                        style:
-                                            AppTextStyles.inter16MediumPrimary,
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                _buildAvatar(state.profileEntity.name),
+                                SizedBox(width: 14.w),
+                                _buildGreetingAndName(state.profileEntity.name),
                               ],
                             ),
-                            InkWell(
-                              borderRadius: BorderRadius.circular(10.w),
-                              canRequestFocus: false,
-                              onTap: () => true,
-                              child: Ink(
-                                width: 40.w,
-                                height: 40.w,
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(10.w),
-                                  boxShadow: [AppShadows.shadow094],
-                                  color: AppColors.white,
-                                ),
-                                child: Icon(Icons.notifications),
-                              ),
-                            ),
+                            _buildNotificationButton(),
                           ],
                         ),
                         SizedBox(height: 22.w),

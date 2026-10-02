@@ -5,6 +5,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
+import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
 import 'package:mingda_app/core/widgets/skeleton.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_summary_entity.dart';
@@ -26,6 +27,7 @@ class HistoryAttendancePage extends StatefulWidget {
 }
 
 class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
+  bool _isPageTransitioning = true;
   AttendanceEnum? attendanceSelected;
   MonthEnum? monthSelected;
   int yearsSelected = DateTime.now().year;
@@ -33,6 +35,18 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
     4,
     (index) => DateTime.now().year - index,
   );
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        setState(() {
+          _isPageTransitioning = false;
+        });
+      }
+    });
+  }
 
   // Snapshot data terakhir untuk ditampilkan saat filter sedang loading
   AttendanceHistoryEntity? _lastHistory;
@@ -172,6 +186,12 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
       body: BlocConsumer<HistoryAttendanceBloc, HistoryAttendanceState>(
         bloc: historyAttendanceBloc,
         builder: (context, state) {
+          // Tier 1: Initial mount / route transition
+          if (_isPageTransitioning || state is HistoryAttendanceInitialState) {
+            return const MingdaPageLoading();
+          }
+
+          // Tier 2: Fetching data in progress
           if (state is HistoryAttendanceEarlyLoadingState) {
             return const HistorySkeleton();
           }

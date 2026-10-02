@@ -9,6 +9,7 @@ import 'package:mingda_app/features/work_leave/presentation/pages/add_work_leave
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_detail_sheet.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_filter_dropdown.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_item_card.dart';
+import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_skeleton.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_stat_card.dart';
 
@@ -24,8 +25,27 @@ class WorkLeavePage extends StatelessWidget {
   }
 }
 
-class _WorkLeaveView extends StatelessWidget {
+class _WorkLeaveView extends StatefulWidget {
   const _WorkLeaveView();
+
+  @override
+  State<_WorkLeaveView> createState() => _WorkLeaveViewState();
+}
+
+class _WorkLeaveViewState extends State<_WorkLeaveView> {
+  bool _isPageTransitioning = true;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        setState(() {
+          _isPageTransitioning = false;
+        });
+      }
+    });
+  }
 
   void _openAddLeave(BuildContext context) {
     final bloc = context.read<WorkLeaveBloc>();
@@ -46,7 +66,13 @@ class _WorkLeaveView extends StatelessWidget {
       body: SafeArea(
         child: BlocBuilder<WorkLeaveBloc, WorkLeaveState>(
           builder: (context, state) {
-            if (state is WorkLeaveLoadingState || state is WorkLeaveInitialState) {
+            // Tier 1: Initial mount / route transition
+            if (_isPageTransitioning || state is WorkLeaveInitialState) {
+              return const MingdaPageLoading();
+            }
+
+            // Tier 2: Fetching data in progress
+            if (state is WorkLeaveLoadingState) {
               return const WorkLeaveSkeleton();
             }
 

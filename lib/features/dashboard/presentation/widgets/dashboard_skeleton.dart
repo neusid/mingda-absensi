@@ -27,19 +27,19 @@ class DashboardSkeleton extends StatelessWidget {
                 children: [
                   Row(
                     children: [
-                      SkeletonBox(width: 50.w, height: 50.w, radius: 10.w),
-                      SizedBox(width: 20.w),
+                      SkeletonBox(width: 52.w, height: 52.w, radius: 14.r),
+                      SizedBox(width: 14.w),
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          SkeletonBox(width: 100.w, height: 14.w),
-                          SizedBox(height: 8.w),
-                          SkeletonBox(width: 160.w, height: 16.w),
+                          SkeletonBox(width: 90.w, height: 12.w, radius: 4.r),
+                          SizedBox(height: 6.w),
+                          SkeletonBox(width: 150.w, height: 18.w, radius: 4.r),
                         ],
                       ),
                     ],
                   ),
-                  SkeletonBox(width: 40.w, height: 40.w, radius: 10.w),
+                  SkeletonBox(width: 40.w, height: 40.w, radius: 13.r),
                 ],
               ),
               SizedBox(height: 22.w),

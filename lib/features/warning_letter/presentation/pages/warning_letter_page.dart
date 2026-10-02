@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
+import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
 import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_card.dart';
 import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_filter_dropdown.dart';
 import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_policy_banner.dart';
 import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_policy_dialog.dart';
+import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_skeleton.dart';
 
 class WarningLetterPage extends StatefulWidget {
   const WarningLetterPage({super.key});
@@ -15,11 +17,36 @@ class WarningLetterPage extends StatefulWidget {
 }
 
 class _WarningLetterPageState extends State<WarningLetterPage> {
+  // Tier 1: Initial mount / route transition
+  bool _isInitialLoading = true;
+  // Tier 2: Data fetching in progress
+  bool _isFetching = false;
+
   WarningLetterType? _selectedType;
   WarningLetterStatus? _selectedStatus;
 
   WarningLetterType? _appliedType;
   WarningLetterStatus? _appliedStatus;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.delayed(const Duration(milliseconds: 350), () {
+      if (mounted) {
+        setState(() {
+          _isInitialLoading = false;
+        });
+      }
+    });
+  }
+
+  Future<void> _onRefresh() async {
+    setState(() => _isFetching = true);
+    await Future.delayed(const Duration(milliseconds: 600));
+    if (mounted) {
+      setState(() => _isFetching = false);
+    }
+  }
 
   /// Data Surat Peringatan sesuai schema REST API Mingda (/mobile/v1/warning-letters/*)
   static const List<WarningLetterItemData> _allWarnings = [
@@ -138,15 +165,41 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Tier 1: Initial mount / route transition
+    if (_isInitialLoading) {
+      return const Scaffold(
+        backgroundColor: AppColors.bg,
+        body: MingdaPageLoading(),
+      );
+    }
+
+    // Tier 2: Fetching data in progress
+    if (_isFetching) {
+      return const Scaffold(
+        backgroundColor: AppColors.bg,
+        body: SafeArea(
+          bottom: false,
+          child: SingleChildScrollView(
+            child: WarningLetterSkeleton(),
+          ),
+        ),
+      );
+    }
+
     final filteredList = _filteredWarnings;
 
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
         bottom: false,
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 25.w),
-          child: Column(
+        child: RefreshIndicator(
+          onRefresh: _onRefresh,
+          color: AppColors.filterTealAccent,
+          backgroundColor: Colors.white,
+          child: SingleChildScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            padding: EdgeInsets.symmetric(horizontal: 25.w),
+            child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 16.w),
@@ -298,6 +351,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                   ],
                 ),
               ),
+            ),
       ),
     );
   }
