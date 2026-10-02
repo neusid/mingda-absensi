@@ -36,12 +36,12 @@ class AppColors {
   static const Color blueGradient = Color(0xFF00A8CC);
 
   // Elevation & Shadows
-  static final Color shadowCard = const Color(0xFF000000).withOpacity(0.04);
+  static final Color shadowCard = const Color(0xFF000000).withValues(alpha: 0.04);
   static final Color shadowInput = const Color(0xFFD8E6FD);
   static final Color shadowAppBar = const Color(0xFF191919);
 
   // Text Colors
-  static const Color textPrimary = Color(0xFF24252C);
+  static const Color textPrimary = Color(0xFF334155); // Slate 700 - soft corporate neutral dark
   static const Color textSecondary = Color(0xFF535862);
   static const Color textTertiary = Color(0xFF9DB2CE);
 
@@ -63,6 +63,6 @@ class AppColors {
   static const Color filterStatusBlue = Color(0xFF0284C7);
   static const Color filterStatusPurple = Color(0xFF7C3AED);
   static const Color filterStatusOrange = Color(0xFFFF5722);
-  static const Color filterDarkText = Color(0xFF0F172A);
+  static const Color filterDarkText = Color(0xFF334155);
   static const Color filterItemText = Color(0xFF334155);
 }

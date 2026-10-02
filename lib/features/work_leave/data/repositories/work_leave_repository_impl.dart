@@ -29,4 +29,28 @@ class WorkLeaveRepositoryImpl implements WorkLeaveRepository {
       return Left(ServerFailure('Gagal mengambil data cuti: $e'));
     }
   }
+
+  @override
+  Future<Either<Failure, LeaveItemEntity>> submitLeaveRequest({
+    required String leaveType,
+    required String startDate,
+    required String endDate,
+    required String reason,
+    String? attachmentPath,
+  }) async {
+    try {
+      final model = await remoteDataSource.submitLeaveRequest(
+        leaveType: leaveType,
+        startDate: startDate,
+        endDate: endDate,
+        reason: reason,
+        attachmentPath: attachmentPath,
+      );
+      return Right(model.toDomain());
+    } on Failure catch (f) {
+      return Left(f);
+    } catch (e) {
+      return Left(ServerFailure('Gagal mengajukan permohonan cuti: $e'));
+    }
+  }
 }

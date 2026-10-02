@@ -61,4 +61,24 @@ class WorkLeaveDummyDataSourceImpl implements WorkLeaveRemoteDataSource {
 
     return sample;
   }
+
+  @override
+  Future<LeaveItemModel> submitLeaveRequest({
+    required String leaveType,
+    required String startDate,
+    required String endDate,
+    required String reason,
+    String? attachmentPath,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return LeaveItemModel(
+      id: DateTime.now().millisecondsSinceEpoch,
+      employeeId: 1,
+      leaveType: leaveType,
+      startDate: startDate,
+      endDate: endDate,
+      reason: reason,
+      status: 'pending',
+    );
+  }
 }

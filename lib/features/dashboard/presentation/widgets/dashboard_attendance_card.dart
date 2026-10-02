@@ -236,19 +236,24 @@ class DashboardAttendanceCard extends StatelessWidget {
                     Row(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          item.title,
-                          style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 16.w,
-                            fontWeight: FontWeight.w700,
-                            color: isToday
-                                ? Colors.white
-                                : const Color(0xFF0F172A),
+                        Flexible(
+                          child: Text(
+                            item.title,
+                            overflow: TextOverflow.ellipsis,
+                            style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 16.w,
+                              fontWeight: FontWeight.w600,
+                              color: isToday
+                                  ? Colors.white
+                                  : AppColors.textPrimary,
+                            ),
                           ),
                         ),
                         SizedBox(width: 6.w),
-                        _buildStatusBadge(isToday),
+                        Flexible(
+                          child: _buildStatusBadge(isToday),
+                        ),
                       ],
                     ),
                     SizedBox(height: 5.w),
@@ -296,10 +301,10 @@ class DashboardAttendanceCard extends StatelessWidget {
                     style: TextStyle(
                       fontFamily: 'Inter',
                       fontSize: 18.w,
-                      fontWeight: FontWeight.w700,
+                      fontWeight: FontWeight.w600,
                       color: isToday
                           ? Colors.white
-                          : const Color(0xFF0F172A),
+                          : AppColors.textPrimary,
                     ),
                   ),
                   SizedBox(height: 5.w),
@@ -380,109 +385,71 @@ class DashboardAttendanceCard extends StatelessWidget {
       );
     }
 
+    // Non-today cards: Unified Corporate Teal (anti-warna-warni)
+    Widget iconWidget;
+    const tealIconColor = Color(0xFF0D9488); // Teal 600
+
     if (item.type == DashboardAttendanceType.pulang) {
-      return Container(
-        width: 48.w,
-        height: 48.w,
-        decoration: BoxDecoration(
-          color: const Color(0xFFE6F7FB),
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: const Color(0xFFBAE6FD),
-            width: 1.w,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: SvgPicture.asset(
-          'assets/icon/logout.svg',
-          width: 22.w,
-          height: 22.w,
-          colorFilter: const ColorFilter.mode(
-            Color(0xFF0284C7),
-            BlendMode.srcIn,
-          ),
+      iconWidget = SvgPicture.asset(
+        'assets/icon/logout.svg',
+        width: 22.w,
+        height: 22.w,
+        colorFilter: const ColorFilter.mode(
+          tealIconColor,
+          BlendMode.srcIn,
         ),
       );
-    }
-
-    if (item.isLate) {
-      return Container(
-        width: 48.w,
-        height: 48.w,
-        decoration: BoxDecoration(
-          color: const Color(0xFFFFFBEB),
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: const Color(0xFFFDE68A),
-            width: 1.w,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: Icon(
-          Icons.access_time_rounded,
-          size: 24.w,
-          color: const Color(0xFFD97706),
+    } else if (item.isLate) {
+      iconWidget = Icon(
+        Icons.access_time_rounded,
+        size: 24.w,
+        color: tealIconColor,
+      );
+    } else if (item.type == DashboardAttendanceType.masuk) {
+      iconWidget = SvgPicture.asset(
+        'assets/icon/login.svg',
+        width: 22.w,
+        height: 22.w,
+        colorFilter: const ColorFilter.mode(
+          tealIconColor,
+          BlendMode.srcIn,
         ),
       );
-    }
-
-    if (item.type == DashboardAttendanceType.masuk) {
-      return Container(
-        width: 48.w,
-        height: 48.w,
-        decoration: BoxDecoration(
-          color: const Color(0xFFE8FAF3),
-          borderRadius: BorderRadius.circular(14.r),
-          border: Border.all(
-            color: const Color(0xFFC7F3DE),
-            width: 1.w,
-          ),
-        ),
-        alignment: Alignment.center,
-        child: SvgPicture.asset(
-          'assets/icon/login.svg',
-          width: 22.w,
-          height: 22.w,
-          colorFilter: const ColorFilter.mode(
-            Color(0xFF007A78),
-            BlendMode.srcIn,
-          ),
-        ),
-      );
-    }
-
-    // Other (Izin / Sakit / Cuti)
-    return Container(
-      width: 48.w,
-      height: 48.w,
-      decoration: BoxDecoration(
-        color: const Color(0xFFF1F5F9),
-        borderRadius: BorderRadius.circular(14.r),
-        border: Border.all(
-          color: const Color(0xFFCBD5E1),
-          width: 1.w,
-        ),
-      ),
-      alignment: Alignment.center,
-      child: SvgPicture.asset(
+    } else {
+      iconWidget = SvgPicture.asset(
         'assets/icon/calendar.svg',
         width: 20.w,
         height: 20.w,
         colorFilter: const ColorFilter.mode(
-          Color(0xFF475569),
+          tealIconColor,
           BlendMode.srcIn,
         ),
+      );
+    }
+
+    return Container(
+      width: 48.w,
+      height: 48.w,
+      decoration: BoxDecoration(
+        color: const Color(0xFFF0FDFA), // Frosted Soft Mint Teal
+        borderRadius: BorderRadius.circular(14.r),
+        border: Border.all(
+          color: const Color(0xFFCCFBF1), // Soft Teal border
+          width: 1.w,
+        ),
       ),
+      alignment: Alignment.center,
+      child: iconWidget,
     );
   }
 
   Widget _buildStatusBadge(bool isToday) {
     if (isToday) {
       return Container(
-        padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.w),
+        padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.w),
         decoration: BoxDecoration(
           color: Colors.white.withValues(alpha: 0.20),
-          borderRadius: BorderRadius.circular(20.r),
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
             color: Colors.white.withValues(alpha: 0.45),
             width: 0.8.w,
@@ -492,8 +459,8 @@ class DashboardAttendanceCard extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Container(
-              width: 4.w,
-              height: 4.w,
+              width: 3.w,
+              height: 3.w,
               decoration: BoxDecoration(
                 color: item.isLate
                     ? const Color(0xFFF87171)
@@ -501,7 +468,7 @@ class DashboardAttendanceCard extends StatelessWidget {
                 shape: BoxShape.circle,
               ),
             ),
-            SizedBox(width: 3.w),
+            SizedBox(width: 2.5.w),
             Flexible(
               child: Text(
                 item.statusText,
@@ -509,7 +476,7 @@ class DashboardAttendanceCard extends StatelessWidget {
                 overflow: TextOverflow.ellipsis,
                 style: TextStyle(
                   fontFamily: 'Inter',
-                  fontSize: 9.w,
+                  fontSize: 8.sp,
                   fontWeight: FontWeight.w600,
                   color: Colors.white,
                 ),
@@ -548,24 +515,24 @@ class DashboardAttendanceCard extends StatelessWidget {
     }
 
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 6.w, vertical: 2.w),
+      padding: EdgeInsets.symmetric(horizontal: 5.w, vertical: 1.5.w),
       decoration: BoxDecoration(
         color: bgColor,
-        borderRadius: BorderRadius.circular(20.r),
+        borderRadius: BorderRadius.circular(12.r),
         border: Border.all(color: borderColor, width: 0.8.w),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           Container(
-            width: 4.w,
-            height: 4.w,
+            width: 3.w,
+            height: 3.w,
             decoration: BoxDecoration(
               color: dotColor,
               shape: BoxShape.circle,
             ),
           ),
-          SizedBox(width: 3.w),
+          SizedBox(width: 2.5.w),
           Flexible(
             child: Text(
               item.statusText,
@@ -573,7 +540,7 @@ class DashboardAttendanceCard extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
               style: TextStyle(
                 fontFamily: 'Inter',
-                fontSize: 9.w,
+                fontSize: 8.sp,
                 fontWeight: FontWeight.w600,
                 color: textColor,
               ),

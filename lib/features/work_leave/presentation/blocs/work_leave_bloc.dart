@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import 'package:mingda_app/features/work_leave/domain/entities/leave_item_entity.dart';
 import 'package:mingda_app/features/work_leave/domain/entities/leave_summary_entity.dart';
 import 'package:mingda_app/features/work_leave/domain/usecases/get_leave_list_usecase.dart';
+import 'package:mingda_app/features/work_leave/domain/usecases/submit_leave_request_usecase.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_stat_card.dart';
 
 part 'work_leave_event.dart';
@@ -10,11 +11,15 @@ part 'work_leave_state.dart';
 
 class WorkLeaveBloc extends Bloc<WorkLeaveEvent, WorkLeaveState> {
   final GetLeaveListUseCase getLeaveListUseCase;
+  final SubmitLeaveRequestUseCase? submitLeaveRequestUseCase;
 
-  WorkLeaveBloc({required this.getLeaveListUseCase})
-      : super(WorkLeaveInitialState()) {
+  WorkLeaveBloc({
+    required this.getLeaveListUseCase,
+    this.submitLeaveRequestUseCase,
+  }) : super(WorkLeaveInitialState()) {
     on<WorkLeaveEventFetch>(_onFetch);
     on<WorkLeaveEventFilterByStat>(_onFilterByStat);
+    on<WorkLeaveEventSubmitRequest>(_onSubmit);
   }
 
   Future<void> _onFetch(
@@ -86,6 +91,40 @@ class WorkLeaveBloc extends Bloc<WorkLeaveEvent, WorkLeaveState> {
         selectedStat: () => targetStat,
         filteredLeaves: filtered,
       ),
+    );
+  }
+
+  Future<void> _onSubmit(
+    WorkLeaveEventSubmitRequest event,
+    Emitter<WorkLeaveState> emit,
+  ) async {
+    if (submitLeaveRequestUseCase == null) return;
+    final result = await submitLeaveRequestUseCase!(
+      leaveType: event.leaveType,
+      startDate: event.startDate,
+      endDate: event.endDate,
+      reason: event.reason,
+      attachmentPath: event.attachmentPath,
+    );
+    result.fold(
+      (failure) {
+        event.onError?.call(failure.message);
+      },
+      (newEntity) {
+        final current = state;
+        if (current is WorkLeaveLoadedState) {
+          final updatedList = [newEntity, ...current.allLeaves];
+          final updatedSummary = LeaveSummaryEntity.fromLeaveList(updatedList);
+          emit(
+            current.copyWith(
+              allLeaves: updatedList,
+              filteredLeaves: updatedList,
+              summary: updatedSummary,
+            ),
+          );
+        }
+        event.onSuccess?.call(newEntity);
+      },
     );
   }
 }

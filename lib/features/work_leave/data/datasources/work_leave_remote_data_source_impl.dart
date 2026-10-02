@@ -64,4 +64,57 @@ class WorkLeaveRemoteDataSourceImpl implements WorkLeaveRemoteDataSource {
       throw ServerFailure('Gagal memproses data pengajuan cuti: $e');
     }
   }
+
+  @override
+  Future<LeaveItemModel> submitLeaveRequest({
+    required String leaveType,
+    required String startDate,
+    required String endDate,
+    required String reason,
+    String? attachmentPath,
+  }) async {
+    try {
+      final Map<String, dynamic> data = {
+        'leave_type': leaveType,
+        'start_date': startDate,
+        'end_date': endDate,
+        'reason': reason,
+      };
+
+      dynamic payload = data;
+      if (attachmentPath != null && attachmentPath.isNotEmpty) {
+        payload = FormData.fromMap({
+          ...data,
+          'attachment': await MultipartFile.fromFile(attachmentPath),
+        });
+      }
+
+      final response = await dio.post(
+        '/mobile/v1/leave',
+        data: payload,
+      );
+
+      final dynamic resData = response.data;
+      Map<String, dynamic> jsonMap = {};
+      if (resData is Map<String, dynamic>) {
+        if (resData['data'] is Map<String, dynamic>) {
+          jsonMap = resData['data'] as Map<String, dynamic>;
+        } else {
+          jsonMap = resData;
+        }
+      }
+
+      return LeaveItemModel.fromJson(jsonMap);
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final apiMessage = e.response?.data is Map
+          ? (e.response?.data as Map)['message']?.toString()
+          : null;
+      throw ServerFailure(
+        apiMessage ?? 'Gagal mengajukan permohonan cuti (Kode: $statusCode).',
+      );
+    } catch (e) {
+      throw ServerFailure('Gagal mengajukan permohonan cuti: $e');
+    }
+  }
 }

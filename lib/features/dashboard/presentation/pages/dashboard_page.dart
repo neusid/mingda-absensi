@@ -26,6 +26,11 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
+  String _formatStatus(String status) {
+    if (status.isEmpty) return '';
+    return status[0].toUpperCase() + status.substring(1).toLowerCase();
+  }
+
   @override
   Widget build(BuildContext context) {
     final dasboardBloc = context.read<DashboardBloc>();
@@ -169,30 +174,72 @@ class DashboardPage extends StatelessWidget {
                               DateTime.now().toIndonesianString(),
                               style: AppTextStyles.inter96MediumPrimary,
                             ),
-                            Container(
-                              width: 156.w,
-                              height: 26.w,
-                              padding: EdgeInsets.symmetric(horizontal: 10.w),
-                              decoration: BoxDecoration(
-                                color: AppColors.deepTeal,
-                                borderRadius: BorderRadius.circular(10.w),
-                              ),
-                              child: Row(
-                                children: [
-                                  Container(
-                                    width: 15.w,
-                                    height: 15.w,
-                                    decoration: BoxDecoration(
-                                      color: AppColors.white,
-                                      borderRadius: BorderRadius.circular(5.w),
+                            SizedBox(width: 8.w),
+                            Flexible(
+                              child: Container(
+                                height: 26.w,
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 10.w,
+                                  vertical: 4.w,
+                                ),
+                                decoration: BoxDecoration(
+                                  gradient: const LinearGradient(
+                                    begin: Alignment.topLeft,
+                                    end: Alignment.bottomRight,
+                                    colors: [
+                                      Color(0xFF0F766E), // Teal 700
+                                      Color(0xFF14B8A6), // Teal 500
+                                    ],
+                                  ),
+                                  borderRadius: BorderRadius.circular(20.w),
+                                  border: Border.all(
+                                    color: Colors.white.withValues(alpha: 0.35),
+                                    width: 1.w,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: const Color(0x200F766E),
+                                      blurRadius: 8,
+                                      offset: const Offset(0, 2),
                                     ),
-                                  ),
-                                  SizedBox(width: 10.w),
-                                  Text(
-                                    "${state.profileEntity.position.name} - ${state.profileEntity.position.status}",
-                                    style: AppTextStyles.inter96RegularWhite,
-                                  ),
-                                ],
+                                  ],
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Container(
+                                      width: 7.w,
+                                      height: 7.w,
+                                      decoration: BoxDecoration(
+                                        color: const Color(0xFF4ADE80),
+                                        shape: BoxShape.circle,
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: const Color(0xFF4ADE80)
+                                                .withValues(alpha: 0.6),
+                                            blurRadius: 4,
+                                            spreadRadius: 1,
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    SizedBox(width: 6.w),
+                                    Flexible(
+                                      child: Text(
+                                        "${state.profileEntity.position.name} • ${_formatStatus(state.profileEntity.position.status)}",
+                                        overflow: TextOverflow.ellipsis,
+                                        maxLines: 1,
+                                        style: TextStyle(
+                                          fontFamily: 'Inter',
+                                          fontSize: 10.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                          letterSpacing: 0.2,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ),
                           ],

@@ -8,4 +8,12 @@ abstract class WorkLeaveRepository {
     int? year,
     String? status,
   });
+
+  Future<Either<Failure, LeaveItemEntity>> submitLeaveRequest({
+    required String leaveType,
+    required String startDate,
+    required String endDate,
+    required String reason,
+    String? attachmentPath,
+  });
 }

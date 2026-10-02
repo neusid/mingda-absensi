@@ -96,7 +96,7 @@ class AppTextStyles {
     fontSize: 10.13.sp,
     height: 22 / 11,
     fontWeight: FontWeight.w300,
-    color: AppColors.textPrimary,
+    color: AppColors.textSecondary,
   );
 
   static TextStyle get inter11RegularPrimary => TextStyle(

@@ -468,7 +468,7 @@ class HistoryAttendanceItemCard extends StatelessWidget {
     required IconData icon,
   }) {
     return Container(
-      padding: EdgeInsets.symmetric(horizontal: 7.w, vertical: 3.w),
+      padding: EdgeInsets.symmetric(horizontal: 5.5.w, vertical: 2.w),
       decoration: BoxDecoration(
         color: bgColor,
         borderRadius: BorderRadius.circular(4.w),
@@ -477,13 +477,13 @@ class HistoryAttendanceItemCard extends StatelessWidget {
       child: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          Icon(icon, size: 11.sp, color: textColor),
-          SizedBox(width: 4.w),
+          Icon(icon, size: 9.5.sp, color: textColor),
+          SizedBox(width: 3.w),
           Text(
             label,
             style: TextStyle(
               fontFamily: 'Inter',
-              fontSize: 10.sp,
+              fontSize: 8.5.sp,
               fontWeight: FontWeight.w500,
               color: textColor,
             ),

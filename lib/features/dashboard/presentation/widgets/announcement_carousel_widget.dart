@@ -251,7 +251,7 @@ class _AnnouncementCarouselWidgetState
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 8.5.w,
-                            fontWeight: FontWeight.w700,
+                            fontWeight: FontWeight.w600,
                             color: Colors.white,
                             letterSpacing: 0.4,
                           ),
@@ -280,7 +280,7 @@ class _AnnouncementCarouselWidgetState
                       style: TextStyle(
                         fontFamily: 'Inter',
                         fontSize: 14.w,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                         color: Colors.white,
                         height: 1.25,
                       ),

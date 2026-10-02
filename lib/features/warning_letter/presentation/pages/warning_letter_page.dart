@@ -1,34 +1,170 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
-import 'package:mingda_app/core/theme/app_text_styles.dart';
+import 'package:mingda_app/core/theme/app_shadows.dart';
+import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_card.dart';
+import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_filter_dropdown.dart';
+import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_policy_banner.dart';
+import 'package:mingda_app/features/warning_letter/presentation/widgets/warning_letter_policy_dialog.dart';
 
-class WarningLetterPage extends StatelessWidget {
+class WarningLetterPage extends StatefulWidget {
   const WarningLetterPage({super.key});
 
   @override
+  State<WarningLetterPage> createState() => _WarningLetterPageState();
+}
+
+class _WarningLetterPageState extends State<WarningLetterPage> {
+  WarningLetterType? _selectedType;
+  WarningLetterStatus? _selectedStatus;
+
+  WarningLetterType? _appliedType;
+  WarningLetterStatus? _appliedStatus;
+
+  /// Data Surat Peringatan sesuai schema REST API Mingda (/mobile/v1/warning-letters/*)
+  static const List<WarningLetterItemData> _allWarnings = [
+    WarningLetterItemData(
+      id: 1,
+      spNumber: 'SP/001/HRD/I/2026',
+      spLevel: 'SP 1',
+      title: 'Keterlambatan',
+      description:
+          'Terlambat 3x berturut-turut dalam seminggu. '
+          'Perlu penagihan kedisiplinan dan pembinaan kehadiran.',
+      status: 'active',
+      issuedDate: '10 Jan 2026',
+      validUntil: '10 Jul 2026',
+      attachmentUrl: '/mobile/v1/warning-letters/1/download',
+    ),
+    WarningLetterItemData(
+      id: 2,
+      spNumber: 'SP/002/HRD/IV/2026',
+      spLevel: 'SP 2',
+      title: 'Pelanggaran SOP',
+      description:
+          'Tidak mengikuti prosedur K3 pada shift malam. '
+          'Perlu pelatihan ulang operasional keselamatan kerja.',
+      status: 'active',
+      issuedDate: '02 Apr 2026',
+      validUntil: '02 Okt 2026',
+      attachmentUrl: '/mobile/v1/warning-letters/2/download',
+    ),
+    WarningLetterItemData(
+      id: 3,
+      spNumber: 'SP/003/HRD/II/2026',
+      spLevel: 'SP 1',
+      title: 'Absensi',
+      description:
+          'Tidak hadir tanpa keterangan selama 2 hari kerja. '
+          'Sudah ditindaklanjuti dan masa pembinaan telah selesai.',
+      status: 'completed',
+      issuedDate: '25 Feb 2026',
+      validUntil: '25 Ags 2026',
+      attachmentUrl: '/mobile/v1/warning-letters/3/download',
+    ),
+    WarningLetterItemData(
+      id: 4,
+      spNumber: 'SP/004/HRD/VI/2026',
+      spLevel: 'SP 3',
+      title: 'Disiplin',
+      description:
+          'Pelanggaran aturan seragam kerja dan etika operasional. '
+          'Perlu evaluasi kedisiplinan tingkat akhir.',
+      status: 'active',
+      issuedDate: '01 Jun 2026',
+      validUntil: '01 Des 2026',
+      attachmentUrl: '/mobile/v1/warning-letters/4/download',
+    ),
+  ];
+
+  List<WarningLetterItemData> get _filteredWarnings {
+    return _allWarnings.where((item) {
+      if (_appliedType != null && item.spLevel != _appliedType!.label) {
+        return false;
+      }
+      if (_appliedStatus != null &&
+          item.displayStatus != _appliedStatus!.label) {
+        return false;
+      }
+      return true;
+    }).toList();
+  }
+
+  void _applySearch() {
+    setState(() {
+      _appliedType = _selectedType;
+      _appliedStatus = _selectedStatus;
+    });
+  }
+
+  void _resetFilters() {
+    setState(() {
+      _selectedType = null;
+      _selectedStatus = null;
+      _appliedType = null;
+      _appliedStatus = null;
+    });
+  }
+
+  void _handleDownload(WarningLetterItemData item) {
+    ScaffoldMessenger.of(context).hideCurrentSnackBar();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        behavior: SnackBarBehavior.floating,
+        backgroundColor: const Color(0xFF0F766E),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.w),
+        ),
+        content: Row(
+          children: [
+            Icon(Icons.download_done_rounded, size: 18.w, color: Colors.white),
+            SizedBox(width: 8.w),
+            Expanded(
+              child: Text(
+                'Mengunduh berkas fisik ${item.spNumber}...',
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 12.sp,
+                  color: Colors.white,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final filteredList = _filteredWarnings;
+
     return Scaffold(
       backgroundColor: AppColors.bg,
       body: SafeArea(
-        child: Column(
-          children: [
-            Expanded(
-              child: SingleChildScrollView(
-                padding: EdgeInsets.symmetric(horizontal: 25.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    SizedBox(height: 20.w),
+        bottom: false,
+        child: SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: 25.w),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(height: 16.w),
 
+                    // ==================== 0. BANNER EDUKASI & SOP KEDISIPLINAN ====================
+                    WarningLetterPolicyBanner(
+                      onTap: () => WarningLetterPolicyDialog.show(context),
+                    ),
+
+                    SizedBox(height: 14.w),
+
+                    // ==================== 1. KARTU STATISTIK SP ====================
                     // 2 kartu statistik atas
                     Row(
                       children: [
                         Expanded(
                           child: _StatCard(
-                            icon: Icons.event_busy,
-                            iconColor: AppColors.red,
-                            iconBg: AppColors.red50,
+                            icon: Icons.warning_amber_rounded,
                             value: '1',
                             label: 'SP AKTIF',
                           ),
@@ -36,9 +172,7 @@ class WarningLetterPage extends StatelessWidget {
                         SizedBox(width: 8.w),
                         Expanded(
                           child: _StatCard(
-                            icon: Icons.calendar_today,
-                            iconColor: AppColors.green2,
-                            iconBg: AppColors.green250,
+                            icon: Icons.check_circle_outline_rounded,
                             value: '12',
                             label: 'SP SELESAI',
                           ),
@@ -48,78 +182,56 @@ class WarningLetterPage extends StatelessWidget {
                     SizedBox(height: 8.w),
 
                     // 1 kartu statistik lebar
-                    Container(
-                      width: double.infinity,
-                      padding: EdgeInsets.all(11.w),
-                      decoration: BoxDecoration(
-                        color: AppColors.white,
-                        borderRadius: BorderRadius.circular(10.w),
-                      ),
-                      child: Row(
-                        children: [
-                          Container(
-                            width: 40.w,
-                            height: 40.w,
-                            decoration: BoxDecoration(
-                              color: AppColors.charcoalSlate50,
-                              borderRadius: BorderRadius.circular(5.w),
-                            ),
-                            child: Icon(
-                              Icons.edit_calendar,
-                              size: 24.w,
-                              color: AppColors.charcoalSlate,
-                            ),
-                          ),
-                          SizedBox(width: 14.w),
-                          Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Text(
-                                '2',
-                                style: AppTextStyles.inter16MediumPrimary,
-                              ),
-                              Text(
-                                'TOTAL SP DITERIMA',
-                                style: AppTextStyles.inter8MediumSecondary,
-                              ),
-                            ],
-                          ),
-                        ],
-                      ),
+                    _StatCard(
+                      icon: Icons.assignment_outlined,
+                      value: '2',
+                      label: 'TOTAL SP DITERIMA',
                     ),
 
                     SizedBox(height: 15.w),
 
-                    // Filter: dropdown jenis & status
+                    // Filter: dropdown jenis & status (Overlay Mingda Pattern)
                     Row(
                       children: [
-                        Expanded(child: _FilterDropdown(value: 'Pilih jenis')),
-                        SizedBox(width: 7.w),
-                        Expanded(child: _FilterDropdown(value: 'Pilih Status')),
+                        Expanded(
+                          child: WarningLetterTypeFilterDropdown(
+                            selected: _selectedType,
+                            onChanged: (val) {
+                              setState(() => _selectedType = val);
+                            },
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Expanded(
+                          child: WarningLetterStatusFilterDropdown(
+                            selected: _selectedStatus,
+                            onChanged: (val) {
+                              setState(() => _selectedStatus = val);
+                            },
+                          ),
+                        ),
                       ],
                     ),
                     SizedBox(height: 10.w),
 
-                    // Tombol Cari & Reset
+                    // Tombol Cari & Reset (Mingda Corporate Styling)
                     Row(
                       children: [
                         Expanded(
                           child: _ActionButton(
                             label: 'Cari',
-                            icon: Icons.search,
-                            backgroundColor: AppColors.deepTeal,
-                            foregroundColor: AppColors.white,
-                            onTap: () {},
+                            icon: Icons.search_rounded,
+                            isPrimary: true,
+                            onTap: _applySearch,
                           ),
                         ),
                         SizedBox(width: 10.w),
                         Expanded(
                           child: _ActionButton(
                             label: 'Reset',
-                            icon: Icons.refresh,
-                            backgroundColor: AppColors.white,
-                            foregroundColor: AppColors.textSecondary,
-                            onTap: () {},
+                            icon: Icons.refresh_rounded,
+                            isPrimary: false,
+                            onTap: _resetFilters,
                           ),
                         ),
                       ],
@@ -127,58 +239,65 @@ class WarningLetterPage extends StatelessWidget {
 
                     SizedBox(height: 16.w),
 
-                    // List surat peringatan
-                    const _WarningCard(
-                      code: 'SP-1',
-                      title: 'Keterlambatan',
-                      status: 'Aktif',
-                      isActive: true,
-                      date: 'Diterbitkan: 10 Jan 2026',
-                      description:
-                          'Terlambat 3x berturut-turut dalam seminggu. '
-                          'Perlu penagihan kedisiplinan.',
-                    ),
-                    SizedBox(height: 12.w),
-                    const _WarningCard(
-                      code: 'SP-2',
-                      title: 'Pelanggaran SOP',
-                      status: 'Aktif',
-                      isActive: true,
-                      date: 'Diterbitkan: 02 Apr 2026',
-                      description:
-                          'Tidak mengikuti prosedur K3 pada shift malam. '
-                          'Perlu pelatihan ulang.',
-                    ),
-                    SizedBox(height: 12.w),
-                    const _WarningCard(
-                      code: 'SP-1',
-                      title: 'Absensi',
-                      status: 'Selesai',
-                      isActive: false,
-                      date: 'Diterbitkan: 25 Feb 2026',
-                      description:
-                          'Tidak hadir tanpa keterangan selama 2 hari. '
-                          'Sudah ditindaklanjuti.',
-                    ),
-                    SizedBox(height: 12.w),
-                    const _WarningCard(
-                      code: 'SP-3',
-                      title: 'Disiplin',
-                      status: 'Aktif',
-                      isActive: true,
-                      date: 'Diterbitkan: 01 Jun 2026',
-                      description:
-                          'Pelanggaran aturan seragam kerja. '
-                          'Perlu evaluasi kedisiplinan.',
-                    ),
+                    // List surat peringatan atau Empty State
+                    if (filteredList.isEmpty)
+                      Container(
+                        width: double.infinity,
+                        padding: EdgeInsets.symmetric(
+                          vertical: 36.w,
+                          horizontal: 20.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.white,
+                          borderRadius: BorderRadius.circular(14.w),
+                          border: Border.all(color: Colors.white, width: 1.5.w),
+                          boxShadow: [AppShadows.shadow094],
+                        ),
+                        child: Column(
+                          children: [
+                            Icon(
+                              Icons.search_off_rounded,
+                              size: 40.w,
+                              color: const Color(0xFF94A3B8),
+                            ),
+                            SizedBox(height: 10.w),
+                            Text(
+                              'Tidak ada Surat Peringatan',
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
+                              ),
+                            ),
+                            SizedBox(height: 4.w),
+                            Text(
+                              'Tidak ditemukan SP yang sesuai dengan filter yang dipilih.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w400,
+                                color: AppColors.textSecondary,
+                              ),
+                            ),
+                          ],
+                        ),
+                      )
+                    else
+                      ...filteredList.map((warning) => Padding(
+                            padding: EdgeInsets.only(bottom: 12.w),
+                            child: WarningLetterCard(
+                              item: warning,
+                              onTap: () {},
+                              onDownload: () => _handleDownload(warning),
+                            ),
+                          )),
 
-                    SizedBox(height: 24.w),
+                    SizedBox(height: 16.w),
                   ],
                 ),
               ),
-            ),
-          ],
-        ),
       ),
     );
   }
@@ -186,15 +305,11 @@ class WarningLetterPage extends StatelessWidget {
 
 class _StatCard extends StatelessWidget {
   final IconData icon;
-  final Color iconColor;
-  final Color iconBg;
   final String value;
   final String label;
 
   const _StatCard({
     required this.icon,
-    required this.iconColor,
-    required this.iconBg,
     required this.value,
     required this.label,
   });
@@ -202,65 +317,67 @@ class _StatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(11.w),
+      padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 11.w),
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(10.w),
+        border: Border.all(color: Colors.white, width: 1.5.w),
+        boxShadow: [AppShadows.shadow094],
       ),
       child: Row(
         children: [
           Container(
-            width: 40.w,
-            height: 40.w,
+            width: 42.w,
+            height: 42.w,
             decoration: BoxDecoration(
-              color: iconBg,
-              borderRadius: BorderRadius.circular(5.w),
-            ),
-            child: Icon(icon, size: 24.w, color: iconColor),
-          ),
-          SizedBox(width: 14.w),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(value, style: AppTextStyles.inter16MediumPrimary),
-              Text(label, style: AppTextStyles.inter8MediumSecondary),
-            ],
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _FilterDropdown extends StatelessWidget {
-  final String value;
-
-  const _FilterDropdown({required this.value});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 45.w,
-      padding: EdgeInsets.symmetric(horizontal: 16.w),
-      decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(10.w),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Text(
-              value,
-              overflow: TextOverflow.ellipsis,
-              style: TextStyle(
-                fontFamily: 'Roboto',
-                fontSize: 14.sp,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF8B8B8B),
+              color: const Color(0xFFF0FDFA),
+              borderRadius: BorderRadius.circular(10.w),
+              border: Border.all(
+                color: const Color(0xFFCCFBF1),
+                width: 1.w,
               ),
             ),
+            alignment: Alignment.center,
+            child: Icon(
+              icon,
+              size: 22.w,
+              color: const Color(0xFF0D9488),
+            ),
           ),
-          Icon(Icons.keyboard_arrow_down, size: 24.w, color: Color(0xFF8B8B8B)),
+          SizedBox(width: 12.w),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  value,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 18.w,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                    letterSpacing: -0.4,
+                    height: 1.1,
+                    fontFeatures: const [FontFeature.tabularFigures()],
+                  ),
+                ),
+                SizedBox(height: 3.w),
+                Text(
+                  label,
+                  style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 10.w,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xFF64748B),
+                    letterSpacing: 0.3,
+                  ),
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                ),
+              ],
+            ),
+          ),
         ],
       ),
     );
@@ -270,152 +387,67 @@ class _FilterDropdown extends StatelessWidget {
 class _ActionButton extends StatelessWidget {
   final String label;
   final IconData icon;
-  final Color backgroundColor;
-  final Color foregroundColor;
+  final bool isPrimary;
   final VoidCallback onTap;
 
   const _ActionButton({
     required this.label,
     required this.icon,
-    required this.backgroundColor,
-    required this.foregroundColor,
+    required this.isPrimary,
     required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8.w),
-      child: Container(
-        height: 34.w,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(8.w),
-        ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 14.w, color: foregroundColor),
-            SizedBox(width: 6.w),
-            Text(
-              label,
-              style: TextStyle(
-                fontFamily: 'Inter',
-                fontSize: 13.sp,
-                fontWeight: FontWeight.w600,
-                color: foregroundColor,
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _WarningCard extends StatelessWidget {
-  final String code;
-  final String title;
-  final String status;
-  final bool isActive;
-  final String date;
-  final String description;
-
-  const _WarningCard({
-    required this.code,
-    required this.title,
-    required this.status,
-    required this.isActive,
-    required this.date,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final Color statusColor = isActive ? AppColors.green2 : Color(0xFF7F7F7F);
-    final Color statusBg = isActive ? AppColors.green250 : Color(0xFFF3F4F6);
-
     return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.w),
+      height: 40.w,
       decoration: BoxDecoration(
-        color: AppColors.white,
-        borderRadius: BorderRadius.circular(16.w),
+        borderRadius: BorderRadius.circular(10.w),
+        gradient: isPrimary
+            ? const LinearGradient(
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+                colors: [
+                  AppColors.filterGradientStart,
+                  AppColors.filterGradientEnd,
+                ],
+              )
+            : null,
+        color: isPrimary ? null : AppColors.white,
+        border: Border.all(
+          color: isPrimary
+              ? AppColors.white.withValues(alpha: 0.45)
+              : Colors.white,
+          width: 1.5.w,
+        ),
+        boxShadow: [AppShadows.shadow094],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          borderRadius: BorderRadius.circular(10.w),
+          onTap: onTap,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 10.w, vertical: 6.w),
-                decoration: BoxDecoration(
-                  color: AppColors.deepTeal50,
-                  borderRadius: BorderRadius.circular(8.w),
-                ),
-                child: Text(
-                  code,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w700,
-                    color: AppColors.deepTeal,
-                  ),
-                ),
+              Icon(
+                icon,
+                size: 16.w,
+                color: isPrimary ? AppColors.white : AppColors.filterSlateIcon,
               ),
-              SizedBox(width: 10.w),
-              Expanded(
-                child: Text(
-                  title,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14.sp,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.charcoalSlate,
-                  ),
-                ),
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.w),
-                decoration: BoxDecoration(
-                  color: statusBg,
-                  borderRadius: BorderRadius.circular(6.w),
-                ),
-                child: Text(
-                  status,
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 12.sp,
-                    fontWeight: FontWeight.w600,
-                    color: statusColor,
-                  ),
+              SizedBox(width: 6.w),
+              Text(
+                label,
+                style: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w600,
+                  color: isPrimary ? AppColors.white : AppColors.filterSlateIcon,
                 ),
               ),
             ],
           ),
-          SizedBox(height: 12.w),
-          Text(
-            date,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 12.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textSecondary,
-            ),
-          ),
-          SizedBox(height: 4.w),
-          Text(
-            description,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 13.sp,
-              fontWeight: FontWeight.w400,
-              color: AppColors.textPrimary,
-              height: 1.4,
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

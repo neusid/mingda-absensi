@@ -9,6 +9,7 @@ class InputAuth extends StatefulWidget {
   final bool isPassword;
   final TextEditingController controller;
   final String? Function(String?)? validator;
+  final bool enabled;
 
   const InputAuth({
     super.key,
@@ -17,6 +18,7 @@ class InputAuth extends StatefulWidget {
     this.hintText,
     this.isPassword = false,
     this.validator,
+    this.enabled = true,
   });
 
   @override
@@ -57,9 +59,9 @@ class _InputAuthState extends State<InputAuth> {
           Container(
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(13.w),
-              color: Colors.white,
+              color: widget.enabled ? Colors.white : const Color(0xFFF9FAFB),
               boxShadow: [
-                _focusNode.hasFocus
+                widget.enabled && _focusNode.hasFocus
                     ? BoxShadow(
                         color: AppColors.deepTeal50,
                         spreadRadius: 4.w,
@@ -72,19 +74,34 @@ class _InputAuthState extends State<InputAuth> {
             child: TextFormField(
               controller: widget.controller,
               focusNode: _focusNode,
+              enabled: widget.enabled,
               obscureText: widget.isPassword ? _obsecureText : false,
               validator: widget.validator,
-              style: AppTextStyles.inputTextStyles,
+              style: AppTextStyles.inputTextStyles.copyWith(
+                color: widget.enabled ? AppColors.textPrimary : AppColors.textTertiary,
+              ),
               decoration: InputDecoration(
                 hintText: widget.hintText,
                 suffixIcon: widget.isPassword
                     ? IconButton(
-                        onPressed: () => setState(() {
-                          _obsecureText = !_obsecureText;
-                        }),
+                        onPressed: widget.enabled
+                            ? () => setState(() {
+                                _obsecureText = !_obsecureText;
+                              })
+                            : null,
                         icon: _obsecureText
-                            ? Icon(Icons.visibility)
-                            : Icon(Icons.visibility_off),
+                            ? Icon(
+                                Icons.visibility,
+                                color: widget.enabled
+                                    ? AppColors.textSecondary
+                                    : AppColors.textTertiary,
+                              )
+                            : Icon(
+                                Icons.visibility_off,
+                                color: widget.enabled
+                                    ? AppColors.textSecondary
+                                    : AppColors.textTertiary,
+                              ),
                       )
                     : null,
                 contentPadding: EdgeInsets.all(8.w),
@@ -93,6 +110,13 @@ class _InputAuthState extends State<InputAuth> {
                   borderSide: BorderSide(
                     width: 1.5,
                     color: AppColors.inputColorBorder,
+                  ),
+                ),
+                disabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.w),
+                  borderSide: BorderSide(
+                    width: 1.5,
+                    color: AppColors.inputColorBorder.withValues(alpha: 0.2),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(

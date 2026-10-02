@@ -33,6 +33,22 @@ class ProfileNetworkImage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final cleanUrl = url.trim();
+
+    if (cleanUrl.startsWith('assets/')) {
+      return ClipRRect(
+        borderRadius: BorderRadius.circular(radius),
+        child: Image.asset(
+          cleanUrl,
+          width: width,
+          height: height,
+          fit: fit,
+          errorBuilder: (context, error, stack) {
+            return fallback ?? _buildDefaultFallback();
+          },
+        ),
+      );
+    }
+
     if (cleanUrl.isEmpty ||
         (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://'))) {
       return fallback ?? _buildDefaultFallback();

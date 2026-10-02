@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
@@ -14,40 +13,50 @@ enum AttendanceStatType {
   cuti,
   sakit;
 
+  /// Label ringkas & jelas (bebas text overflow pada layar sempit)
   String get label {
     switch (this) {
       case AttendanceStatType.hadir:
-        return 'TOTAL HADIR';
+        return 'HADIR';
       case AttendanceStatType.terlambat:
-        return 'TOTAL TERLAMBAT';
+        return 'TERLAMBAT';
       case AttendanceStatType.alpha:
-        return 'TOTAL ALPHA';
+        return 'ALPHA';
       case AttendanceStatType.izin:
-        return 'TOTAL IZIN';
+        return 'IZIN';
       case AttendanceStatType.cuti:
-        return 'TOTAL CUTI';
+        return 'CUTI';
       case AttendanceStatType.sakit:
-        return 'TOTAL SAKIT';
+        return 'SAKIT';
     }
   }
 
-  /// Path ke badge SVG 48x48 pixel-perfect dari Figma export
-  String get svgBadgePath {
+  /// Ikon vektor monoline modern korporat
+  IconData get iconData {
     switch (this) {
       case AttendanceStatType.hadir:
-        return 'assets/icon/stat_badge_hadir.svg';
+        return Icons.check_circle_outline_rounded;
       case AttendanceStatType.terlambat:
-        return 'assets/icon/stat_badge_terlambat.svg';
+        return Icons.access_time_rounded;
       case AttendanceStatType.alpha:
-        return 'assets/icon/stat_badge_alpha.svg';
+        return Icons.highlight_off_rounded;
       case AttendanceStatType.izin:
-        return 'assets/icon/stat_badge_izin.svg';
+        return Icons.description_outlined;
       case AttendanceStatType.cuti:
-        return 'assets/icon/stat_badge_cuti.svg';
+        return Icons.event_available_outlined;
       case AttendanceStatType.sakit:
-        return 'assets/icon/stat_badge_sakit.svg';
+        return Icons.medical_services_outlined;
     }
   }
+
+  /// Warna aksen utama Teal Korporat terpadu (selaras dengan brand Mingda & dropdown)
+  Color get accentColor => const Color(0xFF0D9488); // Teal 600
+
+  /// Warna kontainer squircle: Frosted Soft Mint Teal
+  Color get containerBgColor => const Color(0xFFF0FDFA); // Mint 50
+
+  /// Border kontainer squircle: Teal halus
+  Color get borderColor => const Color(0xFFCCFBF1); // Mint / Teal 100
 
   /// Pemetaan langsung ke domain AttendanceEnum untuk filter riwayat
   AttendanceEnum get toAttendanceEnum {
@@ -67,7 +76,25 @@ enum AttendanceStatType {
     }
   }
 
-  /// Path ke kartu SVG lengkap dari folder Mingda Absensi (36)
+  /// Path ke badge SVG (fallback backwards compatibility)
+  String get svgBadgePath {
+    switch (this) {
+      case AttendanceStatType.hadir:
+        return 'assets/icon/stat_badge_hadir.svg';
+      case AttendanceStatType.terlambat:
+        return 'assets/icon/stat_badge_terlambat.svg';
+      case AttendanceStatType.alpha:
+        return 'assets/icon/stat_badge_alpha.svg';
+      case AttendanceStatType.izin:
+        return 'assets/icon/stat_badge_izin.svg';
+      case AttendanceStatType.cuti:
+        return 'assets/icon/stat_badge_cuti.svg';
+      case AttendanceStatType.sakit:
+        return 'assets/icon/stat_badge_sakit.svg';
+    }
+  }
+
+  /// Path ke kartu SVG lengkap (fallback backwards compatibility)
   String get svgCardPath {
     switch (this) {
       case AttendanceStatType.hadir:
@@ -82,42 +109,6 @@ enum AttendanceStatType {
         return 'assets/icon/stat_card_cuti.svg';
       case AttendanceStatType.sakit:
         return 'assets/icon/stat_card_sakit.svg';
-    }
-  }
-
-  /// Warna solid cerah khas Figma Mingda Absensi (36)
-  Color get accentColor {
-    switch (this) {
-      case AttendanceStatType.hadir:
-        return const Color(0xFF00AA13);
-      case AttendanceStatType.terlambat:
-        return const Color(0xFFD97706);
-      case AttendanceStatType.alpha:
-        return const Color(0xFFED2736);
-      case AttendanceStatType.izin:
-        return const Color(0xFF0284C7);
-      case AttendanceStatType.cuti:
-        return const Color(0xFF4F46E5);
-      case AttendanceStatType.sakit:
-        return const Color(0xFF0D9488);
-    }
-  }
-
-  /// Background pastel lembut untuk kontainer squircle badge
-  Color get containerBgColor {
-    switch (this) {
-      case AttendanceStatType.hadir:
-        return const Color(0xFFE6F7EB);
-      case AttendanceStatType.terlambat:
-        return const Color(0xFFFFF8E6);
-      case AttendanceStatType.alpha:
-        return const Color(0xFFFEECEE);
-      case AttendanceStatType.izin:
-        return const Color(0xFFE6F7FB);
-      case AttendanceStatType.cuti:
-        return const Color(0xFFEEF2FF);
-      case AttendanceStatType.sakit:
-        return const Color(0xFFF0FDFA);
     }
   }
 
@@ -138,7 +129,7 @@ class AttendanceStatItem {
     required this.count,
   });
 
-  /// Factory sampel data presensi bulanan persis dari screenshot Tuan
+  /// Factory sampel data presensi bulanan
   static List<AttendanceStatItem> sampleList() {
     return const [
       AttendanceStatItem(type: AttendanceStatType.hadir, count: 20),
@@ -151,7 +142,7 @@ class AttendanceStatItem {
   }
 }
 
-/// Widget Kartu Statistik Presensi (Figma SVG Template — Pixel Perfect Gojek Style)
+/// Widget Kartu Statistik Presensi (Corporate Teal — 100% Monokromatik & Selaras Brand)
 class AttendanceStatCard extends StatelessWidget {
   final AttendanceStatType type;
   final int count;
@@ -179,13 +170,33 @@ class AttendanceStatCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 1. Symmetrical Squircle + Solid Circle Vector Badge
-          SvgPicture.asset(
-            type.svgBadgePath,
+          // 1. Corporate Teal Squircle + Clean Vector Icon
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             width: 44.w,
             height: 44.w,
+            decoration: BoxDecoration(
+              color: isSelected
+                  ? const Color(0xFF0F766E) // Deep Teal saat aktif
+                  : const Color(0xFFF0FDFA), // Soft Mint Teal
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: isSelected
+                    ? const Color(0xFF0F766E)
+                    : const Color(0xFFCCFBF1),
+                width: 1.2.w,
+              ),
+            ),
+            alignment: Alignment.center,
+            child: Icon(
+              type.iconData,
+              size: 22.w,
+              color: isSelected
+                  ? Colors.white
+                  : const Color(0xFF0D9488), // Teal 600
+            ),
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 9.w),
 
           // 2. Value & Label
           Expanded(
@@ -198,8 +209,10 @@ class AttendanceStatCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 22.sp,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF0F172A), // Slate 900
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? const Color(0xFF0F766E)
+                        : AppColors.textPrimary,
                     letterSpacing: -0.5,
                     height: 1.1,
                     fontFeatures: const [FontFeature.tabularFigures()],
@@ -210,10 +223,12 @@ class AttendanceStatCard extends StatelessWidget {
                   type.label,
                   style: TextStyle(
                     fontFamily: 'Inter',
-                    fontSize: 9.8.sp,
-                    fontWeight: FontWeight.w700,
-                    color: type.labelColor,
-                    letterSpacing: 0.2,
+                    fontSize: 10.sp,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? const Color(0xFF0D9488)
+                        : const Color(0xFF64748B),
+                    letterSpacing: 0.3,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -225,12 +240,27 @@ class AttendanceStatCard extends StatelessWidget {
       ),
     );
 
-    return Container(
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
       height: 72.w,
       decoration: BoxDecoration(
-        color: AppColors.white,
+        color: isSelected ? const Color(0xFFF0FDFA) : AppColors.white,
         borderRadius: BorderRadius.circular(10.w),
-        boxShadow: [AppShadows.shadow094],
+        border: isSelected
+            ? Border.all(
+                color: const Color(0xFF0D9488),
+                width: 1.5.w,
+              )
+            : null,
+        boxShadow: isSelected
+            ? [
+                const BoxShadow(
+                  color: Color(0x180F766E),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ]
+            : [AppShadows.shadow094],
       ),
       child: onTap != null
           ? Material(
@@ -238,8 +268,8 @@ class AttendanceStatCard extends StatelessWidget {
               child: InkWell(
                 onTap: onTap,
                 borderRadius: BorderRadius.circular(10.w),
-                splashColor: type.accentColor.withValues(alpha: 0.12),
-                highlightColor: type.accentColor.withValues(alpha: 0.05),
+                splashColor: const Color(0xFF0D9488).withValues(alpha: 0.12),
+                highlightColor: const Color(0xFF0D9488).withValues(alpha: 0.05),
                 child: cardContent,
               ),
             )

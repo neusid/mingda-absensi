@@ -12,6 +12,8 @@ import 'package:mingda_app/features/history_attendance/presentation/pages/histor
 import 'package:mingda_app/features/root/presentation/pages/root_page.dart';
 import 'package:mingda_app/features/splash/presentation/blocs/splash_bloc.dart';
 import 'package:mingda_app/features/splash/presentation/pages/splash_page.dart';
+import 'package:mingda_app/features/work_leave/presentation/blocs/work_leave_bloc.dart';
+import 'package:mingda_app/features/work_leave/presentation/pages/add_work_leave_page.dart';
 import 'package:mingda_app/features/work_leave/presentation/pages/work_leave_page.dart';
 import 'package:mingda_app/features/warning_letter/presentation/pages/warning_letter_page.dart';
 
@@ -69,6 +71,19 @@ class AppRoutes {
         );
       case '/work-leave':
         return MaterialPageRoute(builder: (context) => const WorkLeavePage());
+      case '/add-work-leave':
+        final workLeaveBloc = settings.arguments as WorkLeaveBloc?;
+        return MaterialPageRoute(
+          builder: (context) => workLeaveBloc != null
+              ? BlocProvider.value(
+                  value: workLeaveBloc,
+                  child: const AddWorkLeavePage(),
+                )
+              : BlocProvider(
+                  create: (context) => sl<WorkLeaveBloc>(),
+                  child: const AddWorkLeavePage(),
+                ),
+        );
       case '/warning-letter':
         return MaterialPageRoute(
           builder: (context) => const WarningLetterPage(),

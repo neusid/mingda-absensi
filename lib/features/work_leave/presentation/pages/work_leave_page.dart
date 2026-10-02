@@ -3,7 +3,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mingda_app/core/di/injection_container.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
+import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/work_leave/presentation/blocs/work_leave_bloc.dart';
+import 'package:mingda_app/features/work_leave/presentation/pages/add_work_leave_page.dart';
+import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_detail_sheet.dart';
+import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_filter_dropdown.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_item_card.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_skeleton.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_stat_card.dart';
@@ -22,6 +26,18 @@ class WorkLeavePage extends StatelessWidget {
 
 class _WorkLeaveView extends StatelessWidget {
   const _WorkLeaveView();
+
+  void _openAddLeave(BuildContext context) {
+    final bloc = context.read<WorkLeaveBloc>();
+    Navigator.of(context, rootNavigator: true).push(
+      MaterialPageRoute(
+        builder: (_) => BlocProvider.value(
+          value: bloc,
+          child: const AddWorkLeavePage(),
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -95,7 +111,12 @@ class _WorkLeaveView extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    SizedBox(height: 20.w),
+                    SizedBox(height: 16.w),
+
+                    // ==================== 0. BANNER PENGUMUMAN CUTI ====================
+                    _buildBannerCard(),
+
+                    SizedBox(height: 14.w),
 
                     // ==================== 1. REKAP STATISTIK REAL API ====================
                     Row(
@@ -140,18 +161,22 @@ class _WorkLeaveView extends StatelessWidget {
                     Row(
                       children: [
                         Expanded(
-                          child: _FilterDropdown(
-                            value: selectedStat != null
-                                ? selectedStat.label
-                                : 'Semua Pengajuan',
-                            onTap: () => _showFilterSheet(context, selectedStat),
+                          child: WorkLeaveStatusFilterDropdown(
+                            selected: selectedStat,
+                            onChanged: (stat) {
+                              context.read<WorkLeaveBloc>().add(
+                                    WorkLeaveEventFilterByStat(stat),
+                                  );
+                            },
                           ),
                         ),
                         SizedBox(width: 10.w),
                         _FilterIconButton(
                           icon: Icons.refresh_rounded,
                           onTap: () {
-                            context.read<WorkLeaveBloc>().add(const WorkLeaveEventFetch());
+                            context.read<WorkLeaveBloc>().add(
+                                  const WorkLeaveEventFetch(),
+                                );
                           },
                         ),
                       ],
@@ -167,19 +192,9 @@ class _WorkLeaveView extends StatelessWidget {
                         vertical: 10.w,
                       ),
                       decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10.w),
+                        boxShadow: [AppShadows.shadow094],
                         color: Colors.white,
-                        borderRadius: BorderRadius.circular(12.r),
-                        border: Border.all(
-                          color: const Color(0xFFE2E8F0),
-                          width: 1.2.w,
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: const Color(0x080F172A),
-                            blurRadius: 10.r,
-                            offset: Offset(0, 2.w),
-                          ),
-                        ],
                       ),
                       child: Row(
                         children: [
@@ -189,25 +204,40 @@ class _WorkLeaveView extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 14.5.sp,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF0F172A),
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
                               ),
                             ),
                           ),
-                          Material(
-                            color: AppColors.deepTeal,
-                            borderRadius: BorderRadius.circular(8.r),
-                            child: InkWell(
-                              onTap: () {
-                                // Dialog / Form Pengajuan Cuti Baru
-                              },
+                          Container(
+                            decoration: BoxDecoration(
+                              gradient: const LinearGradient(
+                                colors: [
+                                  Color(0xFF0F766E),
+                                  Color(0xFF14B8A6),
+                                ],
+                              ),
                               borderRadius: BorderRadius.circular(8.r),
-                              child: Padding(
-                                padding: EdgeInsets.all(6.w),
-                                child: Icon(
-                                  Icons.add_rounded,
-                                  size: 18.w,
-                                  color: Colors.white,
+                              boxShadow: const [
+                                BoxShadow(
+                                  color: Color(0x250F766E),
+                                  blurRadius: 6,
+                                  offset: Offset(0, 2),
+                                ),
+                              ],
+                            ),
+                            child: Material(
+                              color: Colors.transparent,
+                              child: InkWell(
+                                onTap: () => _openAddLeave(context),
+                                borderRadius: BorderRadius.circular(8.r),
+                                child: Padding(
+                                  padding: EdgeInsets.all(6.w),
+                                  child: Icon(
+                                    Icons.add_rounded,
+                                    size: 18.w,
+                                    color: Colors.white,
+                                  ),
                                 ),
                               ),
                             ),
@@ -243,6 +273,24 @@ class _WorkLeaveView extends StatelessWidget {
                                 color: const Color(0xFF94A3B8),
                               ),
                             ),
+                            SizedBox(height: 10.w),
+                            TextButton.icon(
+                              onPressed: () => _openAddLeave(context),
+                              icon: Icon(
+                                Icons.add_rounded,
+                                size: 16.w,
+                                color: const Color(0xFF0D9488),
+                              ),
+                              label: Text(
+                                'Buat Pengajuan Baru',
+                                style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 12.5.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF0D9488),
+                                ),
+                              ),
+                            ),
                           ],
                         ),
                       )
@@ -259,7 +307,7 @@ class _WorkLeaveView extends StatelessWidget {
                             status: item.displayStatus,
                             startDate: item.startDate,
                             endDate: item.endDate,
-                            onTap: () {},
+                            onTap: () => WorkLeaveDetailSheet.show(context, item),
                           );
                         },
                       ),
@@ -275,176 +323,148 @@ class _WorkLeaveView extends StatelessWidget {
     );
   }
 
-  void _showFilterSheet(BuildContext context, WorkLeaveStatType? currentStat) {
-    showModalBottomSheet(
-      context: context,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(20.r)),
+  Widget _buildBannerCard() {
+    return Container(
+      width: double.infinity,
+      height: 135.w,
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.w),
+        boxShadow: [AppShadows.shadow094],
       ),
-      backgroundColor: Colors.white,
-      builder: (sheetContext) {
-        return SafeArea(
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.w),
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Center(
-                  child: Container(
-                    width: 40.w,
-                    height: 4.w,
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFCBD5E1),
-                      borderRadius: BorderRadius.circular(2.r),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(10.w),
+        child: Stack(
+          fit: StackFit.expand,
+          children: [
+            // 1. Background Photographic Image from Assets
+            Image.asset(
+              'assets/img/work_leave_banner.jpg',
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) => Container(
+                color: const Color(0xFF1E293B),
+                child: const Center(
+                  child: Icon(
+                    Icons.image_outlined,
+                    color: Colors.white54,
+                    size: 32,
+                  ),
+                ),
+              ),
+            ),
+
+            // 2. Scrim Gradient Overlay for Text Readability
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
+                  stops: const [0.0, 0.55, 1.0],
+                  colors: [
+                    Colors.black.withValues(alpha: 0.85),
+                    Colors.black.withValues(alpha: 0.50),
+                    Colors.black.withValues(alpha: 0.15),
+                  ],
+                ),
+              ),
+            ),
+
+            // 3. Subtle bottom vignette
+            Container(
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  stops: const [0.5, 1.0],
+                  colors: [
+                    Colors.transparent,
+                    Colors.black.withValues(alpha: 0.40),
+                  ],
+                ),
+              ),
+            ),
+
+            // 4. Content Text, Tag & Date
+            Padding(
+              padding: EdgeInsets.symmetric(
+                horizontal: 14.w,
+                vertical: 12.w,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Row 1: Category Tag + Date
+                  Row(
+                    children: [
+                      Container(
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 7.w,
+                          vertical: 2.5.w,
+                        ),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4F46E5).withValues(alpha: 0.88),
+                          borderRadius: BorderRadius.circular(4.w),
+                        ),
+                        child: Text(
+                          'CUTI & LIBUR',
+                          style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 8.5.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                            letterSpacing: 0.4,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Text(
+                        '25 Sep 2026',
+                        style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 9.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.white.withValues(alpha: 0.80),
+                        ),
+                      ),
+                    ],
+                  ),
+
+                  // Title
+                  SizedBox(
+                    width: 170.w,
+                    child: Text(
+                      'Pengumuman Cuti Bersama 2026',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                        height: 1.25,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(height: 16.w),
-                Text(
-                  'Filter Status Pengajuan',
-                  style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 16.sp,
-                    fontWeight: FontWeight.w700,
-                    color: const Color(0xFF0F172A),
-                  ),
-                ),
-                SizedBox(height: 12.w),
-                _buildFilterOption(
-                  sheetContext,
-                  context,
-                  title: 'Semua Pengajuan',
-                  isSelected: currentStat == null,
-                  onTap: () {
-                    context.read<WorkLeaveBloc>().add(
-                          const WorkLeaveEventFilterByStat(null),
-                        );
-                    Navigator.pop(sheetContext);
-                  },
-                ),
-                ...WorkLeaveStatType.values.map(
-                  (type) => _buildFilterOption(
-                    sheetContext,
-                    context,
-                    title: type.label,
-                    color: type.accentColor,
-                    isSelected: currentStat == type,
-                    onTap: () {
-                      context.read<WorkLeaveBloc>().add(
-                            WorkLeaveEventFilterByStat(type),
-                          );
-                      Navigator.pop(sheetContext);
-                    },
-                  ),
-                ),
-              ],
-            ),
-          ),
-        );
-      },
-    );
-  }
 
-  Widget _buildFilterOption(
-    BuildContext sheetContext,
-    BuildContext blocContext, {
-    required String title,
-    Color? color,
-    required bool isSelected,
-    required VoidCallback onTap,
-  }) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 8.w),
-      decoration: BoxDecoration(
-        color: isSelected ? const Color(0xFFF1F5F9) : Colors.transparent,
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: ListTile(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.r)),
-        leading: Container(
-          width: 12.w,
-          height: 12.w,
-          decoration: BoxDecoration(
-            shape: BoxShape.circle,
-            color: color ?? const Color(0xFF64748B),
-          ),
-        ),
-        title: Text(
-          title,
-          style: TextStyle(
-            fontFamily: 'Inter',
-            fontSize: 14.sp,
-            fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-            color: const Color(0xFF0F172A),
-          ),
-        ),
-        trailing: isSelected
-            ? Icon(Icons.check_circle_rounded, color: AppColors.deepTeal, size: 20.w)
-            : null,
-        onTap: onTap,
-      ),
-    );
-  }
-}
-
-class _FilterDropdown extends StatelessWidget {
-  final String value;
-  final VoidCallback? onTap;
-
-  const _FilterDropdown({
-    required this.value,
-    this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      height: 44.w,
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: const Color(0xFFE2E8F0),
-          width: 1.2.w,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x060F172A),
-            blurRadius: 8.r,
-            offset: Offset(0, 2.w),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: onTap,
-          borderRadius: BorderRadius.circular(12.r),
-          child: Padding(
-            padding: EdgeInsets.symmetric(horizontal: 14.w),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Text(
-                    value,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontFamily: 'Inter',
-                      fontSize: 13.sp,
-                      fontWeight: FontWeight.w500,
-                      color: const Color(0xFF334155),
+                  // Description
+                  SizedBox(
+                    width: 250.w,
+                    child: Text(
+                      'Jadwal operasional libur nasional & cuti bersama karyawan.',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 10.sp,
+                        fontWeight: FontWeight.w400,
+                        color: Colors.white.withValues(alpha: 0.90),
+                      ),
                     ),
                   ),
-                ),
-                Icon(
-                  Icons.keyboard_arrow_down_rounded,
-                  size: 20.w,
-                  color: const Color(0xFF64748B),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
+          ],
         ),
       ),
     );
@@ -466,30 +486,22 @@ class _FilterIconButton extends StatelessWidget {
       width: 44.w,
       height: 44.w,
       decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(10.w),
+        boxShadow: [AppShadows.shadow094],
         color: Colors.white,
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: const Color(0xFFE2E8F0),
-          width: 1.2.w,
-        ),
-        boxShadow: [
-          BoxShadow(
-            color: const Color(0x060F172A),
-            blurRadius: 8.r,
-            offset: Offset(0, 2.w),
-          ),
-        ],
       ),
       child: Material(
         color: Colors.transparent,
         child: InkWell(
           onTap: onTap,
-          borderRadius: BorderRadius.circular(12.r),
+          borderRadius: BorderRadius.circular(10.w),
+          splashColor: const Color(0xFF0D9488).withValues(alpha: 0.12),
+          highlightColor: const Color(0xFF0D9488).withValues(alpha: 0.05),
           child: Center(
             child: Icon(
               icon,
               size: 20.w,
-              color: const Color(0xFF334155),
+              color: const Color(0xFF0D9488),
             ),
           ),
         ),

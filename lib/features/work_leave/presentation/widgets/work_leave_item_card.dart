@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
-/// Kartu Riwayat Pengajuan Cuti & Izin (Product Design Standard)
+/// Kartu Riwayat Pengajuan Cuti & Izin (Corporate Teal & Micro-Badge Standards)
 class WorkLeaveItemCard extends StatelessWidget {
   final String title;
   final String status;
@@ -19,58 +20,63 @@ class WorkLeaveItemCard extends StatelessWidget {
     this.onTap,
   });
 
+  /// Status badge dot color
+  Color get _statusDotColor {
+    final lower = status.toLowerCase();
+    if (lower.contains('setuju')) {
+      return const Color(0xFF059669); // Emerald 600
+    } else if (lower.contains('tolak')) {
+      return const Color(0xFFDC2626); // Red 600
+    } else {
+      return const Color(0xFFD97706); // Amber 600
+    }
+  }
+
+  /// Status badge background color
   Color get _statusBgColor {
     final lower = status.toLowerCase();
     if (lower.contains('setuju')) {
-      return const Color(0xFFE6F7EB);
+      return const Color(0xFFE8FAF3); // Mint / Green 50
     } else if (lower.contains('tolak')) {
-      return const Color(0xFFFEECEE);
+      return const Color(0xFFFEECEC); // Rose / Red 50
     } else {
-      return const Color(0xFFFFF8E6);
+      return const Color(0xFFFFFBEB); // Amber 50
     }
   }
 
+  /// Status badge border color
+  Color get _statusBorderColor {
+    final lower = status.toLowerCase();
+    if (lower.contains('setuju')) {
+      return const Color(0xFFA7F3D0); // Mint / Green 200
+    } else if (lower.contains('tolak')) {
+      return const Color(0xFFFECACA); // Rose / Red 200
+    } else {
+      return const Color(0xFFFDE68A); // Amber 200
+    }
+  }
+
+  /// Status badge text color
   Color get _statusTextColor {
     final lower = status.toLowerCase();
     if (lower.contains('setuju')) {
-      return const Color(0xFF00AA13);
+      return const Color(0xFF047857); // Green 700
     } else if (lower.contains('tolak')) {
-      return const Color(0xFFED2736);
+      return const Color(0xFFB91C1C); // Red 700
     } else {
-      return const Color(0xFFD97706);
+      return const Color(0xFFB45309); // Amber 700
     }
   }
 
-  Color get _iconAccentColor {
-    final lower = title.toLowerCase();
-    if (lower.contains('sakit')) {
-      return const Color(0xFFFF5722);
-    } else if (lower.contains('cuti')) {
-      return const Color(0xFF7C3AED);
-    } else {
-      return const Color(0xFF00AED6);
-    }
-  }
-
-  Color get _iconBgColor {
-    final lower = title.toLowerCase();
-    if (lower.contains('sakit')) {
-      return const Color(0xFFFEEFEA);
-    } else if (lower.contains('cuti')) {
-      return const Color(0xFFF2EBFD);
-    } else {
-      return const Color(0xFFE6F7FB);
-    }
-  }
-
+  /// Icon semantik outline yang sesuai dengan jenis pengajuan
   IconData get _iconData {
     final lower = title.toLowerCase();
     if (lower.contains('sakit')) {
-      return Icons.add_rounded;
+      return Icons.medical_services_outlined;
     } else if (lower.contains('cuti')) {
-      return Icons.luggage_rounded;
+      return Icons.event_available_outlined;
     } else {
-      return Icons.description_rounded;
+      return Icons.description_outlined;
     }
   }
 
@@ -87,42 +93,35 @@ class WorkLeaveItemCard extends StatelessWidget {
         child: InkWell(
           onTap: onTap,
           borderRadius: BorderRadius.circular(10.w),
-          splashColor: _iconAccentColor.withValues(alpha: 0.12),
-          highlightColor: _iconAccentColor.withValues(alpha: 0.05),
+          splashColor: const Color(0xFF0D9488).withValues(alpha: 0.12),
+          highlightColor: const Color(0xFF0D9488).withValues(alpha: 0.05),
           child: Padding(
             padding: EdgeInsets.all(12.w),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // 1. Squircle Badge Gojek-Style
+                // 1. Unified Corporate Teal Squircle
                 Container(
                   width: 44.w,
                   height: 44.w,
                   decoration: BoxDecoration(
-                    color: _iconBgColor,
+                    color: const Color(0xFFF0FDFA), // Frosted Soft Mint Teal
                     borderRadius: BorderRadius.circular(14.r),
-                  ),
-                  child: Center(
-                    child: Container(
-                      width: 32.w,
-                      height: 32.w,
-                      decoration: BoxDecoration(
-                        color: _iconAccentColor,
-                        shape: BoxShape.circle,
-                      ),
-                      child: Center(
-                        child: Icon(
-                          _iconData,
-                          size: 18.w,
-                          color: Colors.white,
-                        ),
-                      ),
+                    border: Border.all(
+                      color: const Color(0xFFCCFBF1), // Soft Teal border
+                      width: 1.w,
                     ),
+                  ),
+                  alignment: Alignment.center,
+                  child: Icon(
+                    _iconData,
+                    size: 22.w,
+                    color: const Color(0xFF0D9488), // Teal 600
                   ),
                 ),
                 SizedBox(width: 12.w),
 
-                // 2. Konten Informasi & Pill Status
+                // 2. Konten Informasi & Micro-Badge Status
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -137,30 +136,49 @@ class WorkLeaveItemCard extends StatelessWidget {
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 14.5.sp,
-                                fontWeight: FontWeight.w700,
-                                color: const Color(0xFF0F172A),
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary,
                               ),
                               overflow: TextOverflow.ellipsis,
                             ),
                           ),
                           SizedBox(width: 8.w),
+                          // Micro-Badge Status (sesuai aturan Master Knowledge)
                           Container(
                             padding: EdgeInsets.symmetric(
-                              horizontal: 8.w,
-                              vertical: 3.w,
+                              horizontal: 5.w,
+                              vertical: 1.5.w,
                             ),
                             decoration: BoxDecoration(
                               color: _statusBgColor,
-                              borderRadius: BorderRadius.circular(6.r),
-                            ),
-                            child: Text(
-                              status,
-                              style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 10.sp,
-                                fontWeight: FontWeight.w700,
-                                color: _statusTextColor,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(
+                                color: _statusBorderColor,
+                                width: 0.8.w,
                               ),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Container(
+                                  width: 3.w,
+                                  height: 3.w,
+                                  decoration: BoxDecoration(
+                                    color: _statusDotColor,
+                                    shape: BoxShape.circle,
+                                  ),
+                                ),
+                                SizedBox(width: 2.5.w),
+                                Text(
+                                  status.toUpperCase(),
+                                  style: TextStyle(
+                                    fontFamily: 'Inter',
+                                    fontSize: 8.5.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: _statusTextColor,
+                                  ),
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -169,17 +187,17 @@ class WorkLeaveItemCard extends StatelessWidget {
                       Row(
                         children: [
                           Icon(
-                            Icons.calendar_month_rounded,
-                            size: 13.w,
+                            Icons.calendar_today_outlined,
+                            size: 12.w,
                             color: const Color(0xFF64748B),
                           ),
-                          SizedBox(width: 4.w),
+                          SizedBox(width: 5.w),
                           Flexible(
                             child: Text(
                               startDate,
                               style: TextStyle(
                                 fontFamily: 'Inter',
-                                fontSize: 10.5.sp,
+                                fontSize: 11.sp,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFF64748B),
                               ),
@@ -187,7 +205,7 @@ class WorkLeaveItemCard extends StatelessWidget {
                             ),
                           ),
                           Padding(
-                            padding: EdgeInsets.symmetric(horizontal: 4.w),
+                            padding: EdgeInsets.symmetric(horizontal: 5.w),
                             child: Icon(
                               Icons.arrow_forward_rounded,
                               size: 11.w,
@@ -199,7 +217,7 @@ class WorkLeaveItemCard extends StatelessWidget {
                               endDate,
                               style: TextStyle(
                                 fontFamily: 'Inter',
-                                fontSize: 10.5.sp,
+                                fontSize: 11.sp,
                                 fontWeight: FontWeight.w500,
                                 color: const Color(0xFF64748B),
                               ),
@@ -219,3 +237,4 @@ class WorkLeaveItemCard extends StatelessWidget {
     );
   }
 }
+

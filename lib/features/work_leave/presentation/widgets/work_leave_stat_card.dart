@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
 /// Jenis kategori statistik pengajuan cuti & izin
@@ -22,64 +23,37 @@ enum WorkLeaveStatType {
     }
   }
 
-  /// Ikon representatif putih di dalam solid circle Gojek style
+  /// Ikon vektor monoline modern korporat
   IconData get icon {
     switch (this) {
       case WorkLeaveStatType.disetujui:
-        return Icons.check_rounded;
+        return Icons.check_circle_outline_rounded;
       case WorkLeaveStatType.menunggu:
         return Icons.access_time_rounded;
       case WorkLeaveStatType.ditolak:
-        return Icons.close_rounded;
+        return Icons.highlight_off_rounded;
       case WorkLeaveStatType.cutiTerpakai:
-        return Icons.luggage_rounded;
+        return Icons.event_available_outlined;
     }
   }
 
-  /// Warna solid cerah khas Gojek
-  Color get accentColor {
-    switch (this) {
-      case WorkLeaveStatType.disetujui:
-        return const Color(0xFF00AA13); // Gojek Green
-      case WorkLeaveStatType.menunggu:
-        return const Color(0xFFFF9800); // Gojek Amber
-      case WorkLeaveStatType.ditolak:
-        return const Color(0xFFED2736); // Gojek Red
-      case WorkLeaveStatType.cutiTerpakai:
-        return const Color(0xFF7C3AED); // Gojek Purple
-    }
-  }
+  /// Warna aksen utama Teal Korporat terpadu
+  Color get accentColor => const Color(0xFF0D9488); // Teal 600
 
-  /// Background pastel lembut untuk kontainer squircle
-  Color get containerBgColor {
-    switch (this) {
-      case WorkLeaveStatType.disetujui:
-        return const Color(0xFFE6F7EB);
-      case WorkLeaveStatType.menunggu:
-        return const Color(0xFFFFF8E6);
-      case WorkLeaveStatType.ditolak:
-        return const Color(0xFFFEECEE);
-      case WorkLeaveStatType.cutiTerpakai:
-        return const Color(0xFFF2EBFD);
-    }
-  }
+  /// Background pastel Soft Mint Teal
+  Color get containerBgColor => const Color(0xFFF0FDFA); // Mint 50
 
-  Color get cardBorderColor {
-    if (this == WorkLeaveStatType.ditolak) {
-      return const Color(0xFFFECDD3);
-    }
-    return const Color(0xFFE2E8F0);
-  }
+  /// Border halus Teal
+  Color get borderColor => const Color(0xFFCCFBF1); // Mint / Teal 100
 
-  Color get labelColor {
-    if (this == WorkLeaveStatType.ditolak) {
-      return const Color(0xFFED2736);
-    }
-    return const Color(0xFF64748B);
-  }
+  Color get cardBgColor => Colors.white;
+
+  Color get cardBorderColor => const Color(0xFFE2E8F0);
+
+  Color get labelColor => const Color(0xFF64748B);
 }
 
-/// Widget Kartu Statistik Cuti (Product Design Standard — Gojek Solid Badge)
+/// Widget Kartu Statistik Cuti (Corporate Teal — 100% Selaras Brand Mingda)
 class WorkLeaveStatCard extends StatelessWidget {
   final WorkLeaveStatType type;
   final String value;
@@ -101,33 +75,31 @@ class WorkLeaveStatCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          // 1. Squircle Container dengan Lingkaran Solid Gojek Style di Tengah
-          Container(
+          // 1. Corporate Teal Squircle + Clean Vector Outline Icon
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 200),
             width: 44.w,
             height: 44.w,
             decoration: BoxDecoration(
-              color: type.containerBgColor,
-              borderRadius: BorderRadius.circular(14.r),
-            ),
-            child: Center(
-              child: Container(
-                width: 32.w,
-                height: 32.w,
-                decoration: BoxDecoration(
-                  color: type.accentColor,
-                  shape: BoxShape.circle,
-                ),
-                child: Center(
-                  child: Icon(
-                    type.icon,
-                    color: Colors.white,
-                    size: 18.w,
-                  ),
-                ),
+              color: isSelected
+                  ? const Color(0xFF0F766E) // Deep Teal saat aktif
+                  : const Color(0xFFF0FDFA), // Soft Mint Teal
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: isSelected
+                    ? const Color(0xFF0F766E)
+                    : const Color(0xFFCCFBF1),
+                width: 1.2.w,
               ),
             ),
+            alignment: Alignment.center,
+            child: Icon(
+              type.icon,
+              size: 22.w,
+              color: isSelected ? Colors.white : const Color(0xFF0D9488),
+            ),
           ),
-          SizedBox(width: 8.w),
+          SizedBox(width: 9.w),
 
           // 2. Value & Label
           Expanded(
@@ -140,8 +112,10 @@ class WorkLeaveStatCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 22.sp,
-                    fontWeight: FontWeight.w800,
-                    color: const Color(0xFF0F172A), // Slate 900
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? const Color(0xFF0F766E)
+                        : AppColors.textPrimary,
                     letterSpacing: -0.5,
                     height: 1.1,
                     fontFeatures: const [FontFeature.tabularFigures()],
@@ -153,9 +127,11 @@ class WorkLeaveStatCard extends StatelessWidget {
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 9.8.sp,
-                    fontWeight: FontWeight.w700,
-                    color: type.labelColor,
-                    letterSpacing: 0.2,
+                    fontWeight: FontWeight.w600,
+                    color: isSelected
+                        ? const Color(0xFF0D9488)
+                        : const Color(0xFF64748B),
+                    letterSpacing: 0.3,
                   ),
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
@@ -167,12 +143,27 @@ class WorkLeaveStatCard extends StatelessWidget {
       ),
     );
 
-    return Container(
-      height: 72.w,
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 200),
+      constraints: BoxConstraints(minHeight: 72.w),
       decoration: BoxDecoration(
+        color: isSelected ? const Color(0xFFF0FDFA) : Colors.white,
         borderRadius: BorderRadius.circular(10.w),
-        boxShadow: [AppShadows.shadow094],
-        color: Colors.white,
+        border: isSelected
+            ? Border.all(
+                color: const Color(0xFF0D9488),
+                width: 1.5.w,
+              )
+            : null,
+        boxShadow: isSelected
+            ? [
+                const BoxShadow(
+                  color: Color(0x180F766E),
+                  blurRadius: 8,
+                  offset: Offset(0, 2),
+                ),
+              ]
+            : [AppShadows.shadow094],
       ),
       child: onTap != null
           ? Material(
@@ -180,8 +171,8 @@ class WorkLeaveStatCard extends StatelessWidget {
               child: InkWell(
                 onTap: onTap,
                 borderRadius: BorderRadius.circular(10.w),
-                splashColor: type.accentColor.withValues(alpha: 0.12),
-                highlightColor: type.accentColor.withValues(alpha: 0.05),
+                splashColor: const Color(0xFF0D9488).withValues(alpha: 0.12),
+                highlightColor: const Color(0xFF0D9488).withValues(alpha: 0.05),
                 child: cardContent,
               ),
             )
@@ -189,3 +180,4 @@ class WorkLeaveStatCard extends StatelessWidget {
     );
   }
 }
+
