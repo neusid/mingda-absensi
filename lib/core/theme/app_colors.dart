@@ -13,6 +13,14 @@ class AppColors {
   static const Color charcoalSlate50 = Color(0xFFE2E5E5);
   static const Color charcoalSlate = Color(0xFF1A2223);
 
+  // Obsidian Theme Palette (Form Focus, Cursor & Selection)
+  static const Color obsidian = Color(0xFF0F172A); // Deep Obsidian / Slate 900
+  static const Color obsidianLight = Color(0xFF1E293B); // Obsidian Slate 800
+  static const Color obsidianMuted = Color(0xFF334155); // Obsidian Slate 700
+  static const Color obsidianBorder = Color(0xFF0F172A); // Focused Obsidian Border
+  static final Color obsidianGlow = const Color(0xFF0F172A).withValues(alpha: 0.08); // Obsidian Focus Ring
+  static final Color obsidianSelection = const Color(0xFF0F172A).withValues(alpha: 0.20);
+
   // Green 2 Palette
   static const Color green250 = Color(0xFFE8F5E9);
   static const Color green2 = Color(0xFF4CAF50);
@@ -45,8 +53,13 @@ class AppColors {
   static const Color textSecondary = Color(0xFF535862);
   static const Color textTertiary = Color(0xFF9DB2CE);
 
-  // Input Border Color
-  static const Color inputColorBorder = Color(0xFF71717A);
+  // Input Border & Focus Colors (Mingda Signature Palette)
+  static const Color inputColorBorder = Color(0xFFE2E8F0); // Refined Slate-200 for inactive state
+  static const Color inputBorderInactive = Color(0xFFE2E8F0);
+  static const Color inputBorderActive = filterTealAccent; // #0D9488 Mingda Teal on click
+  static const Color mingdaInputFocus = filterTealAccent; // #0D9488
+  static final Color mingdaInputGlow = const Color(0xFF0D9488).withValues(alpha: 0.14); // Mingda Focus Glow Ring
+  static final Color mingdaInputSelection = const Color(0xFF0D9488).withValues(alpha: 0.22); // Mingda Text Selection Highlight
 
   // Filter Design System (from filter_riwayat_compact.svg)
   static const Color filterSlateBg = Color(0xFFF8FAFC);

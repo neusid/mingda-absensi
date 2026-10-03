@@ -1,6 +1,9 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_language.dart';
+import 'package:mingda_app/core/localization/bloc/language_bloc.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
@@ -41,7 +44,7 @@ class _AnnouncementCarouselWidgetState
   Timer? _timer;
   int _currentIndex = 0;
 
-  static const List<AnnouncementItem> _defaultAnnouncements = [
+  static const List<AnnouncementItem> _defaultAnnouncementsId = [
     AnnouncementItem(
       category: 'PRESENSI & BIOMETRIK',
       title: 'Pembaruan Mesin Fingerprint & SOP',
@@ -68,15 +71,79 @@ class _AnnouncementCarouselWidgetState
     ),
   ];
 
+  static const List<AnnouncementItem> _defaultAnnouncementsEn = [
+    AnnouncementItem(
+      category: 'ATTENDANCE & BIOMETRIC',
+      title: 'Fingerprint Machine & SOP Update',
+      description: 'Ensure clean fingers when tapping the biometric machine.',
+      date: '01 Oct 2026',
+      imagePath: 'assets/img/announcement_biometric.jpg',
+      badgeColor: Color(0xFF0D9488),
+    ),
+    AnnouncementItem(
+      category: 'SAFETY & HSE',
+      title: 'HSE Audit & Plant PPE Standards',
+      description: 'Safety helmet & vest are strictly required in the production area.',
+      date: '28 Sep 2026',
+      imagePath: 'assets/img/announcement_safety.jpg',
+      badgeColor: Color(0xFFD97706),
+    ),
+    AnnouncementItem(
+      category: 'LEAVE & HOLIDAYS',
+      title: 'Company Joint Holiday Notice 2026',
+      description: 'Operational schedule for national holidays and collective leave.',
+      date: '25 Sep 2026',
+      imagePath: 'assets/img/announcement_holiday.jpg',
+      badgeColor: Color(0xFF4F46E5),
+    ),
+  ];
+
+  static const List<AnnouncementItem> _defaultAnnouncementsZh = [
+    AnnouncementItem(
+      category: '考勤与生物识别',
+      title: '指纹打卡机与操作规范更新',
+      description: '使用生物识别打卡机时请确保手指干净。',
+      date: '2026年10月01日',
+      imagePath: 'assets/img/announcement_biometric.jpg',
+      badgeColor: Color(0xFF0D9488),
+    ),
+    AnnouncementItem(
+      category: '安全与健康 (HSE)',
+      title: '安全生产审查及个人防护标准',
+      description: '生产车间区域内必须佩戴安全帽和反光背心。',
+      date: '2026年09月28日',
+      imagePath: 'assets/img/announcement_safety.jpg',
+      badgeColor: Color(0xFFD97706),
+    ),
+    AnnouncementItem(
+      category: '休假与节日',
+      title: '2026年度公共假期安排通知',
+      description: '法定节假日及公司统筹休假运营安排。',
+      date: '2026年09月25日',
+      imagePath: 'assets/img/announcement_holiday.jpg',
+      badgeColor: Color(0xFF4F46E5),
+    ),
+  ];
+
   late final int _initialPage;
 
-  List<AnnouncementItem> get _announcements =>
-      widget.items ?? _defaultAnnouncements;
+  List<AnnouncementItem> _getAnnouncements(AppLanguage lang) {
+    if (widget.items != null) return widget.items!;
+    switch (lang) {
+      case AppLanguage.en:
+        return _defaultAnnouncementsEn;
+      case AppLanguage.zh:
+        return _defaultAnnouncementsZh;
+      case AppLanguage.id:
+        return _defaultAnnouncementsId;
+    }
+  }
 
   @override
   void initState() {
     super.initState();
-    _initialPage = _announcements.length * 1000;
+    final count = widget.items?.length ?? 3;
+    _initialPage = count * 1000;
     _pageController = PageController(initialPage: _initialPage);
     _startAutoScroll();
   }
@@ -105,7 +172,9 @@ class _AnnouncementCarouselWidgetState
 
   @override
   Widget build(BuildContext context) {
-    if (_announcements.isEmpty) return const SizedBox.shrink();
+    final lang = context.watch<LanguageBloc?>()?.state.language ?? AppLanguage.id;
+    final announcements = _getAnnouncements(lang);
+    if (announcements.isEmpty) return const SizedBox.shrink();
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -128,11 +197,11 @@ class _AnnouncementCarouselWidgetState
               controller: _pageController,
               onPageChanged: (index) {
                 setState(() {
-                  _currentIndex = index % _announcements.length;
+                  _currentIndex = index % announcements.length;
                 });
               },
               itemBuilder: (context, index) {
-                final item = _announcements[index % _announcements.length];
+                final item = announcements[index % announcements.length];
                 return _buildBannerCard(item);
               },
             ),
@@ -143,7 +212,7 @@ class _AnnouncementCarouselWidgetState
         // 2. Dot Indicator (Matching Figma announcement_carousel.svg)
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(_announcements.length, (index) {
+          children: List.generate(announcements.length, (index) {
             final isActive = index == _currentIndex;
             return AnimatedContainer(
               duration: const Duration(milliseconds: 350),

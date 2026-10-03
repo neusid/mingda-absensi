@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
@@ -148,7 +149,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                'Mengunduh berkas fisik ${item.spNumber}...',
+                '${context.tr.downloadingPhysicalFile} ${item.spNumber}...',
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.sp,
@@ -219,7 +220,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                           child: _StatCard(
                             icon: Icons.warning_amber_rounded,
                             value: '1',
-                            label: 'SP AKTIF',
+                            label: context.tr.spActiveUpper,
                           ),
                         ),
                         SizedBox(width: 8.w),
@@ -227,7 +228,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                           child: _StatCard(
                             icon: Icons.check_circle_outline_rounded,
                             value: '12',
-                            label: 'SP SELESAI',
+                            label: context.tr.spCompletedUpper,
                           ),
                         ),
                       ],
@@ -238,7 +239,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                     _StatCard(
                       icon: Icons.assignment_outlined,
                       value: '2',
-                      label: 'TOTAL SP DITERIMA',
+                      label: context.tr.totalSpReceivedUpper,
                     ),
 
                     SizedBox(height: 15.w),
@@ -272,7 +273,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                       children: [
                         Expanded(
                           child: _ActionButton(
-                            label: 'Cari',
+                            label: context.tr.search,
                             icon: Icons.search_rounded,
                             isPrimary: true,
                             onTap: _applySearch,
@@ -281,7 +282,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                         SizedBox(width: 10.w),
                         Expanded(
                           child: _ActionButton(
-                            label: 'Reset',
+                            label: context.tr.reset,
                             icon: Icons.refresh_rounded,
                             isPrimary: false,
                             onTap: _resetFilters,
@@ -315,7 +316,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                             ),
                             SizedBox(height: 10.w),
                             Text(
-                              'Tidak ada Surat Peringatan',
+                              context.tr.noMatchingSpFound,
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 14.sp,
@@ -325,7 +326,7 @@ class _WarningLetterPageState extends State<WarningLetterPage> {
                             ),
                             SizedBox(height: 4.w),
                             Text(
-                              'Tidak ditemukan SP yang sesuai dengan filter yang dipilih.',
+                              context.tr.noMatchingSpSubtitle,
                               textAlign: TextAlign.center,
                               style: TextStyle(
                                 fontFamily: 'Inter',

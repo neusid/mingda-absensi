@@ -1,15 +1,85 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_language.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/month_enum.dart';
 
-// ─── Short month labels for grid ─────────────────────────────────────────────
-const _monthShortLabels = [
-  'Jan', 'Feb', 'Mar', 'Apr',
-  'Mei', 'Jun', 'Jul', 'Ags',
-  'Sep', 'Okt', 'Nov', 'Des',
-];
+extension MonthEnumLocalization on MonthEnum {
+  String localizedName(AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.en:
+        const enMonths = [
+          'January', 'February', 'March', 'April', 'May', 'June',
+          'July', 'August', 'September', 'October', 'November', 'December'
+        ];
+        return enMonths[index];
+      case AppLanguage.zh:
+        return '${index + 1}月';
+      case AppLanguage.id:
+        return name;
+    }
+  }
+
+  String localizedShort(AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.en:
+        const enShort = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        return enShort[index];
+      case AppLanguage.zh:
+        return '${index + 1}月';
+      case AppLanguage.id:
+        const idShort = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+          'Jul', 'Ags', 'Sep', 'Okt', 'Nov', 'Des'
+        ];
+        return idShort[index];
+    }
+  }
+}
+
+extension AttendanceEnumLocalization on AttendanceEnum {
+  String localizedName(AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.en:
+        switch (this) {
+          case AttendanceEnum.Hadir:
+            return 'Present';
+          case AttendanceEnum.Terlambat:
+            return 'Late';
+          case AttendanceEnum.Alpha:
+            return 'Absent';
+          case AttendanceEnum.Izin:
+            return 'Permit';
+          case AttendanceEnum.Cuti:
+            return 'Leave';
+          case AttendanceEnum.Sakit:
+            return 'Sick';
+        }
+      case AppLanguage.zh:
+        switch (this) {
+          case AttendanceEnum.Hadir:
+            return '出勤';
+          case AttendanceEnum.Terlambat:
+            return '迟到';
+          case AttendanceEnum.Alpha:
+            return '旷工';
+          case AttendanceEnum.Izin:
+            return '请假/事假';
+          case AttendanceEnum.Cuti:
+            return '休假';
+          case AttendanceEnum.Sakit:
+            return '病假';
+        }
+      case AppLanguage.id:
+        return name;
+    }
+  }
+}
 
 // ─── Status dot colors ──────────────────────────────────────────────────────
 Color _statusDotColor(AttendanceEnum status) {
@@ -128,7 +198,7 @@ class _MonthFilterDropdownState extends State<MonthFilterDropdown> {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                widget.selected?.name ?? 'Semua Bulan',
+                widget.selected?.localizedName(context.currentLanguage) ?? context.tr.allMonths,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.sp,
@@ -182,7 +252,7 @@ class _MonthPanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // "Semua Bulan" row
-          _buildSemuaBulanRow(),
+          _buildSemuaBulanRow(context),
           SizedBox(height: 8.w),
           // 4×3 grid
           ...List.generate(3, (row) {
@@ -210,7 +280,7 @@ class _MonthPanel extends StatelessWidget {
                                 : AppColors.filterSlateBg,
                           ),
                           child: Text(
-                            _monthShortLabels[index],
+                            month.localizedShort(context.currentLanguage),
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 11.5.sp,
@@ -235,7 +305,7 @@ class _MonthPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildSemuaBulanRow() {
+  Widget _buildSemuaBulanRow(BuildContext context) {
     final isSelected = selected == null;
     return GestureDetector(
       onTap: () => onSelect(null),
@@ -253,7 +323,7 @@ class _MonthPanel extends StatelessWidget {
           children: [
             Expanded(
               child: Text(
-                'Semua Bulan',
+                context.tr.allMonths,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.sp,
@@ -589,7 +659,7 @@ class _StatusFilterDropdownState extends State<StatusFilterDropdown> {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                widget.selected?.name ?? 'Semua Kehadiran',
+                widget.selected?.localizedName(context.currentLanguage) ?? context.tr.allAttendance,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.sp,
@@ -641,7 +711,7 @@ class _StatusPanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // "Semua Kehadiran" row
-          _buildSemuaRow(),
+          _buildSemuaRow(context),
           SizedBox(height: 8.w),
           // 2×3 grid of statuses
           ...List.generate(3, (row) {
@@ -687,7 +757,7 @@ class _StatusPanel extends StatelessWidget {
                               SizedBox(width: 8.w),
                               Expanded(
                                 child: Text(
-                                  status.name,
+                                  status.localizedName(context.currentLanguage),
                                   style: TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 11.5.sp,
@@ -715,7 +785,7 @@ class _StatusPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildSemuaRow() {
+  Widget _buildSemuaRow(BuildContext context) {
     final isSelected = selected == null;
     return GestureDetector(
       onTap: () => onSelect(null),
@@ -752,7 +822,7 @@ class _StatusPanel extends StatelessWidget {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                'Semua Kehadiran',
+                context.tr.allAttendance,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.sp,

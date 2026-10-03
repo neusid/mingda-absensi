@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
@@ -84,7 +85,7 @@ class WarningLetterPolicyDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Pedoman Regulasi SP',
+                            context.tr.warningPolicyDialogTitle,
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 15.sp,
@@ -94,7 +95,7 @@ class WarningLetterPolicyDialog extends StatelessWidget {
                           ),
                           SizedBox(height: 2.w),
                           Text(
-                            'PP PT Mingda (Bab IX - Disiplin)',
+                            context.tr.spRegulationsSubtitle,
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 11.sp,
@@ -138,27 +139,20 @@ class WarningLetterPolicyDialog extends StatelessWidget {
                     children: [
                       _buildPolicySection(
                         step: '1',
-                        title: 'Tingkatan Surat Peringatan',
-                        content:
-                            '• SP-1: Pelanggaran disiplin ringan atau keterlambatan berulang (berlaku 6 bulan).\n'
-                            '• SP-2: Diterbitkan bila terjadi pelanggaran saat SP-1 masih aktif (berlaku 6 bulan).\n'
-                            '• SP-3: Surat Peringatan Terakhir sebelum pertimbangan terminasi/sidang direksi.',
+                        title: context.tr.spSection1Title,
+                        content: context.tr.spSection1Content,
                       ),
                       SizedBox(height: 10.w),
                       _buildPolicySection(
                         step: '2',
-                        title: 'Masa Berlaku & Pemutihan',
-                        content:
-                            'Masa berlaku setiap tingkat SP adalah 6 (enam) bulan sejak tanggal diterbitkan. '
-                            'Apabila karyawan tidak melakukan pelanggaran dalam kurun waktu tersebut, status SP otomatis kadaluarsa (Selesai).',
+                        title: context.tr.spSection2Title,
+                        content: context.tr.spSection2Content,
                       ),
                       SizedBox(height: 10.w),
                       _buildPolicySection(
                         step: '3',
-                        title: 'Hak Klarifikasi & Konseling HRD',
-                        content:
-                            'Karyawan berhak mengajukan klarifikasi tertulis atau berkonsultasi dengan Divisi HRD '
-                            'maksimal 7 (tujuh) hari kerja setelah surat diterbitkan untuk proses pembinaan.',
+                        title: context.tr.spSection3Title,
+                        content: context.tr.spSection3Content,
                       ),
                     ],
                   ),
@@ -196,7 +190,7 @@ class WarningLetterPolicyDialog extends StatelessWidget {
                       onTap: () => Navigator.pop(context),
                       child: Center(
                         child: Text(
-                          'Saya Mengerti',
+                          context.tr.iUnderstand,
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 13.5.sp,

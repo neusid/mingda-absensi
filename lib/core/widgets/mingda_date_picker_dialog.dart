@@ -1,26 +1,29 @@
 import 'package:flutter/material.dart';
+import 'package:mingda_app/core/localization/app_language.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 
-/// Membuka dialog pemilih tanggal mewah ala eksekutif API Bayar (Obsidian Black & White).
+/// Membuka dialog pemilih tanggal ala Mingda Attendance (Corporate Teal).
 /// Mengembalikan objek [DateTime] jika pengguna menekan "Terapkan", atau `null` jika dibatalkan.
-Future<DateTime?> showApiBayarDatePicker({
+Future<DateTime?> showMingdaDatePicker({
   required BuildContext context,
   DateTime? initialDate,
   DateTime? firstDate,
   DateTime? lastDate,
-  String title = 'PILIH TANGGAL',
+  String? title,
 }) {
+  final dialogTitle = title ?? context.tr.selectDateTitle;
   return showGeneralDialog<DateTime>(
     context: context,
     barrierDismissible: true,
-    barrierLabel: 'Tutup Dialog',
+    barrierLabel: context.tr.close,
     barrierColor: Colors.black.withValues(alpha: 0.45),
     transitionDuration: const Duration(milliseconds: 220),
     pageBuilder: (ctx, anim1, anim2) {
-      return ApiBayarDatePickerDialog(
+      return MingdaDatePickerDialog(
         initialDate: initialDate ?? DateTime.now(),
         firstDate: firstDate ?? DateTime(2020),
         lastDate: lastDate ?? DateTime(2035),
-        title: title,
+        title: dialogTitle,
       );
     },
     transitionBuilder: (ctx, anim, secondaryAnim, child) {
@@ -36,14 +39,14 @@ Future<DateTime?> showApiBayarDatePicker({
   );
 }
 
-/// Floating Center Dialog Pemilih Tanggal Standar API Bayar
-class ApiBayarDatePickerDialog extends StatefulWidget {
+/// Floating Center Dialog Pemilih Tanggal Standar Mingda Attendance
+class MingdaDatePickerDialog extends StatefulWidget {
   final DateTime initialDate;
   final DateTime firstDate;
   final DateTime lastDate;
   final String title;
 
-  const ApiBayarDatePickerDialog({
+  const MingdaDatePickerDialog({
     super.key,
     required this.initialDate,
     required this.firstDate,
@@ -52,25 +55,95 @@ class ApiBayarDatePickerDialog extends StatefulWidget {
   });
 
   @override
-  State<ApiBayarDatePickerDialog> createState() => _ApiBayarDatePickerDialogState();
+  State<MingdaDatePickerDialog> createState() => _MingdaDatePickerDialogState();
 }
 
-class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
+class _MingdaDatePickerDialogState extends State<MingdaDatePickerDialog> {
   late DateTime _selectedDate;
   late DateTime _viewMonth;
 
-  static const List<String> _monthNames = [
+  static const List<String> _monthNamesId = [
     'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
     'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
   ];
+  static const List<String> _monthNamesEn = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  static const List<String> _monthNamesZh = [
+    '1月', '2月', '3月', '4月', '5月', '6月',
+    '7月', '8月', '9月', '10月', '11月', '12月'
+  ];
 
-  static const List<String> _dayNames = [
+  static const List<String> _dayNamesId = [
     'Min', 'Sen', 'Sel', 'Rab', 'Kam', 'Jum', 'Sab'
   ];
+  static const List<String> _dayNamesEn = [
+    'Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'
+  ];
+  static const List<String> _dayNamesZh = [
+    '日', '一', '二', '三', '四', '五', '六'
+  ];
 
-  static const List<String> _dayNamesLong = [
+  static const List<String> _dayNamesLongId = [
     'Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'
   ];
+  static const List<String> _dayNamesLongEn = [
+    'Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'
+  ];
+  static const List<String> _dayNamesLongZh = [
+    '星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'
+  ];
+
+  List<String> _getMonthNames(AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.en:
+        return _monthNamesEn;
+      case AppLanguage.zh:
+        return _monthNamesZh;
+      case AppLanguage.id:
+        return _monthNamesId;
+    }
+  }
+
+  List<String> _getDayNames(AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.en:
+        return _dayNamesEn;
+      case AppLanguage.zh:
+        return _dayNamesZh;
+      case AppLanguage.id:
+        return _dayNamesId;
+    }
+  }
+
+  String _formatDisplayDate(DateTime date, AppLanguage lang) {
+    final weekdayIdx = date.weekday % 7;
+    switch (lang) {
+      case AppLanguage.en:
+        final weekdayStr = _dayNamesLongEn[weekdayIdx];
+        final monthStr = _monthNamesEn[date.month - 1].substring(0, 3);
+        return '$weekdayStr, $monthStr ${date.day}, ${date.year}';
+      case AppLanguage.zh:
+        final weekdayStr = _dayNamesLongZh[weekdayIdx];
+        return '${date.year}年${date.month}月${date.day}日 $weekdayStr';
+      case AppLanguage.id:
+        final weekdayStr = _dayNamesLongId[weekdayIdx];
+        final monthStr = _monthNamesId[date.month - 1].substring(0, 3);
+        return '$weekdayStr, ${date.day} $monthStr ${date.year}';
+    }
+  }
+
+  String _formatMonthYear(DateTime viewMonth, AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.zh:
+        return '${viewMonth.year}年${viewMonth.month}月';
+      case AppLanguage.en:
+        return '${_monthNamesEn[viewMonth.month - 1]} ${viewMonth.year}';
+      case AppLanguage.id:
+        return '${_monthNamesId[viewMonth.month - 1]} ${viewMonth.year}';
+    }
+  }
 
   @override
   void initState() {
@@ -106,14 +179,10 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
     return a.year == b.year && a.month == b.month && a.day == b.day;
   }
 
-  String _formatDisplayDate(DateTime date) {
-    final weekdayStr = _dayNamesLong[date.weekday % 7];
-    final monthStr = _monthNames[date.month - 1].substring(0, 3);
-    return '$weekdayStr, ${date.day} $monthStr ${date.year}';
-  }
-
   @override
   Widget build(BuildContext context) {
+    final lang = context.currentLanguage;
+    final dayNames = _getDayNames(lang);
     final today = DateTime.now();
     final yesterday = today.subtract(const Duration(days: 1));
     final sevenDaysAgo = today.subtract(const Duration(days: 7));
@@ -188,7 +257,7 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
 
                   // Display Tanggal Terpilih
                   Text(
-                    _formatDisplayDate(_selectedDate),
+                    _formatDisplayDate(_selectedDate, lang),
                     style: const TextStyle(
                       fontSize: 18.5,
                       fontWeight: FontWeight.w700,
@@ -204,19 +273,19 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
                     child: Row(
                       children: [
                         _buildPresetChip(
-                          label: 'Hari Ini',
+                          label: context.tr.today,
                           isSelected: _isSameDay(_selectedDate, today),
                           onTap: () => _selectPreset(today),
                         ),
                         const SizedBox(width: 8),
                         _buildPresetChip(
-                          label: 'Kemarin',
+                          label: context.tr.yesterday,
                           isSelected: _isSameDay(_selectedDate, yesterday),
                           onTap: () => _selectPreset(yesterday),
                         ),
                         const SizedBox(width: 8),
                         _buildPresetChip(
-                          label: '7 Hari Terakhir',
+                          label: context.tr.last7Days,
                           isSelected: _isSameDay(_selectedDate, sevenDaysAgo),
                           onTap: () => _selectPreset(sevenDaysAgo),
                         ),
@@ -235,7 +304,7 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
                       Row(
                         children: [
                           Text(
-                            '${_monthNames[_viewMonth.month - 1]} ${_viewMonth.year}',
+                            _formatMonthYear(_viewMonth, lang),
                             style: const TextStyle(
                               fontSize: 15,
                               fontWeight: FontWeight.w700,
@@ -271,7 +340,7 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
                   // 3. Days of Week Header
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    children: _dayNames.map((d) {
+                    children: dayNames.map((d) {
                       return SizedBox(
                         width: 38,
                         child: Text(
@@ -311,9 +380,9 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
                             ),
                             padding: const EdgeInsets.symmetric(vertical: 12),
                           ),
-                          child: const Text(
-                            'Batal',
-                            style: TextStyle(
+                          child: Text(
+                            context.tr.cancel,
+                            style: const TextStyle(
                               fontSize: 13.5,
                               fontWeight: FontWeight.w600,
                             ),
@@ -358,9 +427,9 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
                                 borderRadius: BorderRadius.circular(12),
                               ),
                             ),
-                            child: const Text(
-                              'Terapkan',
-                              style: TextStyle(
+                            child: Text(
+                              context.tr.datePickerApply,
+                              style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13.5,
                                 fontWeight: FontWeight.w700,
@@ -614,14 +683,14 @@ class _ApiBayarDatePickerDialogState extends State<ApiBayarDatePickerDialog> {
 }
 
 /// Contoh demo / preview yang dapat langsung dijalankan untuk mencoba modal
-class ApiBayarDatePickerPreview extends StatefulWidget {
-  const ApiBayarDatePickerPreview({super.key});
+class MingdaDatePickerPreview extends StatefulWidget {
+  const MingdaDatePickerPreview({super.key});
 
   @override
-  State<ApiBayarDatePickerPreview> createState() => _ApiBayarDatePickerPreviewState();
+  State<MingdaDatePickerPreview> createState() => _MingdaDatePickerPreviewState();
 }
 
-class _ApiBayarDatePickerPreviewState extends State<ApiBayarDatePickerPreview> {
+class _MingdaDatePickerPreviewState extends State<MingdaDatePickerPreview> {
   DateTime _selected = DateTime.now();
 
   @override
@@ -649,7 +718,7 @@ class _ApiBayarDatePickerPreviewState extends State<ApiBayarDatePickerPreview> {
                 foregroundColor: Colors.white,
               ),
               onPressed: () async {
-                final result = await showApiBayarDatePicker(
+                final result = await showMingdaDatePicker(
                   context: context,
                   initialDate: _selected,
                 );

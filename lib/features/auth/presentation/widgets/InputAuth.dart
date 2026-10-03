@@ -10,6 +10,9 @@ class InputAuth extends StatefulWidget {
   final TextEditingController controller;
   final String? Function(String?)? validator;
   final bool enabled;
+  final Key? fieldKey;
+  final TextInputType? keyboardType;
+  final Widget? prefixIcon;
 
   const InputAuth({
     super.key,
@@ -19,6 +22,9 @@ class InputAuth extends StatefulWidget {
     this.isPassword = false,
     this.validator,
     this.enabled = true,
+    this.fieldKey,
+    this.keyboardType,
+    this.prefixIcon,
   });
 
   @override
@@ -49,39 +55,64 @@ class _InputAuthState extends State<InputAuth> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isFocused = widget.enabled && _focusNode.hasFocus;
+
     return SizedBox(
       width: 322.w,
       child: Column(
         spacing: 8.w,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(widget.label, style: TextStyle(color: Colors.black87)),
-          Container(
+          Text(
+            widget.label,
+            style: TextStyle(
+              fontFamily: 'Inter',
+              fontSize: 13.sp,
+              fontWeight: isFocused ? FontWeight.w600 : FontWeight.w500,
+              color: isFocused ? AppColors.filterTealAccent : const Color(0xFF334155),
+            ),
+          ),
+          AnimatedContainer(
+            duration: const Duration(milliseconds: 180),
+            curve: Curves.easeOutCubic,
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(13.w),
-              color: widget.enabled ? Colors.white : const Color(0xFFF9FAFB),
+              borderRadius: BorderRadius.circular(12.r),
+              color: widget.enabled
+                  ? (isFocused ? Colors.white : const Color(0xFFF8FAFC))
+                  : const Color(0xFFF1F5F9),
               boxShadow: [
-                widget.enabled && _focusNode.hasFocus
+                isFocused
                     ? BoxShadow(
-                        color: AppColors.deepTeal50,
-                        spreadRadius: 4.w,
-                        blurRadius: 0,
+                        color: AppColors.mingdaInputGlow,
+                        spreadRadius: 3.5.w,
+                        blurRadius: 4,
                         offset: const Offset(0, 0),
                       )
                     : const BoxShadow(color: Colors.transparent),
               ],
             ),
             child: TextFormField(
+              key: widget.fieldKey,
               controller: widget.controller,
               focusNode: _focusNode,
               enabled: widget.enabled,
+              keyboardType: widget.keyboardType,
               obscureText: widget.isPassword ? _obsecureText : false,
               validator: widget.validator,
+              cursorColor: AppColors.filterTealAccent,
+              cursorWidth: 1.8,
               style: AppTextStyles.inputTextStyles.copyWith(
                 color: widget.enabled ? AppColors.textPrimary : AppColors.textTertiary,
               ),
               decoration: InputDecoration(
+                prefixIcon: widget.prefixIcon,
                 hintText: widget.hintText,
+                hintStyle: TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 13.sp,
+                  fontWeight: FontWeight.w400,
+                  color: const Color(0xFF94A3B8),
+                ),
                 suffixIcon: widget.isPassword
                     ? IconButton(
                         onPressed: widget.enabled
@@ -89,42 +120,47 @@ class _InputAuthState extends State<InputAuth> {
                                 _obsecureText = !_obsecureText;
                               })
                             : null,
-                        icon: _obsecureText
-                            ? Icon(
-                                Icons.visibility,
-                                color: widget.enabled
-                                    ? AppColors.textSecondary
-                                    : AppColors.textTertiary,
-                              )
-                            : Icon(
-                                Icons.visibility_off,
-                                color: widget.enabled
-                                    ? AppColors.textSecondary
-                                    : AppColors.textTertiary,
-                              ),
+                        icon: Icon(
+                          _obsecureText
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          size: 20.w,
+                          color: isFocused
+                              ? AppColors.filterTealAccent
+                              : (widget.enabled
+                                  ? AppColors.textSecondary
+                                  : AppColors.textTertiary),
+                        ),
                       )
                     : null,
-                contentPadding: EdgeInsets.all(8.w),
+                contentPadding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.w),
                 enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.w),
-                  borderSide: BorderSide(
-                    width: 1.5,
-                    color: AppColors.inputColorBorder,
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: const BorderSide(
+                    width: 1.2,
+                    color: Color(0xFFE2E8F0),
                   ),
                 ),
                 disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.w),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide(
-                    width: 1.5,
-                    color: AppColors.inputColorBorder.withValues(alpha: 0.2),
+                    width: 1.0,
+                    color: const Color(0xFFE2E8F0).withValues(alpha: 0.6),
                   ),
                 ),
                 focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.w),
-                  borderSide: BorderSide(width: 1.5, color: AppColors.deepTeal),
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: const BorderSide(
+                    width: 1.6,
+                    color: AppColors.filterTealAccent,
+                  ),
                 ),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10.w),
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: const BorderSide(
+                    width: 1.2,
+                    color: Color(0xFFE2E8F0),
+                  ),
                 ),
               ),
             ),

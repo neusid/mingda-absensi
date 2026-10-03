@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
 /// Banner Edukasi & Regulasi SOP Surat Peringatan
@@ -133,7 +134,7 @@ class WarningLetterPolicyBanner extends StatelessWidget {
                                 ),
                                 SizedBox(width: 4.w),
                                 Text(
-                                  'REGULASI & KEPATUHAN',
+                                  context.tr.regulationAndCompliance,
                                   style: TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 9.sp,
@@ -157,7 +158,7 @@ class WarningLetterPolicyBanner extends StatelessWidget {
 
                       // Title
                       Text(
-                        'Pedoman Regulasi Surat Peringatan',
+                        context.tr.warningPolicyTitle,
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 14.sp,
@@ -173,7 +174,7 @@ class WarningLetterPolicyBanner extends StatelessWidget {
                       ConstrainedBox(
                         constraints: BoxConstraints(maxWidth: 240.w),
                         child: Text(
-                          'Masa berlaku 6 bulan & hak klarifikasi resmi.',
+                          context.tr.warningPolicySubtitle,
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 11.sp,
@@ -201,7 +202,7 @@ class WarningLetterPolicyBanner extends StatelessWidget {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Text(
-                              'Baca SOP Kedisiplinan',
+                              context.tr.viewCompanyPolicy,
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 11.sp,

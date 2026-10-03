@@ -1,9 +1,96 @@
+import 'package:mingda_app/core/errors/failures.dart';
 import 'package:mingda_app/features/dashboard/data/datasources/dashboard_remote_data_source.dart';
 import 'package:mingda_app/features/dashboard/data/models/attendance_history_model.dart';
 import 'package:mingda_app/features/dashboard/data/models/attendance_summary_model.dart';
 import 'package:mingda_app/features/dashboard/data/models/profile_model.dart';
 
 class DashboardDummyDataSourceImpl implements DashboardRemoteDataSource {
+  static ProfileModel _currentProfile = const ProfileModel(
+    id: 1,
+    employeeCode: 'MD-2024-001',
+    fingerspotPin: '1001',
+    nik: '3578012345670001',
+    name: 'Malik Ibrahim',
+    gender: 'Laki-laki',
+    birthPlace: 'Surabaya',
+    birthDate: '2000-05-15',
+    maritalStatus: 'Belum Menikah',
+    agama: 'Islam',
+    bangsa: 'Indonesia',
+    statusKependudukan: 'WNI',
+    tanggunganAnak: 0,
+    namaIbuKandung: 'Fatimah',
+    ktp: '3578012345670001',
+    kartuKeluarga: '3578012345670002',
+    departmentId: 1,
+    subDepartmentId: 1,
+    subDepartmentOld: null,
+    positionId: 1,
+    joinDate: '2023-01-15',
+    employmentStatus: 'Karyawan Tetap',
+    serikat: 'Tidak',
+    lulusanSekolah: 'S1 Teknik Informatika',
+    workScheduleId: 1,
+    supervisorId: null,
+    salaryBase: 7500000.0,
+    bank: 'BCA',
+    nomorRekening: '8291029381',
+    taxNpwp: '93.812.391.2-604.000',
+    bpjsKesehatan: '000129381928',
+    bpjsKetenagakerjaan: '2019283719',
+    address: 'Jl. Raya Darmo No. 45',
+    city: 'Surabaya',
+    province: 'Jawa Timur',
+    desa: 'Wonokromo',
+    kecamatan: 'Wonokromo',
+    kabupaten: 'Kota Surabaya',
+    postalCode: '60241',
+    phone: '081234567890',
+    email: 'malik.ibrahim@mingda.co.id',
+    emergencyContactName: 'Ahmad Dahlan',
+    emergencyContactPhone: '081298765432',
+    userId: 1,
+    status: 'active',
+    tanggalResign: null,
+    tanggalMangkir: null,
+    tanggalGagalProbation: null,
+    tanggalPending: null,
+    profilePhoto: 'assets/img/SXjGsFTmyKziA5U3bkxY85nZ53l4ld.jpg',
+    createdAt: '2023-01-15 08:00:00',
+    updatedAt: '2026-09-28 08:00:00',
+    shiftType: 'Normal (08:00 - 17:00)',
+    profilePhotoUrl: 'assets/img/SXjGsFTmyKziA5U3bkxY85nZ53l4ld.jpg',
+    department: DepartmentModel(
+      id: 1,
+      name: 'Information Technology',
+      description: 'Divisi Teknologi Informasi & Pengembangan Sistem',
+      createdAt: '2023-01-01',
+      updatedAt: '2023-01-01',
+    ),
+    position: PositionModel(
+      id: 1,
+      code: 'SE',
+      name: 'Software Engineer',
+      level: '3',
+      description: 'Pengembang Aplikasi Mobile',
+      status: 'active',
+      createdAt: '2023-01-01',
+      updatedAt: '2023-01-01',
+      displayName: 'Software Engineer',
+    ),
+    workSchedule: WorkScheduleModel(
+      id: 1,
+      name: 'Shift Reguler (08:00 - 17:00)',
+      startTime: '08:00:00',
+      endTime: '17:00:00',
+      lateTolerance: 15,
+      overtimeThreshold: 60,
+      isActive: true,
+      createdAt: '2023-01-01',
+      updatedAt: '2023-01-01',
+    ),
+  );
+
   @override
   Future<void> SignOutDataSource(String token) async {
     await Future.delayed(const Duration(milliseconds: 200));
@@ -12,91 +99,26 @@ class DashboardDummyDataSourceImpl implements DashboardRemoteDataSource {
   @override
   Future<ProfileModel> getProfile() async {
     await Future.delayed(const Duration(milliseconds: 300));
-    return const ProfileModel(
-      id: 1,
-      employeeCode: 'MD-2024-001',
-      fingerspotPin: '1001',
-      nik: '3578012345670001',
-      name: 'Malik Ibrahim',
-      gender: 'Laki-laki',
-      birthPlace: 'Surabaya',
-      birthDate: '2000-05-15',
-      maritalStatus: 'Belum Menikah',
-      agama: 'Islam',
-      bangsa: 'Indonesia',
-      statusKependudukan: 'WNI',
-      tanggunganAnak: 0,
-      namaIbuKandung: 'Fatimah',
-      ktp: '3578012345670001',
-      kartuKeluarga: '3578012345670002',
-      departmentId: 1,
-      subDepartmentId: 1,
-      subDepartmentOld: null,
-      positionId: 1,
-      joinDate: '2023-01-15',
-      employmentStatus: 'Karyawan Tetap',
-      serikat: 'Tidak',
-      lulusanSekolah: 'S1 Teknik Informatika',
-      workScheduleId: 1,
-      supervisorId: null,
-      salaryBase: 7500000.0,
-      bank: 'BCA',
-      nomorRekening: '8291029381',
-      taxNpwp: '93.812.391.2-604.000',
-      bpjsKesehatan: '000129381928',
-      bpjsKetenagakerjaan: '2019283719',
-      address: 'Jl. Raya Darmo No. 45',
-      city: 'Surabaya',
-      province: 'Jawa Timur',
-      desa: 'Wonokromo',
-      kecamatan: 'Wonokromo',
-      kabupaten: 'Kota Surabaya',
-      postalCode: '60241',
-      phone: '081234567890',
-      email: 'malik.ibrahim@mingda.co.id',
-      emergencyContactName: 'Ahmad Dahlan',
-      emergencyContactPhone: '081298765432',
-      userId: 1,
-      status: 'active',
-      tanggalResign: null,
-      tanggalMangkir: null,
-      tanggalGagalProbation: null,
-      tanggalPending: null,
-      profilePhoto: 'assets/img/SXjGsFTmyKziA5U3bkxY85nZ53l4ld.jpg',
-      createdAt: '2023-01-15 08:00:00',
-      updatedAt: '2026-09-28 08:00:00',
-      shiftType: 'Normal (08:00 - 17:00)',
-      profilePhotoUrl: 'assets/img/SXjGsFTmyKziA5U3bkxY85nZ53l4ld.jpg',
-      department: DepartmentModel(
-        id: 1,
-        name: 'Information Technology',
-        description: 'Divisi Teknologi Informasi & Pengembangan Sistem',
-        createdAt: '2023-01-01',
-        updatedAt: '2023-01-01',
-      ),
-      position: PositionModel(
-        id: 1,
-        code: 'SE',
-        name: 'Software Engineer',
-        level: '3',
-        description: 'Pengembang Aplikasi Mobile',
-        status: 'active',
-        createdAt: '2023-01-01',
-        updatedAt: '2023-01-01',
-        displayName: 'Software Engineer',
-      ),
-      workSchedule: WorkScheduleModel(
-        id: 1,
-        name: 'Shift Reguler (08:00 - 17:00)',
-        startTime: '08:00:00',
-        endTime: '17:00:00',
-        lateTolerance: 15,
-        overtimeThreshold: 60,
-        isActive: true,
-        createdAt: '2023-01-01',
-        updatedAt: '2023-01-01',
-      ),
-    );
+    return _currentProfile;
+  }
+
+  @override
+  Future<ProfileModel> updateProfile(ProfileModel profile) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    _currentProfile = profile;
+    return _currentProfile;
+  }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    await Future.delayed(const Duration(milliseconds: 400));
+    if (currentPassword == 'wrongpassword') {
+      throw const ValidationFailure('Password saat ini tidak sesuai');
+    }
   }
 
   @override
@@ -131,12 +153,7 @@ class DashboardDummyDataSourceImpl implements DashboardRemoteDataSource {
           page: null,
           active: false,
         ),
-        AttendanceLinkModel(
-          url: '1',
-          label: '1',
-          page: 1,
-          active: true,
-        ),
+        AttendanceLinkModel(url: '1', label: '1', page: 1, active: true),
         AttendanceLinkModel(
           url: null,
           label: 'Next &raquo;',

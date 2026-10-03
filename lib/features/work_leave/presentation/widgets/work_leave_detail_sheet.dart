@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/features/work_leave/domain/entities/leave_item_entity.dart';
 
@@ -20,10 +21,10 @@ class WorkLeaveDetailSheet extends StatelessWidget {
   }
 
   Color get _statusDotColor {
-    final lower = item.displayStatus.toLowerCase();
-    if (lower.contains('setuju')) {
+    final lower = item.status.toLowerCase();
+    if (lower.contains('setuju') || lower.contains('approved') || lower.contains('批准')) {
       return const Color(0xFF059669);
-    } else if (lower.contains('tolak')) {
+    } else if (lower.contains('tolak') || lower.contains('rejected') || lower.contains('驳回')) {
       return const Color(0xFFDC2626);
     } else {
       return const Color(0xFFD97706);
@@ -31,10 +32,10 @@ class WorkLeaveDetailSheet extends StatelessWidget {
   }
 
   Color get _statusBgColor {
-    final lower = item.displayStatus.toLowerCase();
-    if (lower.contains('setuju')) {
+    final lower = item.status.toLowerCase();
+    if (lower.contains('setuju') || lower.contains('approved') || lower.contains('批准')) {
       return const Color(0xFFE8FAF3);
-    } else if (lower.contains('tolak')) {
+    } else if (lower.contains('tolak') || lower.contains('rejected') || lower.contains('驳回')) {
       return const Color(0xFFFEECEC);
     } else {
       return const Color(0xFFFFFBEB);
@@ -42,10 +43,10 @@ class WorkLeaveDetailSheet extends StatelessWidget {
   }
 
   Color get _statusTextColor {
-    final lower = item.displayStatus.toLowerCase();
-    if (lower.contains('setuju')) {
+    final lower = item.status.toLowerCase();
+    if (lower.contains('setuju') || lower.contains('approved') || lower.contains('批准')) {
       return const Color(0xFF047857);
-    } else if (lower.contains('tolak')) {
+    } else if (lower.contains('tolak') || lower.contains('rejected') || lower.contains('驳回')) {
       return const Color(0xFFB91C1C);
     } else {
       return const Color(0xFFB45309);
@@ -97,7 +98,7 @@ class WorkLeaveDetailSheet extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        item.displayTitle,
+                        item.localizedTitle(context.currentLanguage),
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 15.sp,
@@ -107,7 +108,7 @@ class WorkLeaveDetailSheet extends StatelessWidget {
                       ),
                       SizedBox(height: 2.w),
                       Text(
-                        'ID Pengajuan: #${item.id}',
+                        '${context.tr.applicationId}: #${item.id}',
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 11.sp,
@@ -137,7 +138,7 @@ class WorkLeaveDetailSheet extends StatelessWidget {
                       ),
                       SizedBox(width: 5.w),
                       Text(
-                        item.displayStatus,
+                        item.localizedStatus(context.currentLanguage),
                         style: TextStyle(
                           fontFamily: 'Inter',
                           fontSize: 11.sp,
@@ -158,26 +159,29 @@ class WorkLeaveDetailSheet extends StatelessWidget {
             // Info Grid / Cards
             _buildDetailRow(
               icon: Icons.calendar_today_rounded,
-              label: 'Periode Pengajuan',
-              value: '${item.startDate} s.d ${item.endDate} ($_durationDays Hari)',
+              label: context.tr.applicationPeriod,
+              value:
+                  '${item.startDate} ${context.tr.toWord} ${item.endDate} ($_durationDays ${context.tr.daysSuffix})',
             ),
             SizedBox(height: 12.w),
             _buildDetailRow(
               icon: Icons.category_outlined,
-              label: 'Jenis Izin / Cuti',
-              value: item.leaveType.toUpperCase(),
+              label: context.tr.leaveTypeLabel,
+              value: item.localizedTitle(context.currentLanguage).toUpperCase(),
             ),
             SizedBox(height: 12.w),
             _buildDetailRow(
               icon: Icons.notes_rounded,
-              label: 'Alasan / Keterangan',
-              value: item.reason.isNotEmpty ? item.reason : '-',
+              label: context.tr.reasonLabel,
+              value: item.localizedReason(context.currentLanguage).isNotEmpty
+                  ? item.localizedReason(context.currentLanguage)
+                  : '-',
             ),
             if (item.attachment != null && item.attachment!.isNotEmpty) ...[
               SizedBox(height: 12.w),
               _buildDetailRow(
                 icon: Icons.attach_file_rounded,
-                label: 'Berkas Lampiran',
+                label: context.tr.attachmentLabel,
                 value: item.attachment!,
                 isAttachment: true,
               ),
@@ -199,7 +203,7 @@ class WorkLeaveDetailSheet extends StatelessWidget {
                   ),
                 ),
                 child: Text(
-                  'Tutup',
+                  context.tr.close,
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 13.sp,

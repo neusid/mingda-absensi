@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_language.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
-import 'package:mingda_app/core/widgets/apibayar_date_picker_dialog.dart';
+import 'package:mingda_app/core/widgets/mingda_date_picker_dialog.dart';
 import 'package:mingda_app/features/work_leave/presentation/blocs/work_leave_bloc.dart';
 
 /// Modal Bottom Sheet Formulir Pengajuan Cuti & Izin
@@ -54,12 +56,24 @@ class _WorkLeaveFormSheetState extends State<WorkLeaveFormSheet> {
     return diff > 0 ? diff : 1;
   }
 
-  String _formatDisplayDate(DateTime date) {
-    const months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
-      'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
-    ];
-    return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]} ${date.year}';
+  String _formatDisplayDate(DateTime date, [AppLanguage? language]) {
+    final lang = language ?? (mounted ? context.currentLanguage : AppLanguage.id);
+    switch (lang) {
+      case AppLanguage.en:
+        const months = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]} ${date.year}';
+      case AppLanguage.zh:
+        return '${date.year}年${date.month.toString().padLeft(2, '0')}月${date.day.toString().padLeft(2, '0')}日';
+      case AppLanguage.id:
+        const months = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun',
+          'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'
+        ];
+        return '${date.day.toString().padLeft(2, '0')} ${months[date.month - 1]} ${date.year}';
+    }
   }
 
   String _formatApiDate(DateTime date) {
@@ -71,12 +85,14 @@ class _WorkLeaveFormSheetState extends State<WorkLeaveFormSheet> {
     final first = isStart ? DateTime(2025) : _startDate;
     final last = DateTime(2030);
 
-    final picked = await showApiBayarDatePicker(
+    final picked = await showMingdaDatePicker(
       context: context,
       initialDate: initial.isBefore(first) ? first : initial,
       firstDate: first,
       lastDate: last,
-      title: isStart ? 'PILIH TANGGAL MULAI' : 'PILIH TANGGAL SELESAI',
+      title: isStart
+          ? context.tr.selectStartDateUpper
+          : context.tr.selectEndDateUpper,
     );
 
     if (picked != null) {

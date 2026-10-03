@@ -269,7 +269,7 @@ void main() {
       expect(find.text('Kirim Pengajuan'), findsOneWidget);
     });
 
-    testWidgets('Tapping Mulai opens ApiBayarDatePickerDialog and closes on Batal', (tester) async {
+    testWidgets('Tapping Mulai opens MingdaDatePickerDialog and closes on Batal', (tester) async {
       final repo = WorkLeaveRepositoryImpl(
         remoteDataSource: WorkLeaveDummyDataSourceImpl(),
       );
@@ -302,7 +302,7 @@ void main() {
       await tester.tap(find.text('Mulai'));
       await tester.pumpAndSettle();
 
-      // Verify ApiBayarDatePickerDialog is displayed
+      // Verify MingdaDatePickerDialog is displayed
       expect(find.text('PILIH TANGGAL MULAI'), findsOneWidget);
       expect(find.text('Terapkan'), findsOneWidget);
       expect(find.text('Batal'), findsOneWidget);

@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
 import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.dart';
+import 'package:mingda_app/core/routes/mingda_page_route.dart';
 import 'package:mingda_app/core/widgets/mingda_page_loading.dart';
 import 'package:mingda_app/core/widgets/mingda_page_transition_wrapper.dart';
 import 'package:mingda_app/core/widgets/skeleton.dart';
+import 'package:mingda_app/core/network/bloc/network_cubit.dart';
+import 'package:mingda_app/features/dashboard/presentation/pages/change_password_page.dart';
+import 'package:mingda_app/features/dashboard/presentation/pages/edit_information_page.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/profile_header_card.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -83,7 +88,10 @@ class _ProfileContent extends StatelessWidget {
               // Remake Header (sesuai profile_header_card_remake.svg)
               ProfileHeaderCard(
                 profile: profile,
-                onNotificationTap: () {},
+                isOnline:
+                    context.watch<NetworkCubit?>()?.state.isOnline ?? true,
+                onNotificationTap: () =>
+                    Navigator.pushNamed(context, '/notifications'),
               ),
 
               SizedBox(height: 19.w),
@@ -94,7 +102,7 @@ class _ProfileContent extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       icon: Icons.qr_code,
-                      label: 'Kode',
+                      label: context.tr.employeeCodeLabel,
                       value: profile.employeeCode,
                     ),
                   ),
@@ -102,7 +110,7 @@ class _ProfileContent extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       icon: Icons.business_outlined,
-                      label: 'Department',
+                      label: context.tr.departmentLabel,
                       value: profile.department.name,
                     ),
                   ),
@@ -114,7 +122,7 @@ class _ProfileContent extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       icon: Icons.work_outline,
-                      label: 'Jabatan',
+                      label: context.tr.positionLabel,
                       value: profile.position.displayName,
                     ),
                   ),
@@ -122,7 +130,7 @@ class _ProfileContent extends StatelessWidget {
                   Expanded(
                     child: _InfoCard(
                       icon: Icons.call_outlined,
-                      label: 'Phone',
+                      label: context.tr.phoneLabel,
                       value: profile.phone,
                     ),
                   ),
@@ -142,7 +150,7 @@ class _ProfileContent extends StatelessWidget {
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 9.w),
                   child: Text(
-                    'Pengaturan Akun',
+                    context.tr.accountSettings,
                     style: AppTextStyles.inter14MediumPrimary,
                   ),
                 ),
@@ -151,19 +159,39 @@ class _ProfileContent extends StatelessWidget {
 
               _SettingItem(
                 icon: Icons.person_outline_rounded,
-                label: 'Ubah Informasi',
-                onTap: () {},
+                label: context.tr.editInformation,
+                onTap: () {
+                  final bloc = context.read<DashboardBloc>();
+                  Navigator.of(context, rootNavigator: true).push(
+                    MingdaPageRoute(
+                      child: BlocProvider.value(
+                        value: bloc,
+                        child: EditInformationPage(profile: profile),
+                      ),
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 10.w),
               _SettingItem(
                 icon: Icons.lock_outline_rounded,
-                label: 'Ubah Password',
-                onTap: () {},
+                label: context.tr.changePasswordTitle,
+                onTap: () {
+                  final bloc = context.read<DashboardBloc>();
+                  Navigator.of(context, rootNavigator: true).push(
+                    MingdaPageRoute(
+                      child: BlocProvider.value(
+                        value: bloc,
+                        child: const ChangePasswordPage(),
+                      ),
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 10.w),
               _SettingItem(
                 icon: Icons.logout_rounded,
-                label: 'Keluar',
+                label: context.tr.logoutButton,
                 onTap: () {
                   context.read<DashboardBloc>().add(DashboardSignout());
                 },
@@ -232,12 +260,14 @@ class _SettingItem extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
   final bool isLogout;
+  final Widget? trailing;
 
   const _SettingItem({
     required this.icon,
     required this.label,
     required this.onTap,
     this.isLogout = false,
+    this.trailing,
   });
 
   @override
@@ -392,11 +422,12 @@ class _SettingItem extends StatelessWidget {
                     ),
                   ),
                 ),
-                Icon(
-                  Icons.chevron_right_rounded,
-                  size: 22.w,
-                  color: Colors.white.withValues(alpha: 0.85),
-                ),
+                trailing ??
+                    Icon(
+                      Icons.chevron_right_rounded,
+                      size: 22.w,
+                      color: Colors.white.withValues(alpha: 0.85),
+                    ),
                 SizedBox(width: 4.w),
               ],
             ),

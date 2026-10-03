@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_language.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
-import 'package:mingda_app/core/widgets/apibayar_date_picker_dialog.dart';
+import 'package:mingda_app/core/widgets/mingda_date_picker_dialog.dart';
 import 'package:mingda_app/features/work_leave/presentation/blocs/work_leave_bloc.dart';
 
 class AddWorkLeavePage extends StatefulWidget {
@@ -37,22 +39,24 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
     return diff > 0 ? diff : 1;
   }
 
-  String _formatDisplayDate(DateTime date) {
-    const months = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
-    ];
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
+  String _formatDisplayDate(DateTime date, [AppLanguage? language]) {
+    final lang = language ?? (mounted ? context.currentLanguage : AppLanguage.id);
+    switch (lang) {
+      case AppLanguage.en:
+        const months = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ];
+        return '${date.day} ${months[date.month - 1]} ${date.year}';
+      case AppLanguage.zh:
+        return '${date.year}年${date.month}月${date.day}日';
+      case AppLanguage.id:
+        const months = [
+          'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        ];
+        return '${date.day} ${months[date.month - 1]} ${date.year}';
+    }
   }
 
   String _formatApiDate(DateTime date) {
@@ -64,12 +68,14 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
     final first = isStart ? DateTime(2025) : _startDate;
     final last = DateTime(2030);
 
-    final picked = await showApiBayarDatePicker(
+    final picked = await showMingdaDatePicker(
       context: context,
       initialDate: initial.isBefore(first) ? first : initial,
       firstDate: first,
       lastDate: last,
-      title: isStart ? 'PILIH TANGGAL MULAI' : 'PILIH TANGGAL SELESAI',
+      title: isStart
+          ? context.tr.selectStartDateUpper
+          : context.tr.selectEndDateUpper,
     );
 
     if (picked != null) {
@@ -136,7 +142,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
               ),
               SizedBox(height: 16.w),
               Text(
-                'Pilih Berkas Lampiran',
+                context.tr.selectAttachmentFile,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 15.w,
@@ -146,7 +152,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
               ),
               SizedBox(height: 4.w),
               Text(
-                'Format PDF, JPG, atau PNG (Maks. 2MB)',
+                context.tr.attachmentSub,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.w,
@@ -217,7 +223,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            'Untuk izin sakit, surat dokter / bukti medis wajib dilampirkan.',
+            context.tr.doctorCertWarning,
             style: TextStyle(fontFamily: 'Inter', fontSize: 12.5.w),
           ),
           backgroundColor: const Color(0xFFDC2626),
@@ -260,7 +266,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                       SizedBox(width: 8.w),
                       Expanded(
                         child: Text(
-                          'Pengajuan cuti berhasil dibuat! (Status: Menunggu)',
+                          context.tr.leaveSubmitSuccess,
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 12.5.w,
@@ -318,7 +324,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
           onPressed: () => Navigator.pop(context),
         ),
         title: Text(
-          'Pengajuan Cuti / Izin',
+          context.tr.addLeaveFormTitle,
           style: AppTextStyles.inter16MediumPrimary,
         ),
       ),
@@ -335,7 +341,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // ================= CARD 1: JENIS PENGAJUAN =================
-                      _buildSectionTitle('Jenis Pengajuan'),
+                      _buildSectionTitle(context.tr.leaveTypeLabel),
                       SizedBox(height: 8.w),
                       _buildCardContainer(
                         child: Row(
@@ -343,7 +349,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                             Expanded(
                               child: _buildTypeSegment(
                                 type: 'cuti',
-                                label: 'Cuti',
+                                label: context.tr.statAnnualLeave,
                                 icon: Icons.event_available_rounded,
                               ),
                             ),
@@ -351,7 +357,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                             Expanded(
                               child: _buildTypeSegment(
                                 type: 'izin',
-                                label: 'Izin',
+                                label: context.tr.statPermission,
                                 icon: Icons.assignment_turned_in_rounded,
                               ),
                             ),
@@ -359,7 +365,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                             Expanded(
                               child: _buildTypeSegment(
                                 type: 'sakit',
-                                label: 'Sakit',
+                                label: context.tr.statSick,
                                 icon: Icons.health_and_safety_rounded,
                               ),
                             ),
@@ -370,7 +376,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                       SizedBox(height: 18.w),
 
                       // ================= CARD 2: RENTANG TANGGAL =================
-                      _buildSectionTitle('Rentang Tanggal'),
+                      _buildSectionTitle(context.tr.dateRange),
                       SizedBox(height: 8.w),
                       _buildCardContainer(
                         child: Column(
@@ -380,7 +386,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                               children: [
                                 Expanded(
                                   child: _buildDateItem(
-                                    label: 'Mulai',
+                                    label: context.tr.start,
                                     date: _startDate,
                                     onTap: () => _pickDate(isStart: true),
                                   ),
@@ -388,7 +394,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                                 SizedBox(width: 12.w),
                                 Expanded(
                                   child: _buildDateItem(
-                                    label: 'Selesai',
+                                    label: context.tr.end,
                                     date: _endDate,
                                     onTap: () => _pickDate(isStart: false),
                                   ),
@@ -417,7 +423,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                                       SizedBox(width: 6.w),
                                       Flexible(
                                         child: Text(
-                                          'Total Durasi:',
+                                          context.tr.totalDuration,
                                           style: TextStyle(
                                             fontFamily: 'Inter',
                                             fontSize: 12.w,
@@ -440,7 +446,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                                     borderRadius: BorderRadius.circular(6.r),
                                   ),
                                   child: Text(
-                                    '$_durationDays Hari Kerja',
+                                    '$_durationDays ${context.tr.workingDays}',
                                     style: TextStyle(
                                       fontFamily: 'Inter',
                                       fontSize: 12.w,
@@ -458,7 +464,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                       SizedBox(height: 18.w),
 
                       // ================= CARD 3: ALASAN PENGAJUAN =================
-                      _buildSectionTitle('Keterangan / Alasan'),
+                      _buildSectionTitle(context.tr.reasonLabel),
                       SizedBox(height: 8.w),
                       _buildCardContainer(
                         child: TextFormField(
@@ -470,8 +476,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                             color: AppColors.textPrimary,
                           ),
                           decoration: InputDecoration(
-                            hintText:
-                                'Tuliskan alasan lengkap permohonan cuti atau izin...',
+                            hintText: context.tr.reasonHint,
                             hintStyle: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 12.5.w,
@@ -482,10 +487,10 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                           ),
                           validator: (value) {
                             if (value == null || value.trim().isEmpty) {
-                              return 'Alasan pengajuan wajib diisi.';
+                              return context.tr.reasonRequired;
                             }
                             if (value.trim().length < 5) {
-                              return 'Keterangan minimal 5 karakter.';
+                              return context.tr.reasonMin5;
                             }
                             return null;
                           },
@@ -499,11 +504,11 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                         crossAxisAlignment: WrapCrossAlignment.center,
                         spacing: 6.w,
                         children: [
-                          _buildSectionTitle('Dokumen Pendukung'),
+                          _buildSectionTitle(context.tr.supportingDocuments),
                           Text(
                             _selectedLeaveType == 'sakit'
-                                ? '(Wajib surat dokter)'
-                                : '(Opsional)',
+                                ? context.tr.doctorCertRequired
+                                : context.tr.optional,
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 11.w,
@@ -551,7 +556,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                                     children: [
                                       Text(
                                         _selectedAttachmentName ??
-                                            'Pilih Berkas Lampiran',
+                                            context.tr.selectAttachmentFile,
                                         style: TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 13.w,
@@ -570,8 +575,8 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                                       SizedBox(height: 3.w),
                                       Text(
                                         _selectedAttachmentName != null
-                                            ? 'Ketuk untuk mengganti berkas'
-                                            : 'PDF, JPG, PNG (Maks 2MB)',
+                                            ? context.tr.tapToChangeFile
+                                            : context.tr.attachmentSub,
                                         style: TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 11.w,
@@ -664,7 +669,7 @@ class _AddWorkLeavePageState extends State<AddWorkLeavePage> {
                             ),
                             SizedBox(width: 8.w),
                             Text(
-                              'Kirim Pengajuan',
+                              context.tr.submitApplication,
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 14.w,

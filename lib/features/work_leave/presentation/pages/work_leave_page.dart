@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:mingda_app/core/di/injection_container.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/work_leave/presentation/blocs/work_leave_bloc.dart';
@@ -111,7 +112,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                           context.read<WorkLeaveBloc>().add(const WorkLeaveEventFetch());
                         },
                         icon: const Icon(Icons.refresh_rounded),
-                        label: const Text('Coba Lagi'),
+                        label: Text(context.tr.retry),
                       ),
                     ],
                   ),
@@ -140,7 +141,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                     SizedBox(height: 16.w),
 
                     // ==================== 0. BANNER PENGUMUMAN CUTI ====================
-                    _buildBannerCard(),
+                    _buildBannerCard(context),
 
                     SizedBox(height: 14.w),
 
@@ -226,7 +227,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                         children: [
                           Expanded(
                             child: Text(
-                              'Riwayat Pengajuan Cuti (${filteredLeaves.length})',
+                              '${context.tr.leaveApplicationsHistory} (${filteredLeaves.length})',
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 14.5.sp,
@@ -290,8 +291,8 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                             SizedBox(height: 8.w),
                             Text(
                               selectedStat != null
-                                  ? 'Tidak ada pengajuan cuti berstatus "${selectedStat.label}"'
-                                  : 'Belum ada riwayat pengajuan cuti',
+                                  ? '${context.tr.noLeaveWithStatusPrefix} "${selectedStat.getLocalizedLabel(context)}"'
+                                  : context.tr.noLeaveHistory,
                               style: TextStyle(
                                 fontFamily: 'Inter',
                                 fontSize: 13.sp,
@@ -308,7 +309,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                                 color: const Color(0xFF0D9488),
                               ),
                               label: Text(
-                                'Buat Pengajuan Baru',
+                                context.tr.createLeaveApplication,
                                 style: TextStyle(
                                   fontFamily: 'Inter',
                                   fontSize: 12.5.sp,
@@ -329,8 +330,8 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                         itemBuilder: (context, index) {
                           final item = filteredLeaves[index];
                           return WorkLeaveItemCard(
-                            title: item.displayTitle,
-                            status: item.displayStatus,
+                            title: item.localizedTitle(context.currentLanguage),
+                            status: item.localizedStatus(context.currentLanguage),
                             startDate: item.startDate,
                             endDate: item.endDate,
                             onTap: () => WorkLeaveDetailSheet.show(context, item),
@@ -349,7 +350,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
     );
   }
 
-  Widget _buildBannerCard() {
+  Widget _buildBannerCard(BuildContext context) {
     return Container(
       width: double.infinity,
       height: 135.w,
@@ -432,7 +433,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                           borderRadius: BorderRadius.circular(4.w),
                         ),
                         child: Text(
-                          'CUTI & LIBUR',
+                          context.tr.leaveBannerCategory,
                           style: TextStyle(
                             fontFamily: 'Inter',
                             fontSize: 8.5.sp,
@@ -459,7 +460,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                   SizedBox(
                     width: 170.w,
                     child: Text(
-                      'Pengumuman Cuti Bersama 2026',
+                      context.tr.leaveBannerTitle,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
@@ -476,7 +477,7 @@ class _WorkLeaveViewState extends State<_WorkLeaveView> {
                   SizedBox(
                     width: 250.w,
                     child: Text(
-                      'Jadwal operasional libur nasional & cuti bersama karyawan.',
+                      context.tr.leaveBannerSubtitle,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

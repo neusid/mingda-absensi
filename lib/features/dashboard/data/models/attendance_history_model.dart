@@ -63,6 +63,61 @@ class AttendanceHistoryModel extends AttendanceHistoryEntity {
       total: parseIntValue(paginationMap['total'] ?? rawList.length),
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'current_page': currentPage,
+      'data': data
+          .map((e) => e is AttendanceItemModel
+              ? e.toJson()
+              : AttendanceItemModel(
+                  id: e.id,
+                  employeeId: e.employeeId,
+                  attendanceDate: e.attendanceDate,
+                  checkIn: e.checkIn,
+                  checkOut: e.checkOut,
+                  status: e.status,
+                  notes: e.notes,
+                  photoIn: e.photoIn,
+                  photoOut: e.photoOut,
+                  locationIn: e.locationIn,
+                  gpsAccuracyIn: e.gpsAccuracyIn,
+                  isMockedIn: e.isMockedIn,
+                  gpsWarningsIn: e.gpsWarningsIn,
+                  isSuspiciousIn: e.isSuspiciousIn,
+                  locationOut: e.locationOut,
+                  gpsAccuracyOut: e.gpsAccuracyOut,
+                  isMockedOut: e.isMockedOut,
+                  gpsWarningsOut: e.gpsWarningsOut,
+                  isSuspiciousOut: e.isSuspiciousOut,
+                  lateMinutes: e.lateMinutes,
+                  overtimeMinutes: e.overtimeMinutes,
+                  createdAt: e.createdAt,
+                  updatedAt: e.updatedAt,
+                ).toJson())
+          .toList(),
+      'first_page_url': firstPageUrl,
+      'from': from,
+      'last_page': lastPage,
+      'last_page_url': lastPageUrl,
+      'links': links
+          .map((e) => e is AttendanceLinkModel
+              ? e.toJson()
+              : AttendanceLinkModel(
+                  url: e.url,
+                  label: e.label,
+                  page: e.page,
+                  active: e.active,
+                ).toJson())
+          .toList(),
+      'next_page_url': nextPageUrl,
+      'path': path,
+      'per_page': perPage,
+      'prev_page_url': prevPageUrl,
+      'to': to,
+      'total': total,
+    };
+  }
 }
 
 class AttendanceItemModel extends AttendanceItemEntity {
@@ -119,6 +174,34 @@ class AttendanceItemModel extends AttendanceItemEntity {
       updatedAt: json['updated_at'] ?? '',
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'employee_id': employeeId,
+      'attendance_date': attendanceDate,
+      'check_in': checkIn,
+      'check_out': checkOut,
+      'status': status,
+      'notes': notes,
+      'photo_in': photoIn,
+      'photo_out': photoOut,
+      'location_in': locationIn,
+      'gps_accuracy_in': gpsAccuracyIn,
+      'is_mocked_in': isMockedIn,
+      'gps_warnings_in': gpsWarningsIn,
+      'is_suspicious_in': isSuspiciousIn,
+      'location_out': locationOut,
+      'gps_accuracy_out': gpsAccuracyOut,
+      'is_mocked_out': isMockedOut,
+      'gps_warnings_out': gpsWarningsOut,
+      'is_suspicious_out': isSuspiciousOut,
+      'late_minutes': lateMinutes,
+      'overtime_minutes': overtimeMinutes,
+      'created_at': createdAt,
+      'updated_at': updatedAt,
+    };
+  }
 }
 
 class AttendanceLinkModel extends AttendanceLinkEntity {
@@ -136,5 +219,14 @@ class AttendanceLinkModel extends AttendanceLinkEntity {
       page: json['page'] == null ? null : parseIntValue(json['page']),
       active: parseBoolValue(json['active']),
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'url': url,
+      'label': label,
+      'page': page,
+      'active': active,
+    };
   }
 }

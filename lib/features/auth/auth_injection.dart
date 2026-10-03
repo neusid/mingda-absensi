@@ -6,6 +6,7 @@ import 'package:mingda_app/features/auth/data/datasources/auth_remote_data_sourc
 import 'package:mingda_app/features/auth/data/datasources/auth_remote_data_source_impl.dart';
 import 'package:mingda_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:mingda_app/features/auth/domain/repositories/auth_repository.dart';
+import 'package:mingda_app/features/auth/domain/usecases/forgot_password_usecase.dart';
 import 'package:mingda_app/features/auth/domain/usecases/get_remember_usecase.dart';
 import 'package:mingda_app/features/auth/domain/usecases/remove_auth_session_usecase.dart';
 import 'package:mingda_app/features/auth/domain/usecases/save_remember_usecase.dart';
@@ -15,6 +16,9 @@ import 'package:mingda_app/features/auth/presentation/blocs/auth_bloc.dart';
 
 void initAuthInjection(GetIt sl) {
   sl.registerLazySingleton<SigninUsecase>(() => SigninUsecase(sl()));
+  sl.registerLazySingleton<ForgotPasswordUseCase>(
+    () => ForgotPasswordUseCase(authRepository: sl<AuthRepository>()),
+  );
 
   sl.registerLazySingleton<SavetokenUsecase>(
     () => SavetokenUsecase(authRepository: sl()),

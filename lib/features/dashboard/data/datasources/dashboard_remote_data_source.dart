@@ -7,4 +7,10 @@ abstract class DashboardRemoteDataSource {
   Future<ProfileModel> getProfile();
   Future<AttendanceSummaryModel> getAttendanceSummary();
   Future<AttendanceHistoryModel> getAttendanceHistory();
+  Future<ProfileModel> updateProfile(ProfileModel profile);
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  });
 }

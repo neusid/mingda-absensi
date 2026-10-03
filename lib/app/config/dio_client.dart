@@ -7,8 +7,8 @@ class DioClient {
 
   DioClient({required this.dio, required this.authLocalDataSource}) {
     dio.options.baseUrl = "https://absensi.mingda.my.id/api";
-    dio.options.connectTimeout = const Duration(seconds: 10);
-    dio.options.receiveTimeout = const Duration(seconds: 10);
+    dio.options.connectTimeout = const Duration(seconds: 3);
+    dio.options.receiveTimeout = const Duration(seconds: 3);
 
     dio.interceptors.add(
       InterceptorsWrapper(

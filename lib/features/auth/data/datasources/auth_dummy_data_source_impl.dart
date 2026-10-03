@@ -34,4 +34,10 @@ class AuthDummyDataSourceImpl implements AuthRemoteDataSource {
   Future<void> CheckToken(String token) async {
     await Future.delayed(const Duration(milliseconds: 200));
   }
+
+  @override
+  Future<String> forgotPasswordDataSource({required String email}) async {
+    await Future.delayed(const Duration(milliseconds: 300));
+    return 'Tautan instruksi pemulihan kata sandi telah dikirim ke $email.';
+  }
 }

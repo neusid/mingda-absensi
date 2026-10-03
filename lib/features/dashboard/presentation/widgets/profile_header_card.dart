@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/profile_entity.dart';
@@ -58,7 +59,7 @@ class ProfileHeaderCard extends StatelessWidget {
         children: [
           _buildAvatar(),
           SizedBox(width: 14.w),
-          Expanded(child: _buildUserInfo()),
+          Expanded(child: _buildUserInfo(context)),
           SizedBox(width: 10.w),
           _buildNotificationButton(context),
         ],
@@ -108,30 +109,30 @@ class ProfileHeaderCard extends StatelessWidget {
             ),
           ),
 
-          // Active Status Online Dot (Sudut Kanan Bawah)
-          if (isOnline)
-            Positioned(
-              right: -1.w,
-              bottom: -1.w,
-              child: Container(
-                width: 12.w,
-                height: 12.w,
-                decoration: BoxDecoration(
-                  color: const Color(0xFF00AA13),
-                  shape: BoxShape.circle,
-                  border: Border.all(
-                    color: Colors.white,
-                    width: 2.w,
-                  ),
+          // Active Status Online/Offline Dot (Sudut Kanan Bawah)
+          Positioned(
+            right: -1.w,
+            bottom: -1.w,
+            child: Container(
+              key: const Key('profile_online_status_dot'),
+              width: 12.w,
+              height: 12.w,
+              decoration: BoxDecoration(
+                color: isOnline ? const Color(0xFF00AA13) : const Color(0xFFED2736),
+                shape: BoxShape.circle,
+                border: Border.all(
+                  color: Colors.white,
+                  width: 2.w,
                 ),
               ),
             ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildUserInfo() {
+  Widget _buildUserInfo(BuildContext context) {
     return SizedBox(
       height: _contentHeight.w,
       child: Column(
@@ -140,7 +141,7 @@ class ProfileHeaderCard extends StatelessWidget {
         children: [
           // 1. Batas Atas: Micro Greeting "Selamat Datang 👋"
           Text(
-            'Selamat Datang 👋',
+            context.tr.welcomeGreeting,
             style: TextStyle(
               fontFamily: 'Inter',
               fontSize: 10.sp,

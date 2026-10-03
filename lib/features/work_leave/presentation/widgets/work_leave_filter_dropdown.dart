@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/work_leave/presentation/widgets/work_leave_stat_card.dart';
@@ -17,16 +18,16 @@ Color _statusDotColor(WorkLeaveStatType status) {
   }
 }
 
-String _statusLabel(WorkLeaveStatType status) {
+String _statusLabel(WorkLeaveStatType status, BuildContext context) {
   switch (status) {
     case WorkLeaveStatType.disetujui:
-      return 'Disetujui';
+      return context.tr.leaveStatApproved;
     case WorkLeaveStatType.menunggu:
-      return 'Menunggu';
+      return context.tr.leaveStatPending;
     case WorkLeaveStatType.ditolak:
-      return 'Ditolak';
+      return context.tr.leaveStatRejected;
     case WorkLeaveStatType.cutiTerpakai:
-      return 'Cuti Terpakai';
+      return context.tr.leaveStatUsed;
   }
 }
 
@@ -156,8 +157,8 @@ class _WorkLeaveStatusFilterDropdownState
             Expanded(
               child: Text(
                 widget.selected != null
-                    ? _statusLabel(widget.selected!)
-                    : 'Semua Pengajuan',
+                    ? _statusLabel(widget.selected!, context)
+                    : context.tr.allApplications,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 13.sp,
@@ -215,7 +216,7 @@ class _WorkLeaveStatusPanel extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           // "Semua Pengajuan" row
-          _buildSemuaRow(),
+          _buildSemuaRow(context),
           SizedBox(height: 8.w),
           // 2x2 grid of statuses
           ...List.generate(2, (row) {
@@ -260,7 +261,7 @@ class _WorkLeaveStatusPanel extends StatelessWidget {
                               SizedBox(width: 8.w),
                               Expanded(
                                 child: Text(
-                                  _statusLabel(status),
+                                  _statusLabel(status, context),
                                   style: TextStyle(
                                     fontFamily: 'Inter',
                                     fontSize: 11.5.sp,
@@ -289,7 +290,7 @@ class _WorkLeaveStatusPanel extends StatelessWidget {
     );
   }
 
-  Widget _buildSemuaRow() {
+  Widget _buildSemuaRow(BuildContext context) {
     final isSelected = selected == null;
     return GestureDetector(
       onTap: () => onSelect(null),
@@ -330,7 +331,7 @@ class _WorkLeaveStatusPanel extends StatelessWidget {
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                'Semua Pengajuan',
+                context.tr.allApplications,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.sp,

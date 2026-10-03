@@ -190,5 +190,30 @@ void main() {
       // Monogram initials MA from "Muhammad Ali"
       expect(find.text('MA'), findsOneWidget);
     });
+
+    testWidgets('renders green dot when isOnline is true and red dot when isOnline is false', (tester) async {
+      await tester.pumpWidget(
+        _buildTestableWidget(
+          const ProfileHeaderCard(profile: _testProfile, isOnline: true),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final dotOnline = tester.widget<Container>(find.byKey(const Key('profile_online_status_dot')));
+      final boxDecOnline = dotOnline.decoration as BoxDecoration;
+      expect(boxDecOnline.color, const Color(0xFF00AA13));
+
+      // Test offline
+      await tester.pumpWidget(
+        _buildTestableWidget(
+          const ProfileHeaderCard(profile: _testProfile, isOnline: false),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final dotOffline = tester.widget<Container>(find.byKey(const Key('profile_online_status_dot')));
+      final boxDecOffline = dotOffline.decoration as BoxDecoration;
+      expect(boxDecOffline.color, const Color(0xFFED2736));
+    });
   });
 }

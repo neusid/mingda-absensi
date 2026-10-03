@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_language.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
@@ -35,6 +37,98 @@ class WarningLetterItemData {
 
   String get displayStatus {
     return isActive ? 'Aktif' : 'Selesai';
+  }
+
+  String localizedStatus(AppLanguage lang) {
+    if (isActive) {
+      return switch (lang) {
+        AppLanguage.en => 'Active',
+        AppLanguage.zh => '生效中',
+        AppLanguage.id => 'Aktif',
+      };
+    } else {
+      return switch (lang) {
+        AppLanguage.en => 'Completed',
+        AppLanguage.zh => '已结案',
+        AppLanguage.id => 'Selesai',
+      };
+    }
+  }
+
+  String localizedTitle(AppLanguage lang) {
+    if (lang == AppLanguage.id) return title;
+    final lowerTitle = title.toLowerCase();
+    if (lowerTitle.contains('terlambat') || lowerTitle.contains('keterlambatan')) {
+      return lang == AppLanguage.zh ? '迟到违规' : 'Tardiness';
+    } else if (lowerTitle.contains('sop')) {
+      return lang == AppLanguage.zh ? '违反SOP规定' : 'SOP Violation';
+    } else if (lowerTitle.contains('absen') || lowerTitle.contains('absensi')) {
+      return lang == AppLanguage.zh ? '旷工未出勤' : 'Unexcused Absence';
+    } else if (lowerTitle.contains('disiplin')) {
+      return lang == AppLanguage.zh ? '违纪行为' : 'Disciplinary Violation';
+    }
+    return title;
+  }
+
+  String localizedDescription(AppLanguage lang) {
+    if (lang == AppLanguage.id) return description;
+    switch (id) {
+      case 1:
+        return lang == AppLanguage.zh
+            ? '一周内连续迟到3次。需进行考勤纪律谈话与督促指导。'
+            : 'Tardy 3 consecutive times in a week. Disciplinary follow-up and attendance coaching required.';
+      case 2:
+        return lang == AppLanguage.zh
+            ? '夜班期间未遵循职业健康安全（K3）流程。需重新进行安全作业培训。'
+            : 'Failed to adhere to occupational safety procedures during the night shift. Retraining required.';
+      case 3:
+        return lang == AppLanguage.zh
+            ? '无故旷工2个工作日。已完成核查且辅导观察期已圆满结束。'
+            : 'Absent without notice for 2 working days. Matter investigated and coaching period completed.';
+      case 4:
+        return lang == AppLanguage.zh
+            ? '违反公司工装规范与作业行为准则。需进行最终纪律考核评估。'
+            : 'Violated work uniform regulations and operational code of conduct. Final disciplinary review pending.';
+      default:
+        return description;
+    }
+  }
+
+  String localizedDate(String dateStr, AppLanguage lang) {
+    if (lang == AppLanguage.id) return dateStr;
+    final parts = dateStr.trim().split(' ');
+    if (parts.length != 3) return dateStr;
+    final day = parts[0];
+    final mon = parts[1].toLowerCase();
+    final year = parts[2];
+
+    const monMap = {
+      'jan': 1,
+      'feb': 2,
+      'mar': 3,
+      'apr': 4,
+      'mei': 5, 'may': 5,
+      'jun': 6,
+      'jul': 7,
+      'ags': 8, 'agu': 8, 'aug': 8,
+      'sep': 9,
+      'okt': 10, 'oct': 10,
+      'nov': 11,
+      'des': 12, 'dec': 12,
+    };
+
+    final monNum = monMap[mon];
+    if (monNum == null) return dateStr;
+
+    if (lang == AppLanguage.zh) {
+      return '$year年${monNum.toString().padLeft(2, '0')}月${day.padLeft(2, '0')}日';
+    } else {
+      const enMonths = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+      ];
+      return '$day ${enMonths[monNum - 1]} $year';
+    }
   }
 
   factory WarningLetterItemData.fromJson(Map<String, dynamic> json) {
@@ -169,7 +263,7 @@ class WarningLetterCard extends StatelessWidget {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Text(
-                                      item.title,
+                                      item.localizedTitle(context.currentLanguage),
                                       style: TextStyle(
                                         fontFamily: 'Inter',
                                         fontSize: 13.5.sp,
@@ -283,7 +377,10 @@ class WarningLetterCard extends StatelessWidget {
                                     ),
                                     SizedBox(width: 4.w),
                                     Text(
-                                      item.displayStatus.toUpperCase(),
+                                      (isActive
+                                              ? context.tr.statActive
+                                              : context.tr.statCompleted)
+                                          .toUpperCase(),
                                       style: TextStyle(
                                         fontFamily: 'Inter',
                                         fontSize: 9.sp,
@@ -304,7 +401,7 @@ class WarningLetterCard extends StatelessWidget {
 
                           // ─── BODY: Description (Kronologi Pelanggaran) ───
                           Text(
-                            item.description,
+                            item.localizedDescription(context.currentLanguage),
                             style: TextStyle(
                               fontFamily: 'Inter',
                               fontSize: 12.sp,
@@ -341,7 +438,7 @@ class WarningLetterCard extends StatelessWidget {
                                     SizedBox(width: 6.w),
                                     Expanded(
                                       child: Text(
-                                        '${item.issuedDate} - ${item.validUntil}',
+                                        '${item.localizedDate(item.issuedDate, context.currentLanguage)} - ${item.localizedDate(item.validUntil, context.currentLanguage)}',
                                         style: TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 11.sp,
@@ -383,7 +480,7 @@ class WarningLetterCard extends StatelessWidget {
                                       ),
                                       SizedBox(width: 4.w),
                                       Text(
-                                        'Unduh PDF',
+                                        context.tr.downloadPdf,
                                         style: TextStyle(
                                           fontFamily: 'Inter',
                                           fontSize: 10.5.sp,

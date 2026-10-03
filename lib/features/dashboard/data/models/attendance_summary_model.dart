@@ -43,4 +43,17 @@ class AttendanceSummaryModel extends AttendanceSummaryEntity {
       totalLateMinutes: totalLateMinutes,
     );
   }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'total': total,
+      'hadir': hadir,
+      'terlambat': terlambat,
+      'izin': izin,
+      'sakit': sakit,
+      'alpha': alpha,
+      'cuti': cuti,
+      'total_late_minutes': totalLateMinutes,
+    };
+  }
 }

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/history_attendance/domain/enum/attendance_enum.dart';
@@ -28,6 +29,24 @@ enum AttendanceStatType {
         return 'CUTI';
       case AttendanceStatType.sakit:
         return 'SAKIT';
+    }
+  }
+
+  /// Dynamic localized label
+  String getLocalizedLabel(BuildContext context) {
+    switch (this) {
+      case AttendanceStatType.hadir:
+        return context.tr.statPresent.toUpperCase();
+      case AttendanceStatType.terlambat:
+        return context.tr.statLate.toUpperCase();
+      case AttendanceStatType.alpha:
+        return context.tr.statAlpha.toUpperCase();
+      case AttendanceStatType.izin:
+        return context.tr.statPermission.toUpperCase();
+      case AttendanceStatType.cuti:
+        return context.tr.statAnnualLeave.toUpperCase();
+      case AttendanceStatType.sakit:
+        return context.tr.statSick.toUpperCase();
     }
   }
 
@@ -220,7 +239,7 @@ class AttendanceStatCard extends StatelessWidget {
                 ),
                 SizedBox(height: 3.w),
                 Text(
-                  type.label,
+                  type.getLocalizedLabel(context),
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 10.sp,

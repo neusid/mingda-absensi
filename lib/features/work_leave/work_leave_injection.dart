@@ -1,6 +1,9 @@
 import 'package:get_it/get_it.dart';
 import 'package:mingda_app/app/config/app_config.dart';
 import 'package:mingda_app/app/config/dio_client.dart';
+import 'package:mingda_app/core/network/network_info.dart';
+import 'package:mingda_app/core/storage/local_cache_service.dart';
+import 'package:mingda_app/core/storage/sync_manager.dart';
 import 'package:mingda_app/features/work_leave/data/datasources/work_leave_dummy_data_source_impl.dart';
 import 'package:mingda_app/features/work_leave/data/datasources/work_leave_remote_data_source.dart';
 import 'package:mingda_app/features/work_leave/data/datasources/work_leave_remote_data_source_impl.dart';
@@ -35,6 +38,12 @@ void initWorkLeaveInjection(GetIt sl) {
   sl.registerLazySingleton<WorkLeaveRepository>(
     () => WorkLeaveRepositoryImpl(
       remoteDataSource: sl<WorkLeaveRemoteDataSource>(),
+      localCacheService: sl.isRegistered<LocalCacheService>()
+          ? sl<LocalCacheService>()
+          : null,
+      syncManager: sl.isRegistered<SyncManager>() ? sl<SyncManager>() : null,
+      networkInfo:
+          sl.isRegistered<NetworkInfo>() ? sl<NetworkInfo>() : null,
     ),
   );
 

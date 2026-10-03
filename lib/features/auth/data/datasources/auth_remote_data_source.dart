@@ -7,4 +7,5 @@ abstract class AuthRemoteDataSource {
   });
   Future<void> SignOutDataSource(String token);
   Future<void> CheckToken(String token);
+  Future<String> forgotPasswordDataSource({required String email});
 }

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mingda_app/core/localization/app_language.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/features/dashboard/domain/entities/attendance_history_entity.dart';
@@ -39,11 +40,34 @@ class DashboardAttendanceItem {
     List<AttendanceItemEntity> list, {
     int? limit,
     bool treatLatestAsToday = true,
+    AppLanguage language = AppLanguage.id,
   }) {
     final items = <DashboardAttendanceItem>[];
     final now = DateTime.now();
     final String latestDateInList =
         list.isNotEmpty ? list.first.attendanceDate : '';
+
+    // Translation helpers
+    final String pulangTitle = switch (language) {
+      AppLanguage.en => 'Check Out',
+      AppLanguage.zh => '下班打卡',
+      AppLanguage.id => 'Pulang',
+    };
+    final String masukTitle = switch (language) {
+      AppLanguage.en => 'Check In',
+      AppLanguage.zh => '上班打卡',
+      AppLanguage.id => 'Masuk',
+    };
+    final String onTimeText = switch (language) {
+      AppLanguage.en => 'On Time',
+      AppLanguage.zh => '准时',
+      AppLanguage.id => 'Tepat Waktu',
+    };
+    final String methodText = switch (language) {
+      AppLanguage.en => 'Via Fingerprint',
+      AppLanguage.zh => '指纹考勤',
+      AppLanguage.id => 'Via Fingerprint',
+    };
 
     for (final att in list) {
       // Tandai sebagai 'today' jika tanggal sesuai hari ini atau tanggal entri terbaru (bila treatLatestAsToday = true)
@@ -55,12 +79,12 @@ class DashboardAttendanceItem {
         items.add(
           DashboardAttendanceItem(
             type: DashboardAttendanceType.pulang,
-            title: 'Pulang',
-            statusText: 'Tepat Waktu',
+            title: pulangTitle,
+            statusText: onTimeText,
             isLate: false,
-            dateText: _formatDate(att.attendanceDate),
+            dateText: _formatDate(att.attendanceDate, language),
             timeText: _formatTime(att.checkOut!),
-            method: 'Via Fingerprint',
+            method: methodText,
             isToday: isToday,
             attendance: att,
           ),
@@ -72,20 +96,28 @@ class DashboardAttendanceItem {
       if (att.checkIn != null && att.checkIn!.trim().isNotEmpty) {
         final isLate =
             att.lateMinutes > 0 || att.status.toLowerCase() == 'terlambat';
+        final String lateText = switch (language) {
+          AppLanguage.en => att.lateMinutes > 0
+              ? 'Late (${att.lateMinutes}m)'
+              : 'Late',
+          AppLanguage.zh => att.lateMinutes > 0
+              ? '迟到 (${att.lateMinutes}分)'
+              : '迟到',
+          AppLanguage.id => att.lateMinutes > 0
+              ? 'Terlambat (${att.lateMinutes}m)'
+              : 'Terlambat',
+        };
+
         items.add(
           DashboardAttendanceItem(
             type: DashboardAttendanceType.masuk,
-            title: 'Masuk',
-            statusText: isLate
-                ? (att.lateMinutes > 0
-                    ? 'Terlambat (${att.lateMinutes}m)'
-                    : 'Terlambat')
-                : 'Tepat Waktu',
+            title: masukTitle,
+            statusText: isLate ? lateText : onTimeText,
             isLate: isLate,
             lateMinutes: att.lateMinutes,
-            dateText: _formatDate(att.attendanceDate),
+            dateText: _formatDate(att.attendanceDate, language),
             timeText: _formatTime(att.checkIn!),
-            method: 'Via Fingerprint',
+            method: methodText,
             isToday: isToday,
             attendance: att,
           ),
@@ -105,9 +137,9 @@ class DashboardAttendanceItem {
             title: statusTitle,
             statusText: att.status.toUpperCase(),
             isLate: false,
-            dateText: _formatDate(att.attendanceDate),
+            dateText: _formatDate(att.attendanceDate, language),
             timeText: '--:--',
-            method: 'Pengajuan',
+            method: language == AppLanguage.zh ? '申请' : (language == AppLanguage.en ? 'Submission' : 'Pengajuan'),
             isToday: isToday,
             attendance: att,
           ),
@@ -122,24 +154,25 @@ class DashboardAttendanceItem {
     return items;
   }
 
-  static String _formatDate(String dateStr) {
+  static String _formatDate(String dateStr, [AppLanguage language = AppLanguage.id]) {
     final dt = DateTime.tryParse(dateStr);
     if (dt == null) return dateStr;
-    const months = [
-      'Januari',
-      'Februari',
-      'Maret',
-      'April',
-      'Mei',
-      'Juni',
-      'Juli',
-      'Agustus',
-      'September',
-      'Oktober',
-      'November',
-      'Desember',
-    ];
-    return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
+    switch (language) {
+      case AppLanguage.en:
+        const months = [
+          'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+          'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+        ];
+        return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
+      case AppLanguage.zh:
+        return '${dt.year}年${dt.month}月${dt.day}日';
+      case AppLanguage.id:
+        const months = [
+          'Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni',
+          'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember',
+        ];
+        return '${months[dt.month - 1]} ${dt.day}, ${dt.year}';
+    }
   }
 
   static String _formatTime(String timeStr) {

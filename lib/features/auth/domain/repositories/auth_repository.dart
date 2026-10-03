@@ -17,4 +17,6 @@ abstract class AuthRepository {
 
   Future<Either<Failure, void>> SaveToken(String token);
   Future<Either<Failure, void>> SaveUser(UserModel user);
+
+  Future<Either<Failure, String>> forgotPassword({required String email});
 }

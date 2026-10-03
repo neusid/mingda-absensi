@@ -25,29 +25,29 @@ Widget _buildTestableWidget(Widget child) {
 void main() {
   group('AttendanceStatType properties and mappings', () {
     test('verifies label, SVG badge path, and enum mapping for all 6 categories', () {
-      expect(AttendanceStatType.hadir.label, 'TOTAL HADIR');
+      expect(AttendanceStatType.hadir.label, 'HADIR');
       expect(AttendanceStatType.hadir.svgBadgePath, 'assets/icon/stat_badge_hadir.svg');
       expect(AttendanceStatType.hadir.toAttendanceEnum, AttendanceEnum.Hadir);
 
-      expect(AttendanceStatType.terlambat.label, 'TOTAL TERLAMBAT');
+      expect(AttendanceStatType.terlambat.label, 'TERLAMBAT');
       expect(AttendanceStatType.terlambat.svgBadgePath, 'assets/icon/stat_badge_terlambat.svg');
       expect(AttendanceStatType.terlambat.toAttendanceEnum, AttendanceEnum.Terlambat);
 
-      expect(AttendanceStatType.alpha.label, 'TOTAL ALPHA');
+      expect(AttendanceStatType.alpha.label, 'ALPHA');
       expect(AttendanceStatType.alpha.svgBadgePath, 'assets/icon/stat_badge_alpha.svg');
       expect(AttendanceStatType.alpha.toAttendanceEnum, AttendanceEnum.Alpha);
       expect(AttendanceStatType.alpha.cardBorderColor, Colors.transparent);
       expect(AttendanceStatType.alpha.labelColor, const Color(0xFF64748B));
 
-      expect(AttendanceStatType.izin.label, 'TOTAL IZIN');
+      expect(AttendanceStatType.izin.label, 'IZIN');
       expect(AttendanceStatType.izin.svgBadgePath, 'assets/icon/stat_badge_izin.svg');
       expect(AttendanceStatType.izin.toAttendanceEnum, AttendanceEnum.Izin);
 
-      expect(AttendanceStatType.cuti.label, 'TOTAL CUTI');
+      expect(AttendanceStatType.cuti.label, 'CUTI');
       expect(AttendanceStatType.cuti.svgBadgePath, 'assets/icon/stat_badge_cuti.svg');
       expect(AttendanceStatType.cuti.toAttendanceEnum, AttendanceEnum.Cuti);
 
-      expect(AttendanceStatType.sakit.label, 'TOTAL SAKIT');
+      expect(AttendanceStatType.sakit.label, 'SAKIT');
       expect(AttendanceStatType.sakit.svgBadgePath, 'assets/icon/stat_badge_sakit.svg');
       expect(AttendanceStatType.sakit.toAttendanceEnum, AttendanceEnum.Sakit);
     });
@@ -67,7 +67,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('20'), findsOneWidget);
-      expect(find.text('TOTAL HADIR'), findsOneWidget);
+      expect(find.text('HADIR'), findsOneWidget);
     });
 
     testWidgets('renders count and label accurately for Total Izin', (tester) async {
@@ -83,7 +83,7 @@ void main() {
       await tester.pumpAndSettle();
 
       expect(find.text('5'), findsOneWidget);
-      expect(find.text('TOTAL IZIN'), findsOneWidget);
+      expect(find.text('IZIN'), findsOneWidget);
     });
 
     testWidgets('triggers onTap callback when tapped', (tester) async {
@@ -113,7 +113,7 @@ void main() {
           AttendanceStatCard(
             type: AttendanceStatType.alpha,
             count: 1,
-            isSelected: true,
+            isSelected: false,
           ),
         ),
       );
@@ -131,7 +131,7 @@ void main() {
       expect(decoration.border, isNull);
       expect(decoration.color, Colors.white);
       expect(find.text('1'), findsOneWidget);
-      expect(find.text('TOTAL ALPHA'), findsOneWidget);
+      expect(find.text('ALPHA'), findsOneWidget);
     });
   });
 }

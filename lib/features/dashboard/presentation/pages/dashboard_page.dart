@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
+import 'package:mingda_app/core/localization/bloc/language_bloc.dart';
+import 'package:mingda_app/core/localization/bloc/language_state.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
@@ -11,7 +14,10 @@ import 'package:mingda_app/features/dashboard/presentation/blocs/dashboard_bloc.
 import 'package:mingda_app/features/dashboard/presentation/widgets/card_dashboard_widget.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_skeleton.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/dashboard_attendance_card.dart';
+import 'package:mingda_app/core/network/bloc/network_cubit.dart';
+import 'package:mingda_app/core/network/bloc/network_state.dart';
 import 'package:mingda_app/features/dashboard/presentation/widgets/announcement_carousel_widget.dart';
+import 'package:mingda_app/features/dashboard/presentation/widgets/language_swap_button.dart';
 
 class DashboardPage extends StatefulWidget {
   const DashboardPage({super.key});
@@ -64,7 +70,7 @@ class _DashboardPageState extends State<DashboardPage> {
     return trimmed.toUpperCase();
   }
 
-  Widget _buildAvatar(String name) {
+  Widget _buildAvatar(String name, {bool isOnline = true}) {
     final initials = _getInitials(name);
     final size = 52.w;
 
@@ -108,10 +114,11 @@ class _DashboardPageState extends State<DashboardPage> {
             right: -1.w,
             bottom: -1.w,
             child: Container(
+              key: const Key('dashboard_avatar_online_dot'),
               width: 11.w,
               height: 11.w,
               decoration: BoxDecoration(
-                color: const Color(0xFF00AA13),
+                color: isOnline ? const Color(0xFF00AA13) : const Color(0xFFED2736),
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: Colors.white,
@@ -125,13 +132,15 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Widget _buildGreetingAndName(String name) {
+  Widget _buildGreetingAndName(String name, AppTranslations tr) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
       children: [
         Text(
-          'Selamat Datang 👋',
+          tr.greetingByHour(DateTime.now().hour),
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
           style: TextStyle(
             fontFamily: 'Inter',
             fontSize: 11.sp,
@@ -141,19 +150,16 @@ class _DashboardPageState extends State<DashboardPage> {
           ),
         ),
         SizedBox(height: 3.w),
-        SizedBox(
-          width: 200.w,
-          child: Text(
-            name,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(
-              fontFamily: 'Inter',
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w700,
-              color: AppColors.deepTeal,
-              letterSpacing: -0.2,
-            ),
+        Text(
+          name,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 15.sp,
+            fontWeight: FontWeight.w700,
+            color: AppColors.deepTeal,
+            letterSpacing: -0.2,
           ),
         ),
       ],
@@ -176,8 +182,9 @@ class _DashboardPageState extends State<DashboardPage> {
       child: Material(
         color: Colors.transparent,
         child: InkWell(
+          key: const Key('dashboard_notification_button'),
           borderRadius: BorderRadius.circular(13.r),
-          onTap: () {},
+          onTap: () => Navigator.pushNamed(context, '/notifications'),
           child: Stack(
             alignment: Alignment.center,
             children: [
@@ -214,13 +221,17 @@ class _DashboardPageState extends State<DashboardPage> {
     final dasboardBloc = context.read<DashboardBloc>();
     return Scaffold(
       backgroundColor: AppColors.bg,
-      body: BlocConsumer<DashboardBloc, DashboardState>(
-        bloc: dasboardBloc,
-        listener: (context, state) {},
-        builder: (context, state) {
-          Widget content;
-          // Tier 1: Initial mount / route transition
-          if (_isPageTransitioning || state is InitialDashboardState) {
+      body: _NetworkStatusListener(
+        child: BlocBuilder<LanguageBloc, LanguageState>(
+        builder: (context, langState) {
+          final tr = langState.tr;
+          return BlocConsumer<DashboardBloc, DashboardState>(
+            bloc: dasboardBloc,
+            listener: (context, state) {},
+            builder: (context, state) {
+              Widget content;
+              // Tier 1: Initial mount / route transition
+              if (_isPageTransitioning || state is InitialDashboardState) {
             content = const KeyedSubtree(
               key: ValueKey('dash_loading'),
               child: MingdaPageLoading(),
@@ -291,6 +302,7 @@ class _DashboardPageState extends State<DashboardPage> {
                 DashboardAttendanceItem.fromAttendanceList(
               state.attendanceHistoryEntity.data,
               limit: 4,
+              language: langState.language,
             );
             content = KeyedSubtree(
               key: const ValueKey('dash_success'),
@@ -306,14 +318,41 @@ class _DashboardPageState extends State<DashboardPage> {
                         Row(
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
+                            Expanded(
+                              child: Row(
+                                children: [
+                                  Builder(
+                                    builder: (context) {
+                                      final isOnline = context
+                                              .watch<NetworkCubit?>()
+                                              ?.state
+                                              .isOnline ??
+                                          true;
+                                      return _buildAvatar(
+                                        state.profileEntity.name,
+                                        isOnline: isOnline,
+                                      );
+                                    },
+                                  ),
+                                  SizedBox(width: 12.w),
+                                  Expanded(
+                                    child: _buildGreetingAndName(
+                                      state.profileEntity.name,
+                                      tr,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
                             Row(
+                              mainAxisSize: MainAxisSize.min,
                               children: [
-                                _buildAvatar(state.profileEntity.name),
-                                SizedBox(width: 14.w),
-                                _buildGreetingAndName(state.profileEntity.name),
+                                const LanguageSwapButton(),
+                                SizedBox(width: 8.w),
+                                _buildNotificationButton(),
                               ],
                             ),
-                            _buildNotificationButton(),
                           ],
                         ),
                         SizedBox(height: 22.w),
@@ -321,7 +360,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text(
-                              DateTime.now().toIndonesianString(),
+                              DateTime.now().toLocalizedString(langState.language),
                               style: AppTextStyles.inter96MediumPrimary,
                             ),
                             SizedBox(width: 8.w),
@@ -406,8 +445,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   CardDashboardWidget(
                                     icon: 'calendar-tick',
-                                    title: 'Hadir',
-                                    subTitle: 'this month',
+                                    title: tr.statPresent,
+                                    subTitle: tr.thisMonth,
                                     day: state.attendanceSummaryEntity.hadir
                                         .toString(),
                                     description: 'TOTAL PRESENT',
@@ -415,8 +454,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ),
                                   CardDashboardWidget(
                                     icon: 'calendar-search',
-                                    title: 'Terlambat',
-                                    subTitle: 'this month',
+                                    title: tr.statLate,
+                                    subTitle: tr.thisMonth,
                                     day: state
                                         .attendanceSummaryEntity
                                         .terlambat
@@ -432,8 +471,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                 children: [
                                   CardDashboardWidget(
                                     icon: 'calendar-remove',
-                                    title: 'Izin Sakit',
-                                    subTitle: 'this month',
+                                    title: tr.statLeave,
+                                    subTitle: tr.thisMonth,
                                     day: (state.attendanceSummaryEntity.izin +
                                             state.attendanceSummaryEntity.sakit)
                                         .toString(),
@@ -442,8 +481,8 @@ class _DashboardPageState extends State<DashboardPage> {
                                   ),
                                   CardDashboardWidget(
                                     icon: 'calendar',
-                                    title: 'Sisa Cuti',
-                                    subTitle: 'this month',
+                                    title: tr.leaveBalance,
+                                    subTitle: tr.thisMonth,
                                     day: state.attendanceSummaryEntity.cuti
                                         .toString(),
                                     description: 'WORK LEAVE',
@@ -473,7 +512,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
                               Text(
-                                'Your activity',
+                                tr.yourActivity,
                                 style: AppTextStyles.inter14MediumPrimary,
                               ),
                               Container(
@@ -512,7 +551,7 @@ class _DashboardPageState extends State<DashboardPage> {
                                     },
                                     child: Center(
                                       child: Text(
-                                        'View all',
+                                        tr.viewAll,
                                         style: AppTextStyles.inter12MediumWhite,
                                       ),
                                     ),
@@ -532,7 +571,7 @@ class _DashboardPageState extends State<DashboardPage> {
                         padding: EdgeInsets.symmetric(vertical: 24.w),
                         alignment: Alignment.center,
                         child: Text(
-                          'Belum ada riwayat absensi',
+                          tr.noAttendanceHistory,
                           style: AppTextStyles.inter128RegularSecondary,
                         ),
                       ),
@@ -575,7 +614,90 @@ class _DashboardPageState extends State<DashboardPage> {
 
           return MingdaPageTransitionWrapper(child: content);
         },
-      ),
+      );
+    },
+  ),
+),
+);
+  }
+}
+
+class _NetworkStatusListener extends StatelessWidget {
+  final Widget child;
+  const _NetworkStatusListener({required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    try {
+      final cubit = context.read<NetworkCubit?>();
+      if (cubit == null) return child;
+    } catch (_) {
+      return child;
+    }
+
+    return BlocListener<NetworkCubit, NetworkState>(
+      listenWhen: (previous, current) =>
+          previous.isOnline != current.isOnline ||
+          (previous.isSyncing != current.isSyncing &&
+              !current.isSyncing &&
+              current.syncedCount > 0),
+      listener: (context, netState) {
+        if (!context.mounted) return;
+        if (!netState.isOnline) {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.wifi_off_rounded, color: Colors.white, size: 18.w),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      'Mode Offline: Koneksi internet terputus. Menampilkan data tersimpan.',
+                      style: TextStyle(fontSize: 12.sp, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: const Color(0xFFED2736),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+              margin: EdgeInsets.all(16.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+            ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).hideCurrentSnackBar();
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Row(
+                children: [
+                  Icon(Icons.wifi_rounded, color: Colors.white, size: 18.w),
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: Text(
+                      netState.syncedCount > 0
+                          ? 'Kembali Online: ${netState.syncedCount} data berhasil disinkronkan.'
+                          : 'Kembali Online: Koneksi internet aktif.',
+                      style: TextStyle(fontSize: 12.sp, color: Colors.white),
+                    ),
+                  ),
+                ],
+              ),
+              backgroundColor: const Color(0xFF00AA13),
+              behavior: SnackBarBehavior.floating,
+              duration: const Duration(seconds: 3),
+              margin: EdgeInsets.all(16.w),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10.r),
+              ),
+            ),
+          );
+        }
+      },
+      child: child,
     );
   }
 }

@@ -137,4 +137,114 @@ class DashboardRemoteDataSourceImpl implements DashboardRemoteDataSource {
       throw ServerFailure('Gagal memproses riwayat absensi: $e');
     }
   }
+
+  @override
+  Future<ProfileModel> updateProfile(ProfileModel profile) async {
+    try {
+      final response = await dio.put(
+        '/mobile/v1/profile',
+        data: profile.toJson(),
+      );
+      return ProfileModel.fromJson(response.data);
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final apiMessage = e.response?.data is Map
+          ? (e.response?.data as Map)['message']?.toString()
+          : null;
+
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const TimeoutFailure();
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkFailure();
+      }
+
+      if (statusCode == 401) {
+        throw AuthFailure(
+          apiMessage ?? 'Token sudah tidak berlaku, mohon login ulang',
+        );
+      }
+
+      if (statusCode == 422) {
+        final errors = e.response?.data is Map
+            ? (e.response?.data as Map)['errors']
+            : null;
+        if (errors is Map && errors.isNotEmpty) {
+          final firstKey = errors.keys.first;
+          final errorList = errors[firstKey];
+          if (errorList is List && errorList.isNotEmpty) {
+            throw ValidationFailure(errorList.first.toString());
+          }
+        }
+        throw ValidationFailure(apiMessage ?? 'Validasi formulir gagal');
+      }
+
+      throw ServerFailure(
+        apiMessage ?? 'Terjadi kendala saat memperbarui profil (Kode: $statusCode)',
+      );
+    } catch (e) {
+      if (e is Failure) rethrow;
+      throw ServerFailure('Gagal memperbarui profil: $e');
+    }
+  }
+
+  @override
+  Future<void> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  }) async {
+    try {
+      await dio.put(
+        '/mobile/v1/profile/password',
+        data: {
+          'current_password': currentPassword,
+          'password': newPassword,
+          'password_confirmation': confirmPassword,
+        },
+      );
+    } on DioException catch (e) {
+      final statusCode = e.response?.statusCode;
+      final apiMessage = e.response?.data is Map
+          ? (e.response?.data as Map)['message']?.toString()
+          : null;
+
+      if (e.type == DioExceptionType.connectionTimeout ||
+          e.type == DioExceptionType.receiveTimeout) {
+        throw const TimeoutFailure();
+      }
+      if (e.type == DioExceptionType.connectionError) {
+        throw const NetworkFailure();
+      }
+
+      if (statusCode == 401) {
+        throw AuthFailure(
+          apiMessage ?? 'Token sudah tidak berlaku, mohon login ulang',
+        );
+      }
+
+      if (statusCode == 422) {
+        final errors = e.response?.data is Map
+            ? (e.response?.data as Map)['errors']
+            : null;
+        if (errors is Map && errors.isNotEmpty) {
+          final firstKey = errors.keys.first;
+          final errorList = errors[firstKey];
+          if (errorList is List && errorList.isNotEmpty) {
+            throw ValidationFailure(errorList.first.toString());
+          }
+        }
+        throw ValidationFailure(apiMessage ?? 'Validasi kata sandi gagal');
+      }
+
+      throw ServerFailure(
+        apiMessage ??
+            'Terjadi kendala saat mengubah kata sandi (Kode: $statusCode)',
+      );
+    } catch (e) {
+      if (e is Failure) rethrow;
+      throw ServerFailure('Gagal mengubah kata sandi: $e');
+    }
+  }
 }

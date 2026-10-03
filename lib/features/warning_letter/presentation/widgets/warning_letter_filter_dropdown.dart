@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
@@ -149,7 +150,9 @@ class _WarningLetterTypeFilterDropdownState
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
-                widget.selected != null ? widget.selected!.label : 'Semua',
+                widget.selected != null
+                    ? widget.selected!.label
+                    : context.tr.allWord,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.5.sp,
@@ -214,7 +217,7 @@ class _TypeSelectionPanel extends StatelessWidget {
         children: [
           // "Semua" option
           _buildItem(
-            label: 'Semua',
+            label: context.tr.allWord,
             badge: 'ALL',
             isSelected: selected == null,
             onTap: () => onSelect(null),
@@ -427,8 +430,10 @@ class _WarningLetterStatusFilterDropdownState
             Expanded(
               child: Text(
                 widget.selected != null
-                    ? widget.selected!.label
-                    : 'Pilih Status',
+                    ? (widget.selected == WarningLetterStatus.aktif
+                        ? context.tr.statActive
+                        : context.tr.statCompleted)
+                    : context.tr.selectStatus,
                 style: TextStyle(
                   fontFamily: 'Inter',
                   fontSize: 12.5.sp,
@@ -493,7 +498,7 @@ class _StatusSelectionPanel extends StatelessWidget {
         children: [
           // "Semua Status" option
           _buildItem(
-            label: 'Semua Status',
+            label: context.tr.allStatuses,
             dotColor: const Color(0xFF0D9488),
             isSelected: selected == null,
             onTap: () => onSelect(null),
@@ -503,11 +508,14 @@ class _StatusSelectionPanel extends StatelessWidget {
             final dotColor = status == WarningLetterStatus.aktif
                 ? const Color(0xFF0D9488)
                 : const Color(0xFF64748B);
+            final statusLabel = status == WarningLetterStatus.aktif
+                ? context.tr.statActive
+                : context.tr.statCompleted;
             return Padding(
               padding:
                   EdgeInsets.only(bottom: status != statuses.last ? 6.w : 0),
               child: _buildItem(
-                label: status.label,
+                label: statusLabel,
                 dotColor: dotColor,
                 isSelected: selected == status,
                 onTap: () => onSelect(status),

@@ -1,3 +1,5 @@
+import 'package:mingda_app/core/localization/app_language.dart';
+
 class AttendanceHistoryEntity {
   final int currentPage;
   final List<AttendanceItemEntity> data;
@@ -80,6 +82,48 @@ class AttendanceItemEntity {
     required this.createdAt,
     required this.updatedAt,
   });
+
+  String localizedStatus(AppLanguage lang) {
+    final lower = status.toLowerCase().trim();
+    switch (lang) {
+      case AppLanguage.en:
+        if (lower.contains('hadir') || lower.contains('present')) return 'Present';
+        if (lower.contains('terlambat') || lower.contains('late')) return 'Late';
+        if (lower.contains('alpha') || lower.contains('absent')) return 'Absent';
+        if (lower.contains('izin') || lower.contains('permit')) return 'Permit';
+        if (lower.contains('cuti') || lower.contains('leave')) return 'Leave';
+        if (lower.contains('sakit') || lower.contains('sick')) return 'Sick';
+        return status;
+      case AppLanguage.zh:
+        if (lower.contains('hadir') || lower.contains('present')) return '出勤';
+        if (lower.contains('terlambat') || lower.contains('late')) return '迟到';
+        if (lower.contains('alpha') || lower.contains('absent')) return '旷工';
+        if (lower.contains('izin') || lower.contains('permit')) return '请假';
+        if (lower.contains('cuti') || lower.contains('leave')) return '休假';
+        if (lower.contains('sakit') || lower.contains('sick')) return '病假';
+        return status;
+      case AppLanguage.id:
+        return status;
+    }
+  }
+
+  String? localizedNotes(AppLanguage lang) {
+    if (notes == null || notes!.trim().isEmpty) return notes;
+    if (lang == AppLanguage.id) return notes;
+    final lower = notes!.toLowerCase().trim();
+    if (lower.contains('tepat waktu')) {
+      return lang == AppLanguage.zh ? '准时出勤' : 'On Time';
+    }
+    if (lower.contains('terlambat')) {
+      if (lateMinutes > 0) {
+        return lang == AppLanguage.zh
+            ? '迟到 $lateMinutes 分钟'
+            : 'Late $lateMinutes minutes';
+      }
+      return lang == AppLanguage.zh ? '迟到' : 'Late';
+    }
+    return notes;
+  }
 }
 
 class AttendanceLinkEntity {

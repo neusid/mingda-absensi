@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:lottie/lottie.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
@@ -60,7 +61,7 @@ class DetailAttendancePage extends StatelessWidget {
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
         title: Text(
-          'Back to Dashboard',
+          context.tr.backToDashboard,
           style: AppTextStyles.inter16MediumPrimary,
         ),
       ),
@@ -109,7 +110,7 @@ class DetailAttendancePage extends StatelessWidget {
                                 overflow: TextOverflow.ellipsis,
                               ),
                               Text(
-                                "${attendanceItemEntity.attendanceDate.toIndonesianDateString()}",
+                                attendanceItemEntity.attendanceDate.toLocalizedDateString(context.currentLanguage),
                                 style: AppTextStyles.inter128RegularSecondary,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -123,22 +124,16 @@ class DetailAttendancePage extends StatelessWidget {
                       height: 20.w,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(5.w),
-                        color: attendanceItemEntity.status == 'hadir'
+                        color: attendanceItemEntity.status.toLowerCase() == 'hadir'
                             ? AppColors.green2
                             : AppColors.red,
                       ),
                       child: Center(
-                        child: attendanceItemEntity.status == 'hadir'
-                            ? Text(
-                                attendanceItemEntity.status,
-                                style: AppTextStyles.inter10RegularWhite,
-                                overflow: TextOverflow.ellipsis,
-                              )
-                            : Text(
-                                attendanceItemEntity.status,
-                                style: AppTextStyles.inter10RegularWhite,
-                                overflow: TextOverflow.ellipsis,
-                              ),
+                        child: Text(
+                          attendanceItemEntity.localizedStatus(context.currentLanguage),
+                          style: AppTextStyles.inter10RegularWhite,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
                     ),
                   ],
@@ -158,7 +153,7 @@ class DetailAttendancePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "Informasi waktu",
+                      context.tr.timeInformation,
                       style: AppTextStyles.inter11RegularPrimary,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -177,12 +172,12 @@ class DetailAttendancePage extends StatelessWidget {
                       children: [
                         CardDetailAttendance(
                           icon: 'assets/icon/barcode.svg',
-                          title: 'Kode',
+                          title: context.tr.employeeCodeLabel,
                           subTitle: profileEntity.employeeCode,
                         ),
                         CardDetailAttendance(
                           icon: 'assets/icon/building.svg',
-                          title: 'Department',
+                          title: context.tr.departmentLabel,
                           subTitle: profileEntity.department.name,
                         ),
                       ],
@@ -192,12 +187,12 @@ class DetailAttendancePage extends StatelessWidget {
                       children: [
                         CardDetailAttendance(
                           icon: 'assets/icon/briefcase.svg',
-                          title: 'Jabatan',
+                          title: context.tr.positionLabel,
                           subTitle: profileEntity.position.name,
                         ),
                         CardDetailAttendance(
                           icon: 'assets/icon/call.svg',
-                          title: 'Phone',
+                          title: context.tr.phoneLabel,
                           subTitle: profileEntity.phone,
                         ),
                       ],
@@ -219,7 +214,7 @@ class DetailAttendancePage extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
                     Text(
-                      "Informasi GPS",
+                      context.tr.gpsInformation,
                       style: AppTextStyles.inter11RegularPrimary,
                       overflow: TextOverflow.ellipsis,
                     ),
@@ -238,12 +233,12 @@ class DetailAttendancePage extends StatelessWidget {
                       children: [
                         CardDetailAttendance(
                           icon: 'assets/icon/barcode.svg',
-                          title: 'Informasi Masuk',
-                          subTitle: attendanceItemEntity.status,
+                          title: context.tr.inInformation,
+                          subTitle: attendanceItemEntity.localizedStatus(context.currentLanguage),
                         ),
                         CardDetailAttendance(
                           icon: 'assets/icon/building.svg',
-                          title: 'Lokasi Keluar',
+                          title: context.tr.outLocation,
                           subTitle: attendanceItemEntity.gpsAccuracyIn
                               .toString(),
                         ),
@@ -254,12 +249,12 @@ class DetailAttendancePage extends StatelessWidget {
                       children: [
                         CardDetailAttendance(
                           icon: 'assets/icon/briefcase.svg',
-                          title: 'Check In',
+                          title: context.tr.checkIn,
                           subTitle: attendanceItemEntity.checkIn,
                         ),
                         CardDetailAttendance(
                           icon: 'assets/icon/call.svg',
-                          title: 'Check Out',
+                          title: context.tr.checkOut,
                           subTitle: attendanceItemEntity.checkOut,
                         ),
                       ],
@@ -270,8 +265,8 @@ class DetailAttendancePage extends StatelessWidget {
               SizedBox(height: 10.w),
               CardLongDetailAttendance(
                 icon: 'assets/icon/barcode.svg',
-                title: 'Catatan',
-                subTitle: attendanceItemEntity.notes,
+                title: context.tr.notes,
+                subTitle: attendanceItemEntity.localizedNotes(context.currentLanguage),
               ),
               SizedBox(height: 17.w),
               Row(
@@ -302,7 +297,7 @@ class DetailAttendancePage extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            'CHECK IN',
+                            context.tr.checkIn.toUpperCase(),
                             style: AppTextStyles.inter12RegularPrimary,
                             overflow: TextOverflow.ellipsis,
                           ),
@@ -335,7 +330,7 @@ class DetailAttendancePage extends StatelessWidget {
                         ),
                         child: Center(
                           child: Text(
-                            'CHECK OUT',
+                            context.tr.checkOut.toUpperCase(),
                             style: AppTextStyles.inter12RegularPrimary,
                             overflow: TextOverflow.ellipsis,
                           ),

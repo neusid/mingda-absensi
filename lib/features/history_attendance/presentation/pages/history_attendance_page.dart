@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 import 'package:mingda_app/core/theme/app_text_styles.dart';
@@ -178,7 +179,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
         backgroundColor: AppColors.white,
         surfaceTintColor: AppColors.white,
         title: Text(
-          'Back to Dashboard',
+          context.tr.backToDashboard,
           style: AppTextStyles.inter16MediumPrimary,
         ),
       ),
@@ -216,7 +217,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
           } else {
             return Center(
               child: Text(
-                'Failed to Get Profile',
+                context.tr.failedToGetProfile,
                 style: AppTextStyles.inter16MediumPrimary,
               ),
             );
@@ -225,6 +226,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
           final attendanceItems = DashboardAttendanceItem.fromAttendanceList(
             history.data,
             treatLatestAsToday: monthSelected == null,
+            language: context.currentLanguage,
           );
 
           return Padding(
@@ -302,7 +304,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                           mainAxisAlignment: MainAxisAlignment.start,
                           children: [
                             Text(
-                              'Riwayat Absensi${attendanceSelected != null ? " - ${attendanceSelected!.name}" : ""}${monthSelected != null ? " - ${monthSelected!.name}" : ""} $yearsSelected',
+                              '${context.tr.historyAttendanceTitle}${attendanceSelected != null ? " - ${attendanceSelected!.name}" : ""}${monthSelected != null ? " - ${monthSelected!.name}" : ""} $yearsSelected',
                               style: AppTextStyles.inter13RegularPrimary,
                             ),
                           ],
@@ -362,7 +364,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                       padding: EdgeInsets.symmetric(vertical: 60.w),
                       child: Center(
                         child: Text(
-                          'Gagal memuat data. Coba lagi.',
+                          context.tr.failedToLoadData,
                           style: AppTextStyles.inter14MediumSecondary,
                         ),
                       ),
@@ -374,7 +376,7 @@ class _HistoryAttendancePageState extends State<HistoryAttendancePage> {
                       padding: EdgeInsets.symmetric(vertical: 60.w),
                       child: Center(
                         child: Text(
-                          'Data kosong',
+                          context.tr.emptyData,
                           style: AppTextStyles.inter14MediumSecondary,
                         ),
                       ),

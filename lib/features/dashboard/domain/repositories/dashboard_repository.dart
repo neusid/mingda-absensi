@@ -9,4 +9,10 @@ abstract class DashboardRepository {
   Future<Either<Failure, ProfileEntity>> getDataProfile();
   Future<Either<Failure, AttendanceSummaryEntity>> getDataAttendanceSummary();
   Future<Either<Failure, AttendanceHistoryEntity>> getDataAttendanceHistory();
+  Future<Either<Failure, ProfileEntity>> updateProfile(ProfileEntity profile);
+  Future<Either<Failure, void>> changePassword({
+    required String currentPassword,
+    required String newPassword,
+    required String confirmPassword,
+  });
 }

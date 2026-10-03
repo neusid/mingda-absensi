@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:mingda_app/core/localization/app_translations.dart';
 import 'package:mingda_app/core/theme/app_colors.dart';
 import 'package:mingda_app/core/theme/app_shadows.dart';
 
@@ -20,6 +21,19 @@ enum WorkLeaveStatType {
         return 'DITOLAK';
       case WorkLeaveStatType.cutiTerpakai:
         return 'CUTI TERPAKAI';
+    }
+  }
+
+  String getLocalizedLabel(BuildContext context) {
+    switch (this) {
+      case WorkLeaveStatType.disetujui:
+        return context.tr.leaveStatApproved.toUpperCase();
+      case WorkLeaveStatType.menunggu:
+        return context.tr.leaveStatPending.toUpperCase();
+      case WorkLeaveStatType.ditolak:
+        return context.tr.leaveStatRejected.toUpperCase();
+      case WorkLeaveStatType.cutiTerpakai:
+        return context.tr.leaveStatUsed.toUpperCase();
     }
   }
 
@@ -123,7 +137,7 @@ class WorkLeaveStatCard extends StatelessWidget {
                 ),
                 SizedBox(height: 3.w),
                 Text(
-                  type.label,
+                  type.getLocalizedLabel(context),
                   style: TextStyle(
                     fontFamily: 'Inter',
                     fontSize: 9.8.sp,
